@@ -14,7 +14,9 @@
 
 3. Add connection string to app settings.json. It will look something like this:
 ```bash
-  Data Source=DESKTOP-EI2TOGP\\SQLEXPRESS;Initial Catalog=GroopsRun;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=DESKTOP-0CLKE34;Initial Catalog=FoodDeliveryWebApp;User ID=sa;Password=123;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi   Subnet Failover=False"
+},
 ```
 
 4. Go to Window PowerShell and type:
