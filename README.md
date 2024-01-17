@@ -25,4 +25,12 @@
    ```bash
     Add-Migration InitialCreate 
    ```
-- To run and migrate the tables into the database
+- To run and migrate the tables into the database, just go to your project directory
+  
+  ![image](https://github.com/thasocheat/FoodDeliveryWebApp/assets/96945084/63c09d8a-7413-4e72-99c7-3c2d7b0c864b)
+
+  ```bash
+    dotnet run seeddata 
+   ```
+  
+  - 
