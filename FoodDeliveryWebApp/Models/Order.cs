@@ -7,7 +7,7 @@ namespace FoodDeliveryWebApp.Models
     {
         [Key]
         public int OrderId { get; set; }
-        public string OrderNo { get; set; }
+        public string? OrderNo { get; set; }
 
         [ForeignKey("Product")]
         public int ProductId { get; set; }
@@ -15,12 +15,12 @@ namespace FoodDeliveryWebApp.Models
         public int Quantity { get; set; }
 
         [ForeignKey("AppUser")]
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
         [ForeignKey("Payment")]
-        public int PaymentId { get; set; }
+        public int? PaymentId { get; set; }
 
         public DateTime OrderAt { get; set; }
 

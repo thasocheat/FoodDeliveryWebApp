@@ -1,9 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FoodDeliveryWebApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+
+        }
+
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Team> Teams { get; set; }
     }
 }
