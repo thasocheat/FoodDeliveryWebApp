@@ -24,10 +24,27 @@ namespace FoodDeliveryWebApp.Controllers.Backend
 			IEnumerable<Team> teams = await _teamRepository.GetAll();
 			return View(teams);
 		}
+        
+        
+        public async Task<IActionResult> Listing(int id)
+		{
+            Team team = await _teamRepository.GetByIdAsync(id);
 
-       
+            if (team == null)
+            {
+                // Return a JSON result for not found
+                return Json(new { success = false, message = "Team not found" + id });
+            }
 
-		public IActionResult Create()
+            return Json(new { success = true, message = "Team listing successfully" });
+
+        }
+
+
+
+
+
+        public IActionResult Create()
 		{
 			return View();
 		}

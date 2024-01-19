@@ -78,49 +78,7 @@ function showImagePreview(imageUploader, previewImage) {
 //    });
 //});
 
-function Delete(teamId) {
-    // Show the SweetAlert confirmation dialog
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'You won\'t be able to revert this!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // If the user confirms, proceed with the deletion
-            $.ajax({
-                url: "/Team/Delete/" + teamId,
-                type: "POST",
-                dataType: "json",
-                success: function (ajaxResult) {
-                    if (ajaxResult.success) {
-                        // Show success message
-                        toastr.success(ajaxResult.message);
 
-                        // Redirect to the index page
-                        window.location.href = '/Team/Index';
-                    } else {
-                        // Show error message
-                        Swal.fire({
-                            title: 'Error!',
-                            text: ajaxResult.message,
-                            icon: 'error'
-                        });
-                    }
-                },
-                error: function (errormessage) {
-                    toastr.error("An error occurred while deleting the Team: " + errormessage.responseText);
-                }
-            });
-        }
-    });
-
-    // Prevent the default link behavior
-    return false;
-}
 
 
 
