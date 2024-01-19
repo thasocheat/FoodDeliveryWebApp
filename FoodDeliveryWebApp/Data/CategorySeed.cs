@@ -21,7 +21,7 @@ namespace FoodDeliveryWebApp.Data
                     new Category
                     {
                         CategoryName = "Food",
-                        ImageUrl = "Images/Ctegories/diet.png",
+                        ImageUrl = "/Images/Ctegories/diet.png",
                         IsActive = true,
                         CreatedAt = DateTime.Now,
                         Products = new List<Product>()
@@ -29,7 +29,7 @@ namespace FoodDeliveryWebApp.Data
                     new Category
                     {
                         CategoryName = "Drink",
-                        ImageUrl = "Images/Ctegories/drink.png",
+                        ImageUrl = "/Images/Ctegories/drink.png",
                         IsActive = true,
                         CreatedAt = DateTime.Now,
                         Products = new List<Product>()

@@ -1,10 +1,16 @@
 using FoodDeliveryWebApp.Data;
+using FoodDeliveryWebApp.Interfaces;
+using FoodDeliveryWebApp.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add services for repository
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Add services for connecting to SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -31,6 +37,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.MapControllerRoute(
+	name: "backend",
+	pattern: "{area:exists}/{controller=Team}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
 	name: "default",

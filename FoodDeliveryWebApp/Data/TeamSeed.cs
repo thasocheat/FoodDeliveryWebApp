@@ -24,7 +24,7 @@ namespace FoodDeliveryWebApp.Data
                         Email = "devteam@example.com",
                         Description = "A team of skilled developers",
                         Title = "Development Team Lead",
-                        ImageUrl = "Images/Teams/lysun.jpg",
+                        ImageUrl = "/Images/Teams/lysun.jpg",
                         Bio = "Our development team is dedicated to building high-quality software.",
                         CreatedAt = DateTime.Now
                     },
@@ -34,7 +34,7 @@ namespace FoodDeliveryWebApp.Data
                         Email = "devteam@example.com",
                         Description = "A team of skilled developers",
                         Title = "Development Team Lead",
-                        ImageUrl = "Images/Teams/rozel.jpg",
+                        ImageUrl = "/Images/Teams/rozel.jpg",
                         Bio = "Our development team is dedicated to building high-quality software.",
                         CreatedAt = DateTime.Now
                     },
@@ -44,7 +44,7 @@ namespace FoodDeliveryWebApp.Data
                         Email = "devteam@example.com",
                         Description = "A team of skilled developers",
                         Title = "Development Team Lead",
-                        ImageUrl = "Images/Teams/socheat.jpg",
+                        ImageUrl = "/Images/Teams/socheat.jpg",
                         Bio = "Our development team is dedicated to building high-quality software.",
                         CreatedAt = DateTime.Now
                     },
@@ -54,7 +54,7 @@ namespace FoodDeliveryWebApp.Data
                         Email = "devteam@example.com",
                         Description = "A team of skilled developers",
                         Title = "Development Team Lead",
-                        ImageUrl = "Images/Teams/khim.jpg",
+                        ImageUrl = "/Images/Teams/khim.jpg",
                         Bio = "Our development team is dedicated to building high-quality software.",
                         CreatedAt = DateTime.Now
                     },
@@ -64,7 +64,7 @@ namespace FoodDeliveryWebApp.Data
                         Email = "devteam@example.com",
                         Description = "A team of skilled developers",
                         Title = "Development Team Lead",
-                        ImageUrl = "Images/Teams/heng.jpg",
+                        ImageUrl = "/Images/Teams/heng.jpg",
                         Bio = "Our development team is dedicated to building high-quality software.",
                         CreatedAt = DateTime.Now
                     },

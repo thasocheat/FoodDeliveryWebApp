@@ -8,10 +8,23 @@
 
   <ItemGroup>
     <Folder Include="Frontend\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
+    <None Include="wwwroot\Images\Categories\diet.png" />
+    <None Include="wwwroot\Images\Categories\drink.png" />
+    <None Include="wwwroot\Images\Products\orange-juice.png" />
+    <None Include="wwwroot\Images\Products\rice.png" />
+    <None Include="wwwroot\Images\Teams\heng.jpg" />
+    <None Include="wwwroot\Images\Teams\khim.jpg" />
+    <None Include="wwwroot\Images\Teams\lysun.jpg" />
+    <None Include="wwwroot\Images\Teams\rozel.jpg" />
+    <None Include="wwwroot\Images\Teams\socheat.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">

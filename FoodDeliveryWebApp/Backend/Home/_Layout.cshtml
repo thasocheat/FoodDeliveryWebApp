@@ -2,241 +2,355 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
-    <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-      <![endif]-->
-    <!-- Meta -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content="CodedThemes">
-    <meta name="keywords" content=" Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
-    <meta name="author" content="CodedThemes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <!-- Favicon icon -->
-    <link rel="icon" href="~/backend/assets/images/favicon.ico" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="~/backend/assets/css/bootstrap/css/bootstrap.min.css">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="~/backend/assets/icon/themify-icons/themify-icons.css">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="~/backend/assets/icon/icofont/css/icofont.css">
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="~/backend/assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="~/backend/assets/css/jquery.mCustomScrollbar.css">
-    @* <link href="~/backend/assets/css/style.css" rel="stylesheet" /> *@
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/favicon.png">
+    <link rel="stylesheet" href="~/assets/vendor/owl-carousel/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/assets/vendor/owl-carousel/css/owl.theme.default.min.css">
+    <link href="~/assets/vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="~/assets/vendor/toastr/css/toastr.min.css">
+    @*<link href="../../Assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+     <!-- Pick date -->
+    <link rel="stylesheet" href="~/assets/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/assets/vendor/pickadate/themes/default.date.css">
+    <!-- Datatable -->
+    <link href="~/assets/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
+    <!--*******************
+            Preloader start
+        ********************-->
+    @*<div id="preloader">
+    <div class="sk-three-bounce">
+    <div class="sk-child sk-bounce1"></div>
+    <div class="sk-child sk-bounce2"></div>
+    <div class="sk-child sk-bounce3"></div>
+    </div>
+    </div>*@
+    <!--*******************
+        Preloader end
+    ********************-->
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
 
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <a href="index.html" class="brand-logo">
+                <img class="logo-abbr" src="~/assets/images/logo.png" alt="">
+                <img class="logo-compact" src="~/assets/images/logo-text.png" alt="">
+                <img class="brand-title" src="~/assets/images/logo-text.png" alt="">
+            </a>
 
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Pre-loader end -->
-    <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
-
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-
-                    <div class="navbar-logo">
-                        <a class="mobile-menu" id="mobile-collapse" href="#!">
-                            <i class="ti-menu"></i>
-                        </a>
-                        <a class="mobile-search morphsearch-search" href="#">
-                            <i class="ti-search"></i>
-                        </a>
-                        <a href="index.html">
-                            <img class="img-fluid" src="assets/images/logo.png" alt="Theme-Logo" />
-                        </a>
-                        <a class="mobile-options">
-                            <i class="ti-more"></i>
-                        </a>
-                    </div>
-
-                    <div class="navbar-container container-fluid">
-                        <ul class="nav-left">
-                            <li>
-                                <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div>
-                            </li>
-
-                            <li>
-                                <a href="#!" onclick="javascript:toggleFullScreen()">
-                                    <i class="ti-fullscreen"></i>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav-right">
-                           
-                            <li class="user-profile header-notification">
-                                <a href="#!">
-                                    <img src="assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image">
-                                    <span>John Doe</span>
-                                    <i class="ti-angle-down"></i>
-                                </a>
-                                <ul class="show-notification profile-notification">
-                                    <li>
-                                        <a href="#!">
-                                            <i class="ti-settings"></i> Settings
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="ti-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="ti-email"></i> My Messages
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="ti-lock"></i> Lock Screen
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="auth-normal-sign-in.html">
-                                            <i class="ti-layout-sidebar-left"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                        <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
-                        <div class="pcoded-inner-navbar main-menu">
-                            
-                            <div class="pcoded-navigatio-lavel" data-i18n="nav.category.navigation">Dashboard Page</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="active">
-                                    <a href="index.html">
-                                        <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.dash.main">Dashboard</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>                                
-                            </ul>
-                            <div class="pcoded-navigatio-lavel" data-i18n="nav.category.forms">Category Crud</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li>
-                                    <a href="form-elements-component.html">
-                                        <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Categories</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                               
-                            </ul>
-
-                            <div class="pcoded-navigatio-lavel" data-i18n="nav.category.forms">Product Crud</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                               
-                                <li>
-                                    <a href="map-google.html">
-                                        <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Product</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                               
-
-                            </ul>
-
-                           
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <div class="search_bar dropdown">
+                                <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <div class="dropdown-menu p-0 m-0">
+                                    <form>
+                                        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                    </nav>
 
-                    @RenderBody()
-
-
-                </div>
+                        <ul class="navbar-nav header-right">
+                            <li class="nav-item dropdown notification_dropdown">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-bell"></i>
+                                    <div class="pulse-css"></div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <ul class="list-unstyled">
+                                        <li class="media dropdown-item">
+                                            <span class="success"><i class="ti-user"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p>
+                                                        <strong>Martin</strong> has added a <strong>customer</strong> Successfully
+                                                    </p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="primary"><i class="ti-shopping-cart"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong>Jennifer</strong> purchased Light Dashboard 2.0.</p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="danger"><i class="ti-bookmark"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p>
+                                                        <strong>Robin</strong> marked a <strong>ticket</strong> as unsolved.
+                                                    </p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="primary"><i class="ti-heart"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p><strong>David</strong> purchased Light Dashboard 1.0.</p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                        <li class="media dropdown-item">
+                                            <span class="success"><i class="ti-image"></i></span>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    <p>
+                                                        <strong> James.</strong> has added a<strong>customer</strong> Successfully
+                                                    </p>
+                                                </a>
+                                            </div>
+                                            <span class="notify-time">3:20 am</span>
+                                        </li>
+                                    </ul>
+                                    <a class="all-notification" href="#">
+                                        See all notifications <i class="ti-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-account"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="./app-profile.html" class="dropdown-item">
+                                        <i class="icon-user"></i>
+                                        <span class="ml-2">Profile </span>
+                                    </a>
+                                    <a href="./email-inbox.html" class="dropdown-item">
+                                        <i class="icon-envelope-open"></i>
+                                        <span class="ml-2">Inbox </span>
+                                    </a>
+                                    <a href="./page-login.html" class="dropdown-item">
+                                        <i class="icon-key"></i>
+                                        <span class="ml-2">Logout </span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
             </div>
-         
         </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="quixnav">
+            <div class="quixnav-scroll">
+                <ul class="metismenu" id="menu">
+
+
+                    <li>
+                        <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                            <i class="icon icon-globe-2"></i><span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                     <li>
+                        <a href="@Url.Action("Index", "Team")" aria-expanded="false">
+                            <i class="icon icon-globe-2"></i><span class="nav-text">Teams</span>
+                        </a>
+                    </li>
+
+                    @*<li>
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon icon-form"></i><span class="nav-text">CRUD Pet</span>
+                    </a>
+                    <ul aria-expanded="false">
+                    <li><a href="@Url.Action("Pets", "Pet")">Views</a></li>
+                    </ul>
+                    </li>
+
+                    <li>
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon icon-form"></i><span class="nav-text">CRUD Pet ajax</span>
+                    </a>
+                    <ul aria-expanded="false">
+                    <li><a href="@Url.Action("ViewAll", "Pet")">Views</a></li>
+                    </ul>
+                    </li>
+
+                    <li>
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon icon-form"></i><span class="nav-text">Forms</span>
+                    </a>
+                    <ul aria-expanded="false">
+                    <li><a href="./form-element.html">Form Elements</a></li>
+                    <li><a href="./form-wizard.html">Wizard</a></li>
+                    <li><a href="./form-editor-summernote.html">Summernote</a></li>
+                    <li><a href="form-pickers.html">Pickers</a></li>
+                    <li><a href="form-validation-jquery.html">Jquery Validate</a></li>
+                    </ul>
+                    </li>*@
+
+                </ul>
+            </div>
+
+
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+        @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <div class="container">
+        @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+        <ul class="navbar-nav flex-grow-1">
+        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+        <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+        <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+        </ul>
+        </div>
+        </div>
+        </nav>*@
+
+
+
+
+        <!--**********************************
+              Content body start
+          ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+
+
+
+
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2023 - SampleApplicationPractice - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
     </div>
 
-    
 
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="~/backend/assets/js/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="~/backend/assets/js/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/backend/assets/js/popper.js/popper.min.js"></script>
-    <script type="text/javascript" src="~/backend/assets/js/bootstrap/js/bootstrap.min.js"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="~/backend/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="~/backend/assets/js/modernizr/modernizr.js"></script>
-    <!-- am chart -->
-    <script src="~/backend/assets/pages/widget/amchart/amcharts.min.js"></script>
-    <script src="~/backend/assets/pages/widget/amchart/serial.min.js"></script>
-    <!-- Todo js -->
-    <script type="text/javascript " src="~/backend/assets/pages/todo/todo.js "></script>
-    <!-- Custom js -->
-    <script type="text/javascript" src="~/backend/assets/pages/dashboard/custom-dashboard.js"></script>
-    <script type="text/javascript" src="~/backend/assets/js/script.js"></script>
-    <script type="text/javascript " src="~/backend/assets/js/SmoothScroll.js"></script>
-    <script src="~/backend/assets/js/pcoded.min.js"></script>
-    <script src="~/backend/assets/js/demo-12.js"></script>
-    <script src="~/backend/assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script>
-        var $window = $(window);
-        var nav = $('.fixed-button');
-            $window.scroll(function(){
-                if ($window.scrollTop() >= 200) {
-                 nav.addClass('active');
-             }
-             else {
-                 nav.removeClass('active');
-             }
-         });
-    </script>
+
+
+
+
+    @*<div class="container body-content">
+    @RenderBody()
+    <hr />
+    <footer>
+    <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+    </footer>
+    </div>*@
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    @*@Scripts.Render("~/bundles/jquery")*@
+    <script src="~/assets/vendor/global/global.min.js"></script>
+    <script src="~/assets/js/quixnav-init.js"></script>
+    <script src="~/assets/js/custom.min.js"></script>
+
+    <!-- Datatable -->
+    <script src="~/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/plugins-init/datatables.init.js"></script>
+
+    <!-- All init script -->
+    <script src="~/assets/js/plugins-init/toastr-init.js"></script>
+
+    <!-- Toastr -->
+    <script src="~/assets/vendor/toastr/js/toastr.min.js"></script>
+    <script src="~/assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+
+    <!-- pickdate -->
+    <script src="~/assets/vendor/pickadate/picker.js"></script>
+    <script src="~/assets/vendor/pickadate/picker.time.js"></script>
+    <script src="~/assets/vendor/pickadate/picker.date.js"></script>
+
+    <!-- Pickdate -->
+    <script src="~/assets/js/plugins-init/pickadate-init.js"></script>
+
+	
+    <script src="~/js/Script.js"></script>
+
+
+    @*<script src="../../Assets/js/plugins-init/sweetalert.init.js"></script>*@
+    <!-- Include SweetAlertJS files -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+
+
+
+    <!-- Vectormap -->
+    <script src="~/assets/vendor/raphael/raphael.min.js"></script>
+    <script src="~/assets/vendor/morris/morris.min.js"></script>
+
+
+    <script src="~/assets/vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="~/assets/vendor/chart.js/Chart.bundle.min.js"></script>
+
+    <script src="~/assets/vendor/gaugeJS/dist/gauge.min.js"></script>
+
+    <!--  flot-chart js -->
+    <script src="~/assets/vendor/flot/jquery.flot.js"></script>
+    <script src="~/assets/vendor/flot/jquery.flot.resize.js"></script>
+
+    <!-- Owl Carousel -->
+    <script src="~/assets/vendor/owl-carousel/js/owl.carousel.min.js"></script>
+
+    <!-- Counter Up -->
+    <script src="~/assets/vendor/jqvmap/js/jquery.vmap.min.js"></script>
+    <script src="~/assets/vendor/jqvmap/js/jquery.vmap.usa.js"></script>
+    <script src="~/assets/vendor/jquery.counterup/jquery.counterup.min.js"></script>
+
+
+    <script src="~/assets/js/dashboard/dashboard-1.js"></script>
 </body>
 </html>

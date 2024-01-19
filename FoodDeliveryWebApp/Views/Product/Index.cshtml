@@ -1,0 +1,109 @@
+﻿@model IEnumerable<FoodDeliveryWebApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Backend/Home/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Large modal -->
+                <h1>Welcome to CRUD ajax with ASP.Net (Visual Studio 2022)</h1>
+                <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg">Add New</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Basic Datatable</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example" class="display" style="min-width: 845px">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ProductId)</th>
+                                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                                <th>@Html.DisplayNameFor(model => model.Price)</th>
+                                <th>@Html.DisplayNameFor(model => model.Quantity)</th>
+                                <th>@Html.DisplayNameFor(model => model.ImageUrl)</th>
+                                <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+                                <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="petTableBody">
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ProductId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" width="50" height="50" alt="@item.Name" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Images/default.png" width="50" height="50" alt="Default Image" />
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.IsActive)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                                        <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
+                                        <a class="btn btn-info btn-sm" asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+                                        @* <a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + item.ProductId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> |
+                                        <a href="#" class="btn btn-danger btn-sm" onclick="return Delele(' + item.ProductId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a> *@
+
+
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ProductId)</th>
+                                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                                <th>@Html.DisplayNameFor(model => model.Price)</th>
+                                <th>@Html.DisplayNameFor(model => model.Quantity)</th>
+                                <th>@Html.DisplayNameFor(model => model.ImageUrl)</th>
+                                <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+                                <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -24,7 +24,7 @@ namespace FoodDeliveryWebApp.Data
                         Description = "White rice",
                         Price = 10,
                         Quantity = 15,
-                        ImageUrl = "Images/Products/rice.png",
+                        ImageUrl = "/Images/Products/rice.png",
                         IsActive = true,
                         CreatedAt = DateTime.Now,
                         CategoryId = 1
@@ -35,7 +35,7 @@ namespace FoodDeliveryWebApp.Data
                         Description = "New oraange juice",
                         Price = 5,
                         Quantity = 5,
-                        ImageUrl = "Images/Products/orange-juice.png",
+                        ImageUrl = "/Images/Products/orange-juice.png",
                         IsActive = true,
                         CreatedAt = DateTime.Now,
                         CategoryId = 2
