@@ -1,22 +1,22 @@
-﻿$(document).ready(function () {
-    // Load team list on page load
-    loadTeamList();
+﻿//$(document).ready(function () {
+//    // Load team list on page load
+//    loadTeamList();
 
-    // Function to load team list using Ajax
-    function loadTeamList() {
-        $.ajax({
-            url: '@Url.Action("Index", "Team")',
-            type: 'GET',
-            success: function (result) {
-                // Update the content of the teamListContainer
-                $('#teamListContainer').html(result);
-            },
-            error: function (error) {
-                console.error('Error loading teams: ', error);
-            }
-        });
-    }
-});
+//    // Function to load team list using Ajax
+//    function loadTeamList() {
+//        $.ajax({
+//            url: '@Url.Action("Index", "Team")',
+//            type: 'GET',
+//            success: function (result) {
+//                // Update the content of the teamListContainer
+//                $('#teamListContainer').html(result);
+//            },
+//            error: function (error) {
+//                console.error('Error loading teams: ', error);
+//            }
+//        });
+//    }
+//});
 
 //Image preview function
 function showImagePreview(imageUploader, previewImage) {

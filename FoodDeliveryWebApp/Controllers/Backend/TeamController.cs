@@ -10,11 +10,13 @@ namespace FoodDeliveryWebApp.Controllers.Backend
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IWebHostEnvironment _webHost;
+        private readonly ApplicationDbContext _context;
 
-        public TeamController(ITeamRepository teamRepository, IWebHostEnvironment webHost)
+        public TeamController(ITeamRepository teamRepository, IWebHostEnvironment webHost, ApplicationDbContext context)
         {
             _teamRepository = teamRepository;
             _webHost = webHost;
+            _context = context;
         }
 
 		public async Task<IActionResult> Index()
@@ -22,6 +24,8 @@ namespace FoodDeliveryWebApp.Controllers.Backend
 			IEnumerable<Team> teams = await _teamRepository.GetAll();
 			return View(teams);
 		}
+
+       
 
 		public IActionResult Create()
 		{

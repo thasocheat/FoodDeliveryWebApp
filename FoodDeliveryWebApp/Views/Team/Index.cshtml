@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Backend/Home/_Layout.cshtml";
+
 }
 
 <div class="row">
@@ -58,8 +59,8 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="teamListContainer">
-                             @foreach (var item in Model)
+                        <tbody >
+                            @foreach (var item in Model)
                             {
                                 <tr>
                                     <td>
@@ -131,6 +132,50 @@
     </div>
    
 </div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        // ﻿$(document).ready(function () {
+        //     // Load team list on page load
+        //      LoadData();
+        // });
+
+    
+        //         function LoadData() {
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: '@Url.Action("getTeam")',
+        //         dataType: 'json',
+        //         data: { id: '' },
+        //         success: function (data) {
+        //             var items = '';
+        //             $.each(data, function (i, item) {
+        //                 var rows = "<tr>"
+        //                     + "<td class='TeamId'>" + item.Name + "</td>"
+        //                     + "<td class='prtoducttd'>" + item.Email + "</td>"
+        //                     + "<td class='prtoducttd'>" + item.Description + "</td>"
+        //                     + "<td class='prtoducttd'>" + item.Title + "</td>"
+        //                     + "<td class='prtoducttd'>" + item.ImageUrl + "</td>"
+        //                     + "<td class='prtoducttd'>" + item.Bio + "</td>"
+        //                     + "<td class='prtoducttd'>" + item.CreatedAt + "</td>"
+        //                     + "</tr>";
+        //                 $('#tblTeam').append(rows);
+        //             });
+        //         },
+        //         error: function (ex) {
+        //             var r = jQuery.parseJSON(response.responseText);
+        //             alert("Message: " + r.Message);
+        //             alert("StackTrace: " + r.StackTrace);
+        //             alert("ExceptionType: " + r.ExceptionType);
+        //         }
+        //     });
+        //     return false;
+        // }
+    </script>
+}
+
 
 
 
