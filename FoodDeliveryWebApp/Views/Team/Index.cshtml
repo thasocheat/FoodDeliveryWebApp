@@ -12,12 +12,13 @@
             <div class="card-body">
                 <!-- Large modal -->
                 <h1>Welcome to CRUD ajax with ASP.Net (Visual Studio 2022)</h1>
-                <button type="button" class="btn btn-primary float-right" id="addNew" onclick="redirectToCreateForm()">Add New</button>
+                <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg">Add New</button>
+                @* <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="redirectToCreateForm()">Add New</button> *@
                 <script>
                     function redirectToCreateForm() {
                         // Assuming your create form action is named "Create"
-                        var createFormUrl = '@Url.Action("Create", "Team")';
-                        window.location.href = createFormUrl;
+                        // var createFormUrl = '@Url.Action("Create", "Team")';
+                        // window.location.href = createFormUrl;
                     }
                 </script>
             </div>
@@ -130,8 +131,84 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Add New Pet</h5>
+                    <button type="button" class="btn btn-info close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="basic-form">
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form id="formUpload" enctype="multipart/form-data">
+                                        <div class="form-row">
+                                            <input type="hidden" class="form-control" id="teamId" placeholder="Id"/>
+                                            <div class="form-group col-md-6">
+                                                <label id="PetNameError">Name</label>
+                                                <input type="text" class="form-control" placeholder="Name" id="name" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label id="PetAgeError">Email</label>
+                                                <input type="text" class="form-control" placeholder="Email" id="email" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label id="PetAgeError">Description</label>
+                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" id="description"></textarea>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label id="PetAgeError">Title</label>
+                                                <input type="text" class="form-control" placeholder="Title" id="title" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label id="PetAgeError">Bio</label>
+                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" id="bio"></textarea>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label id="PetAgeError">Date</label>
+                                                <input type="text" name="datepicker" class="datepicker-default form-control picker__input" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                            </div>
+
+
+                                            <div class="form-group col-md-6">
+                                                <label id="fileUploadError">Upload Image</label>
+                                                <div class="input-group mb-3">
+                                                    <img src="~/Images/default.png" style="margin:10px" height="100" width="100" id="imagePreview" />
+                                                    <input type="file" id="imageUrl" name="ImageUpload" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
    
 </div>
+
+
 
 @section Scripts
 {
@@ -140,40 +217,235 @@
 
 
         $(document).ready(function () {
-            LoadData(1);
+            loadData();
+
+            // Modal event when modal close
+            $('#myModal').on('hidden.bs.modal', function () {
+                clearTextBox();
+                // clearValidate();
+
+            });
         });
 
-        function LoadData(id) {
+        // Function for clearing the textboxes
+        function clearTextBox() {
+            $('#name').val("");
+            $('#email').val("");
+            $('#description').val("");
+            $('#title').val("");
+            $('#bio').val("");
+            $('#createdAt').val("");
+            $('#imagePreview').attr("src", "/Images/default.png");
+            // For file input
+            var fileInput = $('#fileUpload');
+            fileInput.val('');  // Clear the value of the file input
+            $('#btnUpdate').hide();
+            $('#btnAdd').show();
+        }
+
+        // Load Data function
+       
+        function loadData() {
+            // Perform AJAX request
             $.ajax({
                 type: 'GET',
-                url: '/Team/Listing',
+                url: '/Team/GetTeams', // Replace with your actual controller and action names
                 dataType: 'json',
-                data: { id: id },
                 success: function (data) {
-                    if (data.success) {
-                        var items = '';
-                        $.each(data.data, function (i, item) { 
-                            var rows = "<tr>"
-                                + "<td class='TeamId'>" + item.Name + "</td>"
-                                + "<td class='prtoducttd'>" + item.Email + "</td>"
-                                + "<td class='prtoducttd'>" + item.Description + "</td>"
-                                + "<td class='prtoducttd'>" + item.Title + "</td>"
-                                + "<td class='prtoducttd'>" + item.ImageUrl + "</td>"
-                                + "<td class='prtoducttd'>" + item.Bio + "</td>"
-                                + "<td class='prtoducttd'>" + item.CreatedAt + "</td>"
-                                + "</tr>";
-                            $('#example tbody').append(rows);
-                        });
-                    } else {
-                        toastr.error("Error: " + data.message);
-                    }
+                    // Handle the returned JSON data
+                    console.log(data);
+                    // Process the data and update UI as needed
+                    // Update the table body
+                    var tableBody = $('#tblTeam');
+                    tableBody.empty(); // Clear existing rows
+
+                    // Loop through the data and append rows to the table
+                    data.forEach(function (team) {
+                        var row = '<tr>' +
+                            '<td>' + team.name + '</td>' +
+                            '<td>' + team.email + '</td>' +
+                            '<td>' + team.description + '</td>' +
+                            '<td>';
+
+                        // Add the default image path
+                        var defaultImagePath = '/Images/default.png';
+
+                        // Check if team.imageUrl is not null, then include the image tag with team.imageUrl, otherwise use the default image
+                        if (team.imageUrl !== null) {
+                            row += '<img src="' + team.imageUrl + '" alt="Pet Image" style="max-width: 50px; max-height: 50px;">';
+                        } else {
+                            row += '<img src="' + defaultImagePath + '" alt="Default Image" style="max-width: 50px; max-height: 50px;">';
+                        }
+
+                        row += '</td>' +
+                            '<td>' + team.title + '</td>' +
+                            '<td>' + team.bio + '</td>' +
+                            '<td>' + team.createdAt + '</td>' +
+                            '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + team.teamId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + team.teamId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
+                            // Add more columns as needed
+                            '</tr>';
+
+                        tableBody.append(row);
+                    });
+                        toastr.success("Team is listing successfully");
+                },
+                error: function (error) {
+                    // Handle errors
+                    console.error('Error fetching teams:', error);
+                }
+            });
+        }
+
+        // Add Data Function
+        function Add() {
+            // var res = validate();
+            // if (res == false) {
+            //     return false;
+            // }
+
+            // Create a FormData object
+            var formData = new FormData();
+            formData.append('teamId', $('#teamId').val()); // Include the teamId for update
+            formData.append('name', $('#name').val());
+            formData.append('email', $('#email').val());
+            formData.append('description', $('#description').val());
+            formData.append('title', $('#title').val());
+            formData.append('bio', $('#bio').val());
+            formData.append('createdAt', $('#createdAt').val());
+            // Append the image file to FormData
+            var imageFileInput = $("#imageUrl")[0];
+            formData.append("imageFile", imageFileInput.files[0]);
+
+            $.ajax({
+                url: "/Team/Create",
+                data: formData,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    loadData();
+                    $('#myModal').modal('hide');
+                    clearTextBox();
+                    toastr.success(result.message);
                 },
                 error: function (errormessage) {
-                    toastr.error("An error occurred while loading the Team data: " + errormessage.responseText);
+                    toastr.error("Error while create new team!");
+                    //alert(errormessage.responseText);
+                }
+            });
+        }
+
+        // function openEditModal(teamId) {
+        //     // Fetch data for the selected teamId and populate the modal
+        //     var team = // Fetch the team data based on teamId (you might need another AJAX call)
+        //         $('#editForm').html('<input type="text" name="name" value="' + team.name + '">' +
+        //             '<input type="text" name="email" value="' + team.email + '">' +
+        //                        // Add other form fields based on your Team object properties
+        //                       );
+        //     $('#editModal').modal('show');
+        // }
+
+        // function saveChanges() {
+        //     // Extract data from the form, perform validation, and send changes to the server
+        //     // After successful save, you may want to update the table or take other actions
+        //     $('#editModal').modal('hide');
+        // }
+
+        // Function for getting the Data Based upon Employee ID
+        function getbyID(teamId) {
+            $('#PetName').css('border-color', 'lightgrey');
+            $('#PetAge').css('border-color', 'lightgrey');
+            $('#PetGender').css('border-color', 'lightgrey');
+
+            $('#PetNameError').css('color', 'lightgrey');
+            $('#PetAgeError').css('color', 'lightgrey');
+            $('#PetGenderError').css('color', 'lightgrey');
+            $('#imagePreview').css('color', 'lightgrey');
+            $('#fileUploadError').css('color', 'lightgrey');
+
+            $.ajax({
+                url: "/Team/GetbyId/" + teamId,
+                type: "GET",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    $('#teamId').val(result.teamId);
+                    $('#name').val(result.name);
+                    $('#email').val(result.email);
+                    $('#description').val(result.description);
+                    $('#title').val(result.title);
+                    $('#bio').val(result.bio);
+                    $('#creatdAt').val(result.creatdAt);
+
+                    // Set the image preview
+                    var imagePreview = $('#imagePreview');
+                    var defaultImagePath = '/Images/default.png';
+
+
+                    if (result.imageUrl !== null) {
+                        imagePreview.attr('src', result.imageUrl);
+                    } else {
+                        imagePreview.attr('src', defaultImagePath);
+                    }
+
+                    $('#myModal').modal('show');
+                    $('#btnUpdate').show();
+                    $('#btnAdd').hide();
+
+                    toastr.success("Successfully geting the team for update");
+                },
+                error: function (errormessage) {
+                    toastr.error("An error occurred while geting the team for update: " + error);
                 }
             });
             return false;
         }
+
+        // Function for updating pet's record
+        function Update() {
+            //var res = validate();
+            //if (res == false) {
+            //    return false;
+            //}
+            var formData = new FormData();
+            formData.append('teamId', $('#teamId').val()); // Include the teamId for update
+            formData.append('name', $('#name').val());
+            formData.append('email', $('#email').val());
+            formData.append('description', $('#description').val());
+            formData.append('title', $('#title').val());
+            formData.append('bio', $('#bio').val());
+            formData.append('createdAt', $('#createdAt').val());
+            // Append the image file to FormData
+            var imageFileInput = $("#imageUrl")[0];
+            formData.append("imageFile", imageFileInput.files[0]);
+
+            $.ajax({
+                url: "/Team/Edit",
+                data: formData,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    loadData();
+                    $('#myModal').modal('hide');
+                    $('#name').val("");
+                    $('#email').val("");
+                    $('#description').val("");
+                    $('#title').val("");
+                    $('#bio').val("");
+                    $('#createdAt').val("");
+                    $('#imagePreview').attr("src", "/Images/default.png");
+                    toastr.success(result.message);
+                },
+
+                error: function (errormessage) {
+                    toastr.error(errormessage.message);
+                    //alert(errormessage.responseText);
+                }
+            });
+
+        }
+            
 
 
         function Delete(teamId) {
@@ -197,6 +469,7 @@
                             if (ajaxResult.success) {
                                 // // Redirect to the index page
                                 // window.location.href = '/Team/Index';
+                                loadData();
 
                                 // Show success message
                                 toastr.success(ajaxResult.message);  
