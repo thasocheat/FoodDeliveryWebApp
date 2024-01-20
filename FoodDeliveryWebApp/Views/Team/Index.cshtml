@@ -185,15 +185,24 @@
                                                 <label id="fileUploadError">Upload Image</label>
                                                 <div class="input-group mb-3">
                                                     <img src="~/Images/default.png" style="margin:10px" height="100" width="100" id="imagePreview" />
-                                                    <input type="file" id="imageUrl" name="ImageUpload" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
+                                                    <input type="file" id="fileUpload" name="ImageUpload" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
                                                 </div>
                                             </div>
+
+                                            <div class="form-group col-md-6">
+                                                <div class="input-group mb-3">
+                                                    <div id="HiddenDiv" style="visibility: hidden;">
+                                                        <input id="imageUrl" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
 
 
                                         <div class="col-12">
                                             <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
-                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
+                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;">Update</button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                         </div>
                                     </form>
@@ -225,6 +234,100 @@
                 // clearValidate();
 
             });
+
+            $('#btnUpdate').click(function () {
+                // check
+                if (window.FormData !== undefined) {
+                    var fileUpload = $("#fileUpload").get(0);
+                    var files = fileUpload.files;
+
+                    // Create FormData object
+                    var fileData = new FormData();
+
+                    fileData.append('teamId', $('#teamId').val());
+                    fileData.append('name', $('#name').val());
+                    fileData.append('email', $('#email').val());
+                    fileData.append('description', $('#description').val());
+                    fileData.append('title', $('#title').val());
+                    fileData.append('bio', $('#bio').val());
+                    fileData.append('createdAt', $('#createdAt').val());
+
+                    // Loop over files and add them to FormData object
+                    for (var i = 0; i < files.length; i++) {
+                        fileData.append('ImageFile', files[i]);
+                    }
+
+                    // Update();
+                    $.ajax({
+                        url: '/Team/Edit',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: fileData,
+                        success: function (result) {
+                            // alert(result);
+                            loadData();
+                            $('#myModal').modal('hide');
+                            clearTextBox();
+                            toastr.success("Team updated successfully");
+                        },
+                        error: function (err) {
+                            // alert(err.statusText);
+                            toastr.error("Error while updating team!");
+                        }
+                    });
+                } else {
+                    // alert("FormData is not supported.");
+                    toastr.error("FormData is not supported.");
+                }
+            });
+
+            // $('#btnAdd').click(function () {
+            //     // check
+            //     if (window.FormData !== undefined) {
+            //         var fileUpload = $("#fileUpload").get(0);
+            //         var files = fileUpload.files;
+
+            //         // Create
+            //         var fileData = new FormData();
+
+            //         fileData.append('teamId', $('#teamId').val()); // Include the teamId for update
+            //         fileData.append('name', $('#name').val());
+            //         fileData.append('email', $('#email').val());
+            //         fileData.append('description', $('#description').val());
+            //         fileData.append('title', $('#title').val());
+            //         fileData.append('bio', $('#bio').val());
+            //         fileData.append('createdAt', $('#createdAt').val());
+
+            //         // Looping over all files and add it to FormData object
+            //         for (var i = 0; i < files.length; i++) {
+            //             fileData.append('ImageFile', files[i]);
+            //         }
+
+            //         // Add();
+            //         $.ajax({
+            //             url: '/Team/Create',
+            //             type: "POST",
+            //             contentType: false, // Not to set any content header
+            //             processData: false, // Not to process data
+            //             data: fileData,
+            //             success: function (result) {
+            //                 // alert(result);
+            //                 loadData();
+            //                 $('#myModal').modal('hide');
+            //                 clearTextBox();
+            //                 toastr.success("Team created successfully");
+            //             },
+            //             error: function (err) {
+            //                 // alert(err.statusText);
+            //                 toastr.error("Error while create new team!");
+            //             }
+            //         });
+            //     } else {
+            //         // alert("FormData is not supported.");
+            //         toastr.error("FormData is not supported.");
+            //     }
+            // });
         });
 
         // Function for clearing the textboxes
@@ -298,58 +401,52 @@
 
         // Add Data Function
         function Add() {
-            // var res = validate();
-            // if (res == false) {
-            //     return false;
-            // }
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
 
-            // Create a FormData object
-            var formData = new FormData();
-            formData.append('teamId', $('#teamId').val()); // Include the teamId for update
-            formData.append('name', $('#name').val());
-            formData.append('email', $('#email').val());
-            formData.append('description', $('#description').val());
-            formData.append('title', $('#title').val());
-            formData.append('bio', $('#bio').val());
-            formData.append('createdAt', $('#createdAt').val());
-            // Append the image file to FormData
-            var imageFileInput = $("#imageUrl")[0];
-            formData.append("imageFile", imageFileInput.files[0]);
+                // Create
+                var fileData = new FormData();
 
-            $.ajax({
-                url: "/Team/Create",
-                data: formData,
-                type: "POST",
-                contentType: false,
-                processData: false,
-                success: function (result) {
-                    loadData();
-                    $('#myModal').modal('hide');
-                    clearTextBox();
-                    toastr.success(result.message);
-                },
-                error: function (errormessage) {
-                    toastr.error("Error while create new team!");
-                    //alert(errormessage.responseText);
+                fileData.append('teamId', $('#teamId').val()); // Include the teamId for update
+                fileData.append('name', $('#name').val());
+                fileData.append('email', $('#email').val());
+                fileData.append('description', $('#description').val());
+                fileData.append('title', $('#title').val());
+                fileData.append('bio', $('#bio').val());
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
                 }
-            });
+
+                // Add();
+                $.ajax({
+                    url: '/Team/Create',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        loadData();
+                        $('#myModal').modal('hide');
+                        clearTextBox();
+                        toastr.success("Team created successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while create new team!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
         }
 
-        // function openEditModal(teamId) {
-        //     // Fetch data for the selected teamId and populate the modal
-        //     var team = // Fetch the team data based on teamId (you might need another AJAX call)
-        //         $('#editForm').html('<input type="text" name="name" value="' + team.name + '">' +
-        //             '<input type="text" name="email" value="' + team.email + '">' +
-        //                        // Add other form fields based on your Team object properties
-        //                       );
-        //     $('#editModal').modal('show');
-        // }
-
-        // function saveChanges() {
-        //     // Extract data from the form, perform validation, and send changes to the server
-        //     // After successful save, you may want to update the table or take other actions
-        //     $('#editModal').modal('hide');
-        // }
 
         // Function for getting the Data Based upon Employee ID
         function getbyID(teamId) {
@@ -403,46 +500,50 @@
 
         // Function for updating pet's record
         function Update() {
-            //var res = validate();
-            //if (res == false) {
-            //    return false;
-            //}
-            var formData = new FormData();
-            formData.append('teamId', $('#teamId').val()); // Include the teamId for update
-            formData.append('name', $('#name').val());
-            formData.append('email', $('#email').val());
-            formData.append('description', $('#description').val());
-            formData.append('title', $('#title').val());
-            formData.append('bio', $('#bio').val());
-            formData.append('createdAt', $('#createdAt').val());
-            // Append the image file to FormData
-            var imageFileInput = $("#imageUrl")[0];
-            formData.append("imageFile", imageFileInput.files[0]);
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
 
-            $.ajax({
-                url: "/Team/Edit",
-                data: formData,
-                type: "POST",
-                contentType: false,
-                processData: false,
-                success: function (result) {
-                    loadData();
-                    $('#myModal').modal('hide');
-                    $('#name').val("");
-                    $('#email').val("");
-                    $('#description').val("");
-                    $('#title').val("");
-                    $('#bio').val("");
-                    $('#createdAt').val("");
-                    $('#imagePreview').attr("src", "/Images/default.png");
-                    toastr.success(result.message);
-                },
+                // Create FormData object
+                var fileData = new FormData();
 
-                error: function (errormessage) {
-                    toastr.error(errormessage.message);
-                    //alert(errormessage.responseText);
+                fileData.append('teamId', $('#teamId').val());
+                fileData.append('name', $('#name').val());
+                fileData.append('email', $('#email').val());
+                fileData.append('description', $('#description').val());
+                fileData.append('title', $('#title').val());
+                fileData.append('bio', $('#bio').val());
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Loop over files and add them to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
                 }
-            });
+
+                // Update();
+                $.ajax({
+                    url: '/Team/Edit',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        loadData();
+                        $('#myModal').modal('hide');
+                        clearTextBox();
+                        toastr.success("Team updated successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while updating team!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
 
         }
             

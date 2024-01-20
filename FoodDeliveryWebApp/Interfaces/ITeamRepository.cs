@@ -12,5 +12,6 @@ namespace FoodDeliveryWebApp.Interfaces
         bool Delete(Team team);
         bool Save();
         Task<Team> GetById(int id);
+        Task SaveAsync();
     }
 }

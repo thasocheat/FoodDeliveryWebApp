@@ -53,6 +53,11 @@ namespace FoodDeliveryWebApp.Repository
             return saved > 0 ? true : false;
         }
 
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
         public bool Update(Team team)
         {
             _context.Update(team);
