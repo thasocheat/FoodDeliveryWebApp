@@ -14,7 +14,10 @@ namespace FoodDeliveryWebApp.Models
 
         [NotMapped]
         [Display(Name = "Upload Image")]
-        public IFormFile ImageFile { get; set; }
+        public IFormFile ImageFile { get; set; } // Image file to upload during creation
+        [NotMapped]
+        [Display(Name = "Ne Upload Image")]
+        public IFormFile NewImage { get; set; } // New image file to upload during update
         public string? ImageUrl { get; set; }
         public string? Bio { get; set; }
         public DateTime CreatedAt { get; set; }
