@@ -4,7 +4,7 @@ using System.Net;
 
 namespace FoodDeliveryWebApp.Data
 {
-    public class Seed
+    public class Seeds
     {
         public static async Task SeedUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
         {
@@ -22,14 +22,14 @@ namespace FoodDeliveryWebApp.Data
 
                 //Users
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-                string adminUserEmail = "teddysmithdeveloper@gmail.com";
+                string adminUserEmail = "admin@gmail.com";
 
                 var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
                 if (adminUser == null)
                 {
                     var newAdminUser = new AppUser()
                     {
-                        UserName = "teddysmithdev",
+                        UserName = "admin",
                         Email = adminUserEmail,
                         EmailConfirmed = true,
                         Address = "Siem Reap"
@@ -54,7 +54,7 @@ namespace FoodDeliveryWebApp.Data
                     await userManager.AddToRoleAsync(newAppStaff, UserRoles.Staff);
                 }
 
-                string appUserEmail = "user@etickets.com";
+                string appUserEmail = "user@user.com";
 
                 var appUser = await userManager.FindByEmailAsync(appUserEmail);
                 if (appUser == null)

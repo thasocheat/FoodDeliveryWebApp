@@ -35,8 +35,8 @@ var app = builder.Build();
 if(args.Length == 1 && args[0].ToLower() == "seeddata")
 {
 	//Seed.SeedData(app);
-	await Seed.SeedUsersAndRolesAsync(app);
-	//SeedData(app);
+	await Seeds.SeedUsersAndRolesAsync(app);
+	SeedData(app);
 }
 
 // Configure the HTTP request pipeline.
@@ -74,6 +74,7 @@ void SeedData(WebApplication app)
 			CategorySeed.Seed(serviceProvider);
 			ProductSeed.Seed(serviceProvider);
 			TeamSeed.Seed(serviceProvider);
+			//Seeds.Seed(serviceProvider);
 		}
 		catch(Exception ex)
 		{

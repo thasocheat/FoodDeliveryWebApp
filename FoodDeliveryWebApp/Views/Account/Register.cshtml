@@ -1,0 +1,201 @@
+﻿@using FoodDeliveryWebApp.ViewModels
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "../LogRegi/_Layout.cshtml";
+}
+<div class="authincation h-100">
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-md-6">
+                <div class="authincation-content">
+                    <div class="row no-gutters">
+                        <div class="col-xl-12">
+                            <div class="auth-form">
+                                <h4 class="text-center mb-4">Sign up your account</h4>
+                                <form asp-action="Register">
+                                    <div class="form-group">
+                                        <label asp-for="Email"><strong>Email</strong></label>
+                                        <input type="text" asp-for="Email" class="form-control" placeholder="email">
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Password"><strong>Password</strong></label>
+                                        <input type="password" asp-for="Password" class="form-control" value="Password">
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="ConfirmPassword"><strong>Confirm Password</strong></label>
+                                        <input type="password" asp-for="ConfirmPassword" class="form-control" value="Confirm Password">
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button type="submit" id="btnRegister" class="btn btn-primary btn-block">Sign me up</button>
+                                    </div>
+                                </form>
+                                <div class="new-account mt-3">
+                                    <p>Already have an account? <a class="text-primary" href="#" onclick="redirectToCreateForm()">Sign in</a></p>
+
+                                    <script>
+                                        function redirectToCreateForm() {
+                                            // Assuming your create form action is named "Create"
+                                            var createFormUrl = '@Url.Action("Login", "Account")';
+                                            window.location.href = createFormUrl;
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnRegister').click(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate registration form fields
+                // You can add additional validation logic here if needed
+
+                // Get form data
+                var formData = new FormData($('form')[0]);
+
+                // Make an AJAX request
+                $.ajax({
+                    url: '/Account/Register',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        if (result.success) {
+                            toastr.success(result.message);
+                            // Optionally, redirect to another page after successful registration
+                            window.location.href = result.redirectUrl;
+                        } else {
+                            toastr.error(result.message);
+                            // Display ModelState errors
+                            if (result.errors && result.errors.length > 0) {
+                                result.errors.forEach(function (error) {
+                                    toastr.error(error);
+                                });
+                            }
+                        }
+                    },
+                    error: function (err) {
+                        toastr.error("Error during registration!");
+                    }
+                });
+            });
+
+            // Initialize Toastr
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: 'toast-top-right',
+                preventDuplicates: true,
+                showMethod: 'slideDown',
+                hideMethod: 'slideUp',
+                timeOut: 5000
+            };
+        });
+
+        //     function checkUser(email, password) {
+        //         // Make an AJAX request to check if the user exists
+        //         $.ajax({
+        //             url: '/Account/Register', // You need to create an action to check the user on the server-side
+        //             type: 'POST',
+        //             data: { Email: email, Password: password },
+        //             success: function (result) {
+        //                 if (result.success) {
+        //                     // User exists, proceed with login
+        //                     toastr.success("Register successful!");
+        //                     // Optionally, redirect to another page after successful login
+        //                     window.location.href = '/Account/Login';
+        //                 } else {
+        //                     toastr.error(result.message);
+        //                 }
+        //             },
+        //             error: function (err) {
+        //                 toastr.error("Error during Register!");
+        //             }
+        //         });
+        //     }
+        // });
+
+        // $(document).ready(function () {
+        //     $('#btnRegister').click(function (e) {
+        //         e.preventDefault(); // Prevent the default form submission
+
+        //         // Validate email and password fields
+        //         var email = $('#Email').val();
+        //         var password = $('#Password').val();
+        //         var confirmpass = $('#ConfirmPassword').val();
+
+        //         if (!email) {
+        //             toastr.error("Please enter email.");
+        //             return;
+        //         }
+        //         if (!password) {
+        //             toastr.error("Please enter password.");
+        //             return;
+        //         }
+
+        //         if (!confirmpass) {
+        //             toastr.error("Please enter password.");
+        //             return;
+        //         }
+
+        //         // Get form data
+        //         var formData = new FormData($('form')[0]);
+
+        //         // Make an AJAX request
+        //         $.ajax({
+        //             url: '/Account/Register',
+        //             type: 'POST',
+        //             data: formData,
+        //             processData: false,
+        //             contentType: false,
+        //             success: function (result) {
+        //                 if (result.success) {
+        //                     toastr.success(result.message);
+        //                     // Optionally, redirect to another page after successful register
+        //                     window.location.href = '/Account/Login';
+        //                 } else {
+        //                     toastr.error(result.message);
+        //                 }
+        //             },
+        //             error: function () {
+        //                 toastr.error("Error during register!");
+        //             }
+        //         });
+        //     });
+
+           
+        // });
+
+
+        // Initialize Toastr
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            preventDuplicates: true,
+            showMethod: 'slideDown',
+            hideMethod: 'slideUp',
+            timeOut: 5000
+        };
+
+
+    </script>
+
+}

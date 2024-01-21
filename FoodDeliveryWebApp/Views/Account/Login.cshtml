@@ -1,0 +1,131 @@
+﻿﻿@using FoodDeliveryWebApp.ViewModels
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "../LogRegi/_Layout.cshtml";
+
+}
+
+
+<div class="authincation h-100">
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-md-6">
+                <div class="authincation-content">
+                    <div class="row no-gutters">
+                        <div class="col-xl-12">
+                            <div class="auth-form">
+                                <h4 class="text-center mb-4">Sign in your account</h4>
+                                <form asp-action="Login">
+                                    <div class="form-group">
+                                        <label asp-for="Email"><strong>Email</strong></label>
+                                        <input asp-for="Email" type="email" class="form-control" value="hello@example.com">
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Password"><strong>Password</strong></label>
+                                        <input asp-for="Password" type="password" class="form-control" value="Password">
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+
+                                    </div>
+                                    <div class="form-row d-flex justify-content-between mt-4 mb-2">
+                                        <div class="form-group">
+                                            <div class="form-check ml-2">
+                                                <input class="form-check-input" type="checkbox" id="basic_checkbox_1">
+                                                <label class="form-check-label" for="basic_checkbox_1">Remember me</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <a href="page-forgot-password.html">Forgot Password?</a>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" id="btnLogin" class="btn btn-primary btn-block">Sign me in</button>
+                                        @* <input class="btn btn-outline-success float right" id="btnLogin" type="submit" value="Log in" /> *@
+                                    </div>
+                                </form>
+                                <div class="new-account mt-3">
+                                    <p>Don't have an account? <a class="text-primary" href="#" onclick="redirectToCreateForm()">Sign up</a></p>
+
+                                    <script>
+                                        function redirectToCreateForm() {
+                                            // Assuming your create form action is named "Create"
+                                            var createFormUrl = '@Url.Action("Register", "Account")';
+                                            window.location.href = createFormUrl;
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnLogin').click(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate email and password fields
+                var email = $('#Email').val();
+                var password = $('#Password').val();
+
+                if (!email) {
+                    toastr.error("Please enter email.");
+                    return;
+                }
+                if (!password) {
+                    toastr.error("Please enter password.");
+                    return;
+                }
+
+                // Perform asynchronous operation to check if user exists
+                checkUser(email, password);
+            });
+
+            function checkUser(email, password) {
+                // Make an AJAX request to check if the user exists
+                $.ajax({
+                    url: '/Account/Login', // You need to create an action to check the user on the server-side
+                    type: 'POST',
+                    data: { email: email, password: password },
+                    success: function (result) {
+                        if (result.success) {
+                            // User exists, proceed with login
+                            toastr.success("Login successful!");
+                            // Optionally, redirect to another page after successful login
+                            window.location.href = '/Home/Index';
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function (err) {
+                        toastr.error("Error during login!");
+                    }
+                });
+            }
+        });
+
+
+        // Initialize Toastr
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            preventDuplicates: true,
+            showMethod: 'slideDown',
+            hideMethod: 'slideUp',
+            timeOut: 5000
+        };
+        
+    
+    </script>
+
+}

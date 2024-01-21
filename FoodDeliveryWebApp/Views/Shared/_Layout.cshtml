@@ -20,6 +20,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!-- Toastr -->
+    <link rel="stylesheet" href="~/assets/vendor/toastr/css/toastr.min.css">
+    @*<link href="../../Assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <!-- Libraries Stylesheet -->
     <link href="~/frontend/lib/animate/animate.min.css" rel="stylesheet">
     <link href="~/frontend/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
@@ -91,17 +96,55 @@
                     </div>
                     <a href="contact.html" class="nav-item nav-link">Contact Us</a>
                 </div>
-                <div class="d-none d-lg-flex ms-2">
-                    <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
-                        <small class="fa fa-search text-body"></small>
-                    </a>
-                    <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
-                        <small class="fa fa-user text-body"></small>
-                    </a>
-                    <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
-                        <small class="fa fa-shopping-bag text-body"></small>
-                    </a>
-                </div>
+
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-rounded btn-warning" onclick="redirectToCreateForm()">Sign In</a>
+
+                    <script>
+                        function redirectToCreateForm() {
+                            // Assuming your create form action is named "Create"
+                            var createFormUrl = '@Url.Action("Login", "Account")';
+                            window.location.href = createFormUrl;
+                        }
+                    </script>
+                }
+                else
+                {
+                    <div class="d-none d-lg-flex ms-2">
+                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
+                            <small class="fa fa-search text-body"></small>
+                        </a>
+                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
+                            <small class="fa fa-user text-body"></small>
+                        </a>
+                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
+                            <small class="fa fa-shopping-bag text-body"></small>
+                        </a>
+                        
+                    </div>
+
+                    <div class="d-none d-lg-flex ms-2">
+                        <form asp-area="" asp-controller="Dashboard" asp-action="Index">
+                            <button id="btnDashboard" class="btn btn-rounded btn-warning" href="#">
+                                Dashboard
+                            </button>
+                        </form>
+
+                    </div>
+
+                    <div class="d-none d-lg-flex ms-2">
+                        <form asp-area="" asp-controller="Account" asp-action="Logout">
+                            <button id="btnLogout" class="btn btn-rounded btn-warning" href="#">
+                                Logout
+                            </button>
+                        </form>
+
+                    </div>
+
+                   
+                }
+
             </div>
         </nav>
     </div>
@@ -294,6 +337,13 @@
     <script src="~/frontend/lib/waypoints/waypoints.min.js"></script>
     <script src="~/frontend/lib/owlcarousel/owl.carousel.min.js"></script>
 
+    <!-- All init script -->
+    <script src="~/assets/js/plugins-init/toastr-init.js"></script>
+
+    <!-- Toastr -->
+    <script src="~/assets/vendor/toastr/js/toastr.min.js"></script>
+    <script src="~/assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+	<script src="~/js/script.js"></script>
     <!-- Template Javascript -->
     <script src="~/frontend/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

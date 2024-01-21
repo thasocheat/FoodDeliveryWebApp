@@ -1,22 +1,33 @@
-﻿//$(document).ready(function () {
-//    // Load team list on page load
-//    loadTeamList();
+﻿$(document).ready(function () {
+    $('#btnLogout').click(function (e) {
+        e.preventDefault(); // Prevent the default button behavior
 
-//    // Function to load team list using Ajax
-//    function loadTeamList() {
-//        $.ajax({
-//            url: '@Url.Action("Index", "Team")',
-//            type: 'GET',
-//            success: function (result) {
-//                // Update the content of the teamListContainer
-//                $('#teamListContainer').html(result);
-//            },
-//            error: function (error) {
-//                console.error('Error loading teams: ', error);
-//            }
-//        });
-//    }
-//});
+        // Make an AJAX request for logout
+        $.ajax({
+            url: '/Account/Logout',
+            type: 'POST',
+            success: function (result) {
+                toastr.success("Logout successful!");
+                // Optionally, redirect to another page after successful logout
+                window.location.href = '/Home/Index';
+            },
+            error: function (err) {
+                toastr.error("Error during logout!");
+            }
+        });
+    });
+
+    // Initialize Toastr
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: 'toast-top-right',
+        preventDuplicates: true,
+        showMethod: 'slideDown',
+        hideMethod: 'slideUp',
+        timeOut: 5000
+    };
+});
 
 //Image preview function
 function showImagePreview(imageUploader, previewImage) {
@@ -29,54 +40,19 @@ function showImagePreview(imageUploader, previewImage) {
     }
 }
 
+// Initialize Toastr
+toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    preventDuplicates: true,
+    showMethod: 'slideDown',
+    hideMethod: 'slideUp',
+    timeOut: 5000
+};
 
-// Using jQuery for simplicity, ensure jQuery is included in your project
 
-// Attach a click event handler to the delete button
-//$(".delete-link").click(function (e) {
-//    e.preventDefault(); // Prevent the default behavior of the link
 
-//    var deleteUrl = $(this).attr("href"); // Get the URL from the href attribute
-
-//    // Show SweetAlert confirmation dialog
-//    Swal.fire({
-//        title: 'Are you sure?',
-//        text: 'You won\'t be able to revert this!',
-//        icon: 'warning',
-//        showCancelButton: true,
-//        confirmButtonColor: '#d33',
-//        cancelButtonColor: '#3085d6',
-//        confirmButtonText: 'Yes, delete it!'
-//    }).then((result) => {
-//        if (result.isConfirmed) {
-//            // If the user confirms, prevent the default link behavior and proceed with the deletion
-//            e.preventDefault();
-
-//            $.ajax({
-//                url: deleteUrl,
-//                type: "POST",
-//                dataType: "json",
-//                success: function (ajaxResult) {
-//                    if (ajaxResult.success) {
-//                        // Reload data and show success message
-//                        loadData();
-//                        toastr.success(ajaxResult.message);
-//                    } else {
-//                        // Show error message
-//                        Swal.fire({
-//                            title: 'Error!',
-//                            text: ajaxResult.message,
-//                            icon: 'error'
-//                        });
-//                    }
-//                },
-//                error: function (errormessage) {
-//                    toastr.error("An error occurred while deleting the Team: " + errormessage.responseText);
-//                }
-//            });
-//        }
-//    });
-//});
 
 
 
