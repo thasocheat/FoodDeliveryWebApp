@@ -1,6 +1,9 @@
 using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Interfaces;
+using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Repository;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,13 +21,22 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// Add identity
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie();
+
 var app = builder.Build();
 
 // Run all seeder file for example user use
 if(args.Length == 1 && args[0].ToLower() == "seeddata")
 {
 	//Seed.SeedData(app);
-	SeedData(app);
+	await Seed.SeedUsersAndRolesAsync(app);
+	//SeedData(app);
 }
 
 // Configure the HTTP request pipeline.

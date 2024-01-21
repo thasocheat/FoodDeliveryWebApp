@@ -152,32 +152,32 @@
                                             <input type="hidden" class="form-control" id="teamId" placeholder="Id"/>
                                             <div class="form-group col-md-6">
                                                 <label id="PetNameError">Name</label>
-                                                <input type="text" class="form-control" placeholder="Name" id="name" required>
+                                                <input type="text" class="form-control" placeholder="Name" name="name" id="name" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label id="PetAgeError">Email</label>
-                                                <input type="text" class="form-control" placeholder="Email" id="email" required>
+                                                <input type="text" class="form-control" placeholder="Email" name="email" id="email" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label id="PetAgeError">Description</label>
-                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" id="description"></textarea>
+                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" name="description" id="description"></textarea>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label id="PetAgeError">Title</label>
-                                                <input type="text" class="form-control" placeholder="Title" id="title" required>
+                                                <input type="text" class="form-control" placeholder="Title" name="title" id="title" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label id="PetAgeError">Bio</label>
-                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" id="bio"></textarea>
+                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" name="bio" id="bio"></textarea>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label id="PetAgeError">Date</label>
-                                                <input type="text" name="datepicker" class="datepicker-default form-control picker__input" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                                <input type="text" class="datepicker-default form-control picker__input" name="createdAt" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
                                             </div>
 
 
@@ -202,7 +202,7 @@
 
                                         <div class="col-12">
                                             <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
-                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;">Update</button>
+                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                         </div>
                                     </form>
@@ -235,52 +235,52 @@
 
             });
 
-            $('#btnUpdate').click(function () {
-                // check
-                if (window.FormData !== undefined) {
-                    var fileUpload = $("#fileUpload").get(0);
-                    var files = fileUpload.files;
+            // $('#btnUpdate').click(function () {
+            //     // check
+            //     if (window.FormData !== undefined) {
+            //         var fileUpload = $("#fileUpload").get(0);
+            //         var files = fileUpload.files;
 
-                    // Create FormData object
-                    var fileData = new FormData();
+            //         // Create FormData object
+            //         var fileData = new FormData();
 
-                    fileData.append('teamId', $('#teamId').val());
-                    fileData.append('name', $('#name').val());
-                    fileData.append('email', $('#email').val());
-                    fileData.append('description', $('#description').val());
-                    fileData.append('title', $('#title').val());
-                    fileData.append('bio', $('#bio').val());
-                    fileData.append('createdAt', $('#createdAt').val());
+            //         fileData.append('teamId', $('#teamId').val());
+            //         fileData.append('name', $('#name').val());
+            //         fileData.append('email', $('#email').val());
+            //         fileData.append('description', $('#description').val());
+            //         fileData.append('title', $('#title').val());
+            //         fileData.append('bio', $('#bio').val());
+            //         fileData.append('createdAt', $('#createdAt').val());
 
-                    // Loop over files and add them to FormData object
-                    for (var i = 0; i < files.length; i++) {
-                        fileData.append('ImageFile', files[i]);
-                    }
+            //         // Loop over files and add them to FormData object
+            //         for (var i = 0; i < files.length; i++) {
+            //             fileData.append('ImageFile', files[i]);
+            //         }
 
-                    // Update();
-                    $.ajax({
-                        url: '/Team/Edit',
-                        type: "POST",
-                        contentType: false, // Not to set any content header
-                        processData: false, // Not to process data
-                        data: fileData,
-                        success: function (result) {
-                            // alert(result);
-                            loadData();
-                            $('#myModal').modal('hide');
-                            clearTextBox();
-                            toastr.success("Team updated successfully");
-                        },
-                        error: function (err) {
-                            // alert(err.statusText);
-                            toastr.error("Error while updating team!");
-                        }
-                    });
-                } else {
-                    // alert("FormData is not supported.");
-                    toastr.error("FormData is not supported.");
-                }
-            });
+            //         // Update();
+            //         $.ajax({
+            //             url: '/Team/Update' + teamId,
+            //             type: "POST",
+            //             contentType: false, // Not to set any content header
+            //             processData: false, // Not to process data
+            //             data: fileData,
+            //             success: function (result) {
+            //                 // alert(result);
+            //                 loadData();
+            //                 $('#myModal').modal('hide');
+            //                 clearTextBox();
+            //                 toastr.success("Team updated successfully");
+            //             },
+            //             error: function (err) {
+            //                 // alert(err.statusText);
+            //                 toastr.error("Error while updating team!");
+            //             }
+            //         });
+            //     } else {
+            //         // alert("FormData is not supported.");
+            //         toastr.error("FormData is not supported.");
+            //     }
+            // });
 
             // $('#btnAdd').click(function () {
             //     // check
@@ -523,7 +523,7 @@
 
                 // Update();
                 $.ajax({
-                    url: '/Team/Edit',
+                    url: '/Team/GetbyId/' + $('#teamId').val(),
                     type: "POST",
                     contentType: false, // Not to set any content header
                     processData: false, // Not to process data
