@@ -84,7 +84,15 @@
                 <div class="navbar-nav ms-auto p-4 p-lg-0">
                     <a class="nav-item nav-link active" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     <a class="nav-item nav-link">About Us</a>
-                    <a class="nav-item nav-link">Products</a>
+                    <a href="#" class="nav-item nav-link" onclick="redirectToCreateForm()">Products</a>
+
+                    <script>
+                        function redirectToCreateForm() {
+                            // Assuming your create form action is named "Create"
+                            var createFormUrl = '@Url.Action("FrontViewProduct", "Product")';
+                            window.location.href = createFormUrl;
+                        }
+                    </script>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu m-0">

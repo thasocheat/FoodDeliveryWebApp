@@ -21,6 +21,12 @@ namespace FoodDeliveryWebApp.Controllers.Backend
             return View(products);
         }
 
+        public IActionResult FrontViewProduct()
+        {
+            List<Product> products = _context.Products.ToList();
+            return View(products);
+        }
+
         public IActionResult Detail(int id)
         {
 
