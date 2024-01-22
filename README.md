@@ -14,11 +14,11 @@
  Data Source=DESKTOP-0CLKE34;Initial Catalog=FoodDeliveryWebApps;User ID=sa;Password=123;
 ```
 - Data Source is your computer name.
-- In this project the database name is FoodDeliveryWebApps.
+- In this project the database name is `FoodDeliveryWebApps`.
 - User ID your database user name.
 - And password.
 
-3. Add connection string to app appsettings.json. It will look something like this:
+3. Add connection string to app `appsettings.json`. It will look something like this:
 ```bash
   "ConnectionStrings": {
     "DefaultConnection": "Data Source=DESKTOP-0CLKE34;Initial Catalog=FoodDeliveryWebApp;User ID=sa;Password=123;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi   Subnet Failover=False"
@@ -47,4 +47,4 @@
 - Admin: admin@gmail.com
 - Staff: staff@worker.com
 - User: user@user.com
-- Password is the same: Coding@1234?
+- Password is the same: `Coding@1234?`
