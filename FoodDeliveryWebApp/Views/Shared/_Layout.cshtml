@@ -124,14 +124,19 @@
                         
                     </div>
 
-                    <div class="d-none d-lg-flex ms-2">
-                        <form asp-area="" asp-controller="Dashboard" asp-action="Index">
-                            <button id="btnDashboard" class="btn btn-rounded btn-warning" href="#">
-                                Dashboard
-                            </button>
-                        </form>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("admin") || User.Identity.IsAuthenticated && User.IsInRole("staff"))
+                    {
+                        <div class="d-none d-lg-flex ms-2">
+                            <form asp-area="" asp-controller="Dashboard" asp-action="Index">
+                                <button id="btnDashboard" class="btn btn-rounded btn-warning" href="#">
+                                    Dashboard
+                                </button>
+                            </form>
 
-                    </div>
+                        </div>
+                    }
+
+                    
 
                     <div class="d-none d-lg-flex ms-2">
                         <form asp-area="" asp-controller="Account" asp-action="Logout">
@@ -339,7 +344,7 @@
 
     <!-- All init script -->
     <script src="~/assets/js/plugins-init/toastr-init.js"></script>
-
+	<script src="~/js/script.js"></script>
     <!-- Toastr -->
     <script src="~/assets/vendor/toastr/js/toastr.min.js"></script>
     <script src="~/assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>

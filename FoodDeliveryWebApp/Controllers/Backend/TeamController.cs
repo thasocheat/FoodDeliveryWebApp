@@ -1,12 +1,14 @@
 ﻿using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Interfaces;
 using FoodDeliveryWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-    public class TeamController : Controller
+	[Authorize]
+	public class TeamController : Controller
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IWebHostEnvironment _webHost;

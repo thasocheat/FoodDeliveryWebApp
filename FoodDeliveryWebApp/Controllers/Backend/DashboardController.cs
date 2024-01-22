@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-    public class DashboardController : Controller
+	[Authorize]
+	public class DashboardController : Controller
     {
         public IActionResult Index()
         {

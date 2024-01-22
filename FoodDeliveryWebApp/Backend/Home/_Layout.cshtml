@@ -158,10 +158,13 @@
                                         <i class="icon-envelope-open"></i>
                                         <span class="ml-2">Inbox </span>
                                     </a>
-                                    <a href="./page-login.html" class="dropdown-item">
-                                        <i class="icon-key"></i>
-                                        <span class="ml-2">Logout </span>
-                                    </a>
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout">
+                                        <a id="btnLogout" href="#" class="dropdown-item">
+                                            <i class="icon-key"></i>
+                                            <span class="ml-2">Logout </span>
+                                        </a>
+                                    </form>
+                                   
                                 </div>
                             </li>
                         </ul>
@@ -180,48 +183,96 @@
                 <ul class="metismenu" id="menu">
 
 
-                    <li>
-                        <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
-                            <i class="icon icon-globe-2"></i><span class="nav-text">Dashboard</span>
-                        </a>
-                    </li>
+                    @if(User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Dashboard</span>
+                            </a>
+                        </li>
 
-                     <li>
-                        <a href="@Url.Action("Index", "Team")" aria-expanded="false">
-                            <i class="icon icon-globe-2"></i><span class="nav-text">Teams</span>
-                        </a>
-                    </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Category</span>
+                            </a>
+                        </li>
 
-                    @*<li>
-                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                    <i class="icon icon-form"></i><span class="nav-text">CRUD Pet</span>
-                    </a>
-                    <ul aria-expanded="false">
-                    <li><a href="@Url.Action("Pets", "Pet")">Views</a></li>
-                    </ul>
-                    </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Product</span>
+                            </a>
+                        </li>
 
-                    <li>
-                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                    <i class="icon icon-form"></i><span class="nav-text">CRUD Pet ajax</span>
-                    </a>
-                    <ul aria-expanded="false">
-                    <li><a href="@Url.Action("ViewAll", "Pet")">Views</a></li>
-                    </ul>
-                    </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Update Status</span>
+                            </a>
+                        </li>
 
-                    <li>
-                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                    <i class="icon icon-form"></i><span class="nav-text">Forms</span>
-                    </a>
-                    <ul aria-expanded="false">
-                    <li><a href="./form-element.html">Form Elements</a></li>
-                    <li><a href="./form-wizard.html">Wizard</a></li>
-                    <li><a href="./form-editor-summernote.html">Summernote</a></li>
-                    <li><a href="form-pickers.html">Pickers</a></li>
-                    <li><a href="form-validation-jquery.html">Jquery Validate</a></li>
-                    </ul>
-                    </li>*@
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">User</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Contact</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Selling Report</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Team")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Teams</span>
+                            </a>
+                        </li>
+                    }
+                    else if (User.Identity.IsAuthenticated && User.IsInRole("staff"))
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Category</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Product</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Update Status</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Contact</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
+                                <i class="icon icon-globe-2"></i><span class="nav-text">Selling Report</span>
+                            </a>
+                        </li>
+                    }
+
+                    
 
                 </ul>
             </div>

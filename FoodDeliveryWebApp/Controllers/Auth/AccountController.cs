@@ -61,8 +61,23 @@ namespace FoodDeliveryWebApp.Controllers.Auth
                 if (result.Succeeded)
                 {
                     // return RedirectToAction();
-                    return Json(new { success = true, message = "Login successful", redirectUrl = Url.Action("Index", "Home") });
-                }
+
+                    // Check user's credentials
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("Admin"))
+                    {
+						return Json(new { success = true, message = "Admin login successful", redirectUrl = Url.Action("Index", "Dashboard") });
+					}else if (roles.Contains("Staff"))
+                    {
+						return Json(new { success = true, message = "Staff login successful", redirectUrl = Url.Action("Index", "Dashboard") });
+
+                    }
+                    else
+                    {
+						return Json(new { success = true, message = "Login successful", redirectUrl = Url.Action("Index", "Home") });
+
+					}
+				}
 
                 if (result.IsLockedOut)
                 {

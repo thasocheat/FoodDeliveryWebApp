@@ -1,11 +1,13 @@
 ﻿using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-    public class ProductController : Controller
+	[Authorize]
+	public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
 

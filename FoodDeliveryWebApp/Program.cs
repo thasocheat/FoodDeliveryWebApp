@@ -49,6 +49,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthorization();
+
 app.MapControllerRoute(
 	name: "backend",
 	pattern: "{area:exists}/{controller=Team}/{action=Index}/{id?}");
