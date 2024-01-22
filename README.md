@@ -11,7 +11,7 @@
 - Or
 ```bash
   
-  git clone [https://github.com/thasocheat/GroopRunWebApp.git](https://github.com/thasocheat/FoodDeliveryWebApp)
+  git clone https://github.com/thasocheat/FoodDeliveryWebApp
 ```
 
 2. Create a local database.
