@@ -265,6 +265,10 @@
     color: var(--dark);
 }
 
+.active{
+    color:aquamarine;
+}
+
 .nav-pills .nav-item .btn:hover,
 .nav-pills .nav-item .btn.active {
     color: #FFFFFF;

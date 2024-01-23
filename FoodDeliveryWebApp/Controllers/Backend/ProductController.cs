@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-	[Authorize]
+	//[Authorize]
 	public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,11 +21,7 @@ namespace FoodDeliveryWebApp.Controllers.Backend
             return View(products);
         }
 
-        public IActionResult FrontViewProduct()
-        {
-            List<Product> products = _context.Products.ToList();
-            return View(products);
-        }
+       
 
         public IActionResult Detail(int id)
         {
