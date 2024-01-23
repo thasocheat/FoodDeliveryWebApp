@@ -22,11 +22,13 @@
                 </div>
             </div>
             <div class="col-lg-6 text-start text-lg-end wow slideInRight" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: slideInRight;">
+                <input type="hidden" id="selectedCategoryId" value="@Model.SelectedCategoryId" />
                 <ul class="nav nav-pills d-inline-flex justify-content-end mb-5">
                     @foreach(var category in Model.Categories)
                     {
                         <li class="nav-item me-2">
-                            <a class="btn btn-outline-primary border-2" data-bs-toggle="pill" href="#tab-1" data-category-id="@category.CategoryId">@category.CategoryName</a>
+                            @* <a class="btn btn-outline-primary border-2 category-btn" data-bs-toggle="pill" href="#tab-1" data-category-id="@category.CategoryId">@category.CategoryName</a> *@
+                            <a class="btn btn-outline-primary border-2 category-btn @((Model.SelectedCategoryId == category.CategoryId) ? "active" : "")" data-bs-toggle="pill" href="#tab-1" data-category-id="@category.CategoryId">@category.CategoryName</a>
                         </li>
                     }                    
                 </ul>
@@ -36,29 +38,33 @@
             <div id="tab-1" class="tab-pane fade show p-0 active">
                 <div class="row g-4" id="filteredProductListContainer">
 
-                    @foreach (var product in Model.Products)
+                    @foreach (var product in Model.Products.Where(p => !Model.SelectedCategoryId.HasValue || p.CategoryId == Model.SelectedCategoryId.Value))
                     {
-                        <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
-                        <div class="product-item">
-                            <div class="position-relative bg-light overflow-hidden">
-                                <img class="img-fluid w-100" src="@product.ImageUrl" alt="@product.Name">
-                                <div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">New</div>
+                        @if (!Model.SelectedCategoryId.HasValue || product.CategoryId == Model.SelectedCategoryId.Value)
+                        {
+                            <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp filteredProductListContainer" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
+                                <div class="product-item">
+                                    <div class="position-relative bg-light overflow-hidden">
+                                        <img class="img-fluid w-100" src="@product.ImageUrl" alt="@product.Name">
+                                        <div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">New</div>
+                                    </div>
+                                    <div class="text-center p-4">
+                                        <a class="d-block h5 mb-2" href="">@product.Name</a>
+                                        <span class="text-primary me-1">$@product.Price</span>
+                                        <span class="text-body text-decoration-line-through">$29.00</span>
+                                    </div>
+                                    <div class="d-flex border-top">
+                                        <small class="w-50 text-center border-end py-2">
+                                            <a class="text-body" href=""><i class="fa fa-eye text-primary me-2"></i>View detail</a>
+                                        </small>
+                                        <small class="w-50 text-center py-2">
+                                            <a class="text-body" href=""><i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart</a>
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-center p-4">
-                                    <a class="d-block h5 mb-2" href="">@product.Name</a>
-                                    <span class="text-primary me-1">$@product.Price</span>
-                                <span class="text-body text-decoration-line-through">$29.00</span>
-                            </div>
-                            <div class="d-flex border-top">
-                                <small class="w-50 text-center border-end py-2">
-                                    <a class="text-body" href=""><i class="fa fa-eye text-primary me-2"></i>View detail</a>
-                                </small>
-                                <small class="w-50 text-center py-2">
-                                    <a class="text-body" href=""><i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart</a>
-                                </small>
-                            </div>
-                        </div>
-                    </div>
+                        }
+                       
                     }
 
                     <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
@@ -74,28 +80,23 @@
 @section Scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
-            $(".category-btn").click(function () {
-                var selectedCategory = $(this).data("category-id");
 
-                // Use AJAX to fetch filtered products as JSON
-                $.ajax({
-                    url: '/GetFilteredProducts/FrontPages',
-                    type: 'GET',
-                    data: { categoryId: selectedCategory },
-                    dataType: 'json',
-                    success: function (result) {
-                        // Handle the JSON result and update the UI
-                        updateProductList(result);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching products:', error);
+        $(document).ready(function () { 
+            // Attach a click event to category buttons
+            $('.category-btn').on('click', function () {
+                var categoryId = $(this).data('category-id');
+                $('#selectedCategoryId').val(categoryId);
 
-                        // Use Toastr to display an error message
-                        toastr.error('Error fetching products. See console for details.');
-                    }
+                // Make an AJAX request to get filtered products
+                $.get('/FrontPages/GetFilteredProducts', { categoryId: categoryId }, function (data) {
+                    // Update the product list
+                    // $('#filteredProductListContainer').empty();
+                    updateProductList(data);
+                    // Add your code to append the new products to the list
+                    // ...
                 });
             });
+        });
 
             function updateProductList(products) {
                 // Assuming you have a container with the ID 'filteredProductListContainer'
@@ -131,6 +132,6 @@
                     productListContainer.append(productHtml);
                 });
             }
-        });
+
     </script>
 }

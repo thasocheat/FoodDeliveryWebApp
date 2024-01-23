@@ -61,6 +61,11 @@ app.MapControllerRoute(
 //pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
 
+//app.MapControllerRoute(
+//        name: "frontPages",
+//        pattern: "{controller=FrontPages}/{action=GetFilteredProducts}/{id?}");
+
+
 app.Run();
 
 

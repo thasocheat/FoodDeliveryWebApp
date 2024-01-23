@@ -31,7 +31,8 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             var viewModel = new ProductCategoryViewModel
             {
                 Products = products,
-                Categories = categories
+                Categories = categories,
+                SelectedCategoryId = categoryId
             };
 
 			return View(viewModel);

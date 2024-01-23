@@ -377,6 +377,9 @@
     <script src="~/frontend/lib/waypoints/waypoints.min.js"></script>
     <script src="~/frontend/lib/owlcarousel/owl.carousel.min.js"></script>
 
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 	<!-- All init script -->
 	<script src="~/js/script.js"></script>
     <script src="~/assets/js/plugins-init/toastr-init.js"></script>
@@ -387,6 +390,5 @@
 	<script src="~/js/script.js"></script>
     <!-- Template Javascript -->
     <script src="~/frontend/js/main.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
