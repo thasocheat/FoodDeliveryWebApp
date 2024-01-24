@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-	//[Authorize]
-	public class CategoryController : Controller
+    //[Authorize]
+    //[Route("Category")]
+    public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IWebHostEnvironment _webHost;
@@ -125,31 +126,34 @@ namespace FoodDeliveryWebApp.Controllers.Backend
         }
 
         [HttpPost]
-        //[Route("UpdateStatus")]
         public async Task<IActionResult> UpdateStatus(int id, Category updatedCategory)
         {
             try
             {
-                // Retrieve the category from the repository
+                // Check if the provided ID matches any existing team
                 var existingCategory = await _categoryRepository.GetByIdAsync(id);
 
                 if (existingCategory == null)
                 {
-                    return NotFound("Category not found");
+                    return NotFound(new { error = "Category not found" });
                 }
 
-                // Update the status
-                existingCategory.IsActive = updatedCategory.IsActive;
+                // Update only IsActive
+                //existingCategory.IsActive = updatedCategory.IsActive;
+                existingCategory.IsActive = !existingCategory.IsActive;
+                // Update other properties as needed                
 
-                // Save changes to the database
+                // Save the changes to the database
                 _categoryRepository.Update(existingCategory);
                 _categoryRepository.Save();
 
-                return Ok("Status updated successfully");
+                return Json(existingCategory);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+                // Log the exception and return an error response
+                // Log the exception details
+                return StatusCode(500, new { error = "Internal Server Error" });
             }
         }
 

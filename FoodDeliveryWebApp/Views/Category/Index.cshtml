@@ -107,8 +107,8 @@
                                             <div class="form-group col-md-6">
                                                 <label>Status</label>
                                                 <div class="toggle">
-                                                    <input type="checkbox" id="status" name="status" value="1" checked>
-                                                    <label for="status"></label>
+                                                    <input type="checkbox" id="isActive" name="isActive" value="1" checked>
+                                                    <label for="isActive"></label>
                                                 </div>
                                             </div>                                        
 
@@ -165,7 +165,7 @@
 
                 // Validate email and password fields
                 var Catname = $('#categoryName').val();
-                var status = $('#status').val();
+                var isActive = $('#isActive').val();
                 var createdAt = $('#createdAt').val();
                 var fileUpload = $('#fileUpload').val();
 
@@ -173,7 +173,7 @@
                     toastr.error("Please enter category name.");
                     return;
                 }
-                if (!status) {
+                if (!isActive) {
                     toastr.error("Please tell is active or not?.");
                     return;
                 }
@@ -349,11 +349,11 @@
 
                         row += '</td>' +
                             '<td>' +
-                            '<div class="toggle">' +
-                            '<input type="checkbox" id="status_' + categories.categoryId + '" name="status" value="1" ' + (categories.isActive ? 'checked' : '') + '>' +
-                            '<label for="status_' + categories.categoryId + '"></label>' +
-                            '</div>' +
-                            '</td>';
+                                '<div class="toggle">' +
+                                '<input type="checkbox" id="status_' + categories.categoryId + '" name="status" value="1" ' + (categories.isActive ? 'checked' : '') + '>' +
+                                '<label for="status_' + categories.categoryId + '"></label>' +
+                                '</div>' +
+                            '</td>'+
                             '<td>' + formattedDate + '</td>' +
                             '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + categories.categoryId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + categories.categoryId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
                             // Add more columns as needed
@@ -375,20 +375,38 @@
 
                         // Update the status value in the data object
                         if (category) {
-                            category.status = checkbox.prop('checked');
-                            console.log('Status changed:', category.status);
+                            category.isActive = !category.isActive;
+                            console.log('Status changed:', category.isActive);
 
                             // Add AJAX request to update status on the server
                             $.ajax({
-                                type: 'POST', // You might need to change this based on your API endpoint
-                                url: '/Category/UpdateStatus', // Replace with your actual API endpoint
+                                type: 'POST',
+                                url: '/Category/UpdateStatus/' + categoryId,
                                 contentType: 'application/json',
-                                data: JSON.stringify({ categoryId: categoryId, status: category.status }),
+                                data: JSON.stringify({ id: categoryId, isActive: category.isActive }),
                                 success: function (response) {
-                                    console.log('Status updated on the server:', response);
+                                    // console.log('Status updated on the server:', response);
+                                    console.log('Updating status for categoryId:', categoryId, 'Current isActive:', category.isActive);
+
+                                    toastr.success("Status updated successfully");
+                                    // // SweetAlert for success
+                                    // Swal.fire({
+                                    //     icon: 'success',
+                                    //     title: 'Status Updated!',
+                                    //     text: 'The status has been updated successfully.',
+                                    // });
                                 },
                                 error: function (error) {
-                                    console.error('Error updating status:', error);
+                                    // console.error('Error updating status:', error);
+
+                                    toastr.error("Error while update status!");
+
+                                    // // SweetAlert for error
+                                    // Swal.fire({
+                                    //     icon: 'error',
+                                    //     title: 'Error',
+                                    //     text: 'An error occurred while updating the status.',
+                                    // });
                                     // Log additional details of the error
                                     if (error && error.responseJSON) {
                                         console.error('Server response:', error.responseJSON);
@@ -420,7 +438,7 @@
 
                 fileData.append('categoryId', $('#categoryId').val()); // Include the categoryId for update
                 fileData.append('categoryName', $('#categoryName').val());
-                fileData.append('status', $('#status').val());
+                fileData.append('isActive', $('#isActive').prop('checked'));
                 fileData.append('createdAt', $('#createdAt').val());
 
                 // Looping over all files and add it to FormData object
@@ -466,7 +484,8 @@
                 success: function (result) {
                     $('#categoryId').val(result.categoryId);
                     $('#categoryName').val(result.categoryName);
-                    $('#status').val(result.status);
+                    // Set the checkbox state based on isActive
+                    $('#isActive').prop('checked', result.isActive);
                     // Format the createdAt date using toLocaleDateString
                     var formattedDate = new Date(result.createdAt).toLocaleDateString();
 
@@ -508,7 +527,7 @@
 
                 fileData.append('categoryId', $('#categoryId').val()); // Include the categoryId for update
                 fileData.append('categoryName', $('#categoryName').val());
-                fileData.append('status', $('#status').val());
+                fileData.append('isActive', $('#isActive').prop('checked'));
                 fileData.append('createdAt', $('#createdAt').val());
 
                 // Loop over files and add them to FormData object
@@ -518,7 +537,7 @@
 
                 // Update();
                 $.ajax({
-                    url: '/Category/GetbyId/' + $('#teamId').val(),
+                    url: '/Category/GetbyId/' + $('#categoryId').val(),
                     type: "POST",
                     contentType: false, // Not to set any content header
                     processData: false, // Not to process data
@@ -527,6 +546,7 @@
                         // alert(result);
                         loadData();
                         $('#myModal').modal('hide');
+                        updateStatus(result.categoryId, $('#isActive').prop('checked'));
                         clearTextBox();
                         toastr.success("Category updated successfully");
                     },
