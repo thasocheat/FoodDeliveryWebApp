@@ -8,5 +8,8 @@ namespace FoodDeliveryWebApp.ViewModels
         public List<Category> Categories { get; set; }
 
         public int? SelectedCategoryId { get; set; }
+
+        public int CategoryId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

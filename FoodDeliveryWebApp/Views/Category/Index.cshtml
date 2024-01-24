@@ -1,8 +1,595 @@
-﻿
+﻿@model IEnumerable<FoodDeliveryWebApp.Models.Category>
 @{
     ViewData["Title"] = "Category Page";
     Layout = "~/Backend/Home/_Layout.cshtml";
+
+    
 }
 
-<h1>Category Page</h1>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Large modal -->
+                <h1>Welcome to CRUD ajax with ASP.Net (Visual Studio 2022)</h1>
+                <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg">Add New</button>
+                @* <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="redirectToCreateForm()">Add New</button> *@
+                <script>
+                    function redirectToCreateForm() {
+                        // Assuming your create form action is named "Create"
+                        // var createFormUrl = '@Url.Action("Create", "Category")';
+                        // window.location.href = createFormUrl;
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Basic Datatable</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example" class="display" style="min-width: 845px">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Category Name
+                                </th>
+                                <th>
+                                    Image
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblCategory">
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>
+                                    Category Name
+                                </th>
+                                <th>
+                                    Image
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Add New Category</h5>
+                    <button type="button" class="btn btn-info close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="basic-form">
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form id="formUpload" enctype="multipart/form-data">
+                                        <div class="form-row">
+                                            <input type="hidden" class="form-control" id="categoryId" placeholder="Id" />
+                                            <div class="form-group col-md-6">
+                                                <label>Category Name</label>
+                                                <input type="text" class="form-control" placeholder="Category Name" name="categoryName" id="categoryName" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Date</label>
+                                                <input type="text" class="datepicker-default form-control picker__input" name="createdAt" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Status</label>
+                                                <div class="toggle">
+                                                    <input type="checkbox" id="status" name="status" value="1" checked>
+                                                    <label for="status"></label>
+                                                </div>
+                                            </div>                                        
+
+
+                                            <div class="form-group col-md-6">
+                                                <label id="fileUploadError">Upload Image</label>
+                                                <div class="input-group mb-3">
+                                                    <img src="~/Images/default.png" style="margin:10px" height="100" width="100" id="imagePreview" />
+                                                    <input type="file" id="fileUpload" name="ImageUpload" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <div class="input-group mb-3">
+                                                    <div id="HiddenDiv" style="visibility: hidden;">
+                                                        <input id="imageUrl" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-primary" id="btnAdd">Add</button>
+                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+            loadData();
+
+            $('#btnAdd').click(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate email and password fields
+                var Catname = $('#categoryName').val();
+                var status = $('#status').val();
+                var createdAt = $('#createdAt').val();
+                var fileUpload = $('#fileUpload').val();
+
+                if (!Catname) {
+                    toastr.error("Please enter category name.");
+                    return;
+                }
+                if (!status) {
+                    toastr.error("Please tell is active or not?.");
+                    return;
+                }
+                
+                if (!createdAt) {
+                    toastr.error("Please enter date.");
+                    return;
+                }
+                if (!fileUpload) {
+                    toastr.error("Please upload image or photo.");
+                    return;
+                }
+
+                // If all field is have the value then
+                Add();
+            });
+
+
+            // Modal event when modal close
+            $('#myModal').on('hidden.bs.modal', function () {
+                clearTextBox();
+                // clearValidate();
+
+            });
+
+            // $('#btnUpdate').click(function () {
+            //     // check
+            //     if (window.FormData !== undefined) {
+            //         var fileUpload = $("#fileUpload").get(0);
+            //         var files = fileUpload.files;
+
+            //         // Create FormData object
+            //         var fileData = new FormData();
+
+            //         fileData.append('teamId', $('#teamId').val());
+            //         fileData.append('name', $('#name').val());
+            //         fileData.append('email', $('#email').val());
+            //         fileData.append('description', $('#description').val());
+            //         fileData.append('title', $('#title').val());
+            //         fileData.append('bio', $('#bio').val());
+            //         fileData.append('createdAt', $('#createdAt').val());
+
+            //         // Loop over files and add them to FormData object
+            //         for (var i = 0; i < files.length; i++) {
+            //             fileData.append('ImageFile', files[i]);
+            //         }
+
+            //         // Update();
+            //         $.ajax({
+            //             url: '/Team/Update' + teamId,
+            //             type: "POST",
+            //             contentType: false, // Not to set any content header
+            //             processData: false, // Not to process data
+            //             data: fileData,
+            //             success: function (result) {
+            //                 // alert(result);
+            //                 loadData();
+            //                 $('#myModal').modal('hide');
+            //                 clearTextBox();
+            //                 toastr.success("Team updated successfully");
+            //             },
+            //             error: function (err) {
+            //                 // alert(err.statusText);
+            //                 toastr.error("Error while updating team!");
+            //             }
+            //         });
+            //     } else {
+            //         // alert("FormData is not supported.");
+            //         toastr.error("FormData is not supported.");
+            //     }
+            // });
+
+            // $('#btnAdd').click(function () {
+            //     // check
+            //     if (window.FormData !== undefined) {
+            //         var fileUpload = $("#fileUpload").get(0);
+            //         var files = fileUpload.files;
+
+            //         // Create
+            //         var fileData = new FormData();
+
+            //         fileData.append('teamId', $('#teamId').val()); // Include the teamId for update
+            //         fileData.append('name', $('#name').val());
+            //         fileData.append('email', $('#email').val());
+            //         fileData.append('description', $('#description').val());
+            //         fileData.append('title', $('#title').val());
+            //         fileData.append('bio', $('#bio').val());
+            //         fileData.append('createdAt', $('#createdAt').val());
+
+            //         // Looping over all files and add it to FormData object
+            //         for (var i = 0; i < files.length; i++) {
+            //             fileData.append('ImageFile', files[i]);
+            //         }
+
+            //         // Add();
+            //         $.ajax({
+            //             url: '/Team/Create',
+            //             type: "POST",
+            //             contentType: false, // Not to set any content header
+            //             processData: false, // Not to process data
+            //             data: fileData,
+            //             success: function (result) {
+            //                 // alert(result);
+            //                 loadData();
+            //                 $('#myModal').modal('hide');
+            //                 clearTextBox();
+            //                 toastr.success("Team created successfully");
+            //             },
+            //             error: function (err) {
+            //                 // alert(err.statusText);
+            //                 toastr.error("Error while create new team!");
+            //             }
+            //         });
+            //     } else {
+            //         // alert("FormData is not supported.");
+            //         toastr.error("FormData is not supported.");
+            //     }
+            // });
+        });
+
+        // Function for clearing the textboxes
+        function clearTextBox() {
+            $('#categoryName').val("");
+            $('#status').val("");
+            $('#createdAt').val("");
+            $('#imagePreview').attr("src", "/Images/default.png");
+            // For file input
+            var fileInput = $('#fileUpload');
+            fileInput.val('');  // Clear the value of the file input
+            $('#btnUpdate').hide();
+            $('#btnAdd').show();
+        }
+
+        // Load Data function
+
+        function loadData() {
+            // Perform AJAX request
+            $.ajax({
+                type: 'GET',
+                url: '/Category/GetCategories',
+                dataType: 'json',
+                success: function (data) {
+                    // Handle the returned JSON data
+                    console.log(data);
+                    // Process the data and update UI as needed
+                    // Update the table body
+                    var tableBody = $('#tblCategory');
+                    tableBody.empty(); // Clear existing rows
+
+
+
+                    // Loop through the data and append rows to the table
+                    data.forEach(function (categories) {
+
+                        // Format the createdAt date using toLocaleDateString
+                        var formattedDate = new Date(categories.createdAt).toLocaleDateString();
+
+                        var row = '<tr>' +
+                            '<td>' + categories.categoryName + '</td>' +
+                            
+                           
+                            '<td>';
+
+                        // Add the default image path
+                        var defaultImagePath = '/Images/default.png';
+
+                        // Check if categories.imageUrl is not null, then include the image tag with categories.imageUrl, otherwise use the default image
+                        if (categories.imageUrl !== null) {
+                            row += '<img src="' + categories.imageUrl + '" alt="Pet Image" style="max-width: 50px; max-height: 50px;">';
+                        } else {
+                            row += '<img src="' + defaultImagePath + '" alt="Default Image" style="max-width: 50px; max-height: 50px;">';
+                        }
+
+                        row += '</td>' +
+                            '<td>' +
+                            '<div class="toggle">' +
+                            '<input type="checkbox" id="status_' + categories.categoryId + '" name="status" value="1" ' + (categories.isActive ? 'checked' : '') + '>' +
+                            '<label for="status_' + categories.categoryId + '"></label>' +
+                            '</div>' +
+                            '</td>';
+                            '<td>' + formattedDate + '</td>' +
+                            '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + categories.categoryId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + categories.categoryId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
+                            // Add more columns as needed
+                            '</tr>';
+
+                        tableBody.append(row);
+
+                       
+                    });
+                    // Attach a single event listener to the table for status toggle
+                    tableBody.on('click', 'input[name="status"]', function () {
+                        var checkbox = $(this);
+                        var categoryId = checkbox.attr('id').split('_')[1];
+
+                        // Find the corresponding category in the data array
+                        var category = data.find(function (cat) {
+                            return cat.categoryId == categoryId;
+                        });
+
+                        // Update the status value in the data object
+                        if (category) {
+                            category.status = checkbox.prop('checked');
+                            console.log('Status changed:', category.status);
+
+                            // Add AJAX request to update status on the server
+                            $.ajax({
+                                type: 'POST', // You might need to change this based on your API endpoint
+                                url: '/Category/UpdateStatus', // Replace with your actual API endpoint
+                                contentType: 'application/json',
+                                data: JSON.stringify({ categoryId: categoryId, status: category.status }),
+                                success: function (response) {
+                                    console.log('Status updated on the server:', response);
+                                },
+                                error: function (error) {
+                                    console.error('Error updating status:', error);
+                                    // Log additional details of the error
+                                    if (error && error.responseJSON) {
+                                        console.error('Server response:', error.responseJSON);
+                                    }
+                                }
+                            });
+                        }
+
+                        // You can change toggle here for how it look
+                    });
+                    toastr.success("Category is listing successfully");
+                },
+                error: function (error) {
+                    // Handle errors
+                    console.error('Error fetching categories:', error);
+                }
+            });
+        }
+
+        // Add Data Function
+        function Add() {
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create
+                var fileData = new FormData();
+
+                fileData.append('categoryId', $('#categoryId').val()); // Include the categoryId for update
+                fileData.append('categoryName', $('#categoryName').val());
+                fileData.append('status', $('#status').val());
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
+                }
+
+                // Add();
+                $.ajax({
+                    url: '/Category/Create',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        loadData();
+                        $('#myModal').modal('hide');
+                        clearTextBox();
+                        toastr.success("Category created successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while create new category!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
+        }
+
+
+        // Function for getting the Data Based upon Employee ID
+        function getbyID(categoryId) {
+
+
+            $.ajax({
+                url: "/Category/GetbyId/" + categoryId,
+                type: "GET",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    $('#categoryId').val(result.categoryId);
+                    $('#categoryName').val(result.categoryName);
+                    $('#status').val(result.status);
+                    // Format the createdAt date using toLocaleDateString
+                    var formattedDate = new Date(result.createdAt).toLocaleDateString();
+
+                    $('#createdAt').val(formattedDate);
+
+                    // Set the image preview
+                    var imagePreview = $('#imagePreview');
+                    var defaultImagePath = '/Images/default.png';
+
+
+                    if (result.imageUrl !== null) {
+                        imagePreview.attr('src', result.imageUrl);
+                    } else {
+                        imagePreview.attr('src', defaultImagePath);
+                    }
+
+                    $('#myModal').modal('show');
+                    $('#btnUpdate').show();
+                    $('#btnAdd').hide();
+
+                    toastr.success("Successfully geting the category for update");
+                },
+                error: function (errormessage) {
+                    toastr.error("An error occurred while geting the category for update: " + error);
+                }
+            });
+            return false;
+        }
+
+        // Function for updating pet's record
+        function Update() {
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+
+                fileData.append('categoryId', $('#categoryId').val()); // Include the categoryId for update
+                fileData.append('categoryName', $('#categoryName').val());
+                fileData.append('status', $('#status').val());
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Loop over files and add them to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
+                }
+
+                // Update();
+                $.ajax({
+                    url: '/Category/GetbyId/' + $('#teamId').val(),
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        loadData();
+                        $('#myModal').modal('hide');
+                        clearTextBox();
+                        toastr.success("Category updated successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while updating category!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
+
+        }
+
+
+
+        function Delete(categoryId) {
+            // Show the SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, proceed with the deletion
+                    $.ajax({
+                        url: "/Category/Delete/" + categoryId,
+                        type: "POST",
+                        dataType: "json",
+                        success: function (ajaxResult) {
+                            if (ajaxResult.success) {
+                                // // Redirect to the index page
+                                // window.location.href = '/Team/Index';
+                                loadData();
+
+                                // Show success message
+                                toastr.success(ajaxResult.message);
+
+
+                            } else {
+                                // Show error message
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: ajaxResult.message,
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            toastr.error("An error occurred while deleting the categoryId: " + errormessage.responseText);
+                        }
+                    });
+                }
+            });
+
+            // Prevent the default link behavior
+            return false;
+        }
+    </script>
+}
 

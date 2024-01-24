@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-	[Authorize]
+	//[Authorize]
 	public class TeamController : Controller
     {
         private readonly ITeamRepository _teamRepository;

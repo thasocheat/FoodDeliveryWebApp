@@ -61,44 +61,7 @@
                             </tr>
                         </thead>
                         <tbody id="tblTeam">
-                            @* @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Email)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Description)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Title)
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                        {
-                                            <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" width="50" height="50" alt="@item.Name" />
-                                        }
-                                        else
-                                        {
-                                            <img src="~/Images/default.png" width="50" height="50" alt="Default Image" />
-                                        }
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Bio)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                                    </td>
-                                    <td>
-                                        <a asp-action="Edit" class="btn btn-info btn-sm" asp-route-id="@item.TeamId">Edit</a> |
-                                        <a asp-action="Details" class="btn btn-info btn-sm" asp-route-id="@item.TeamId">Details</a> |
-                                        <a asp-action="Delete" class="btn btn-info btn-sm delete-link" asp-route-id="@item.TeamId" onclick="return Delete('@item.TeamId')">Delete</a>
-                                    </td>
-                                </tr>
-                            } *@
+                           
                         </tbody>
                         <tfoot>
                             <tr>
@@ -201,7 +164,7 @@
 
 
                                         <div class="col-12">
-                                            <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+                                            <button type="button" class="btn btn-primary" id="btnAdd">Add</button>
                                             <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                         </div>
@@ -227,6 +190,52 @@
 
         $(document).ready(function () {
             loadData();
+
+            $('#btnAdd').click(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate email and password fields
+                var name = $('#name').val();
+                var email = $('#email').val();
+                var description = $('#description').val();
+                var title = $('#title').val();
+                var bio = $('#bio').val();
+                var createdAt = $('#createdAt').val();
+                var fileUpload = $('#fileUpload').val();
+
+                if (!name) {
+                    toastr.error("Please enter name.");
+                    return;
+                }
+                if (!email) {
+                    toastr.error("Please enter email.");
+                    return;
+                }
+                if (!description) {
+                    toastr.error("Please enter description.");
+                    return;
+                }
+                if (!title) {
+                    toastr.error("Please enter title.");
+                    return;
+                }
+                if (!bio) {
+                    toastr.error("Please enter bio.");
+                    return;
+                }
+                if (!createdAt) {
+                    toastr.error("Please enter date.");
+                    return;
+                }
+                if (!fileUpload) {
+                    toastr.error("Please upload image or photo.");
+                    return;
+                }
+
+                // If all field is have the value then
+                Add();
+            });
+
 
             // Modal event when modal close
             $('#myModal').on('hidden.bs.modal', function () {
@@ -362,8 +371,14 @@
                     var tableBody = $('#tblTeam');
                     tableBody.empty(); // Clear existing rows
 
+                    
+
                     // Loop through the data and append rows to the table
                     data.forEach(function (team) {
+
+                        // Format the createdAt date using toLocaleDateString
+                        var formattedDate = new Date(team.createdAt).toLocaleDateString();
+
                         var row = '<tr>' +
                             '<td>' + team.name + '</td>' +
                             '<td>' + team.email + '</td>' +
@@ -383,7 +398,7 @@
                         row += '</td>' +
                             '<td>' + team.title + '</td>' +
                             '<td>' + team.bio + '</td>' +
-                            '<td>' + team.createdAt + '</td>' +
+                            '<td>' + formattedDate + '</td>' +
                             '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + team.teamId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + team.teamId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
                             // Add more columns as needed
                             '</tr>';
@@ -450,15 +465,7 @@
 
         // Function for getting the Data Based upon Employee ID
         function getbyID(teamId) {
-            // $('#PetName').css('border-color', 'lightgrey');
-            // $('#PetAge').css('border-color', 'lightgrey');
-            // $('#PetGender').css('border-color', 'lightgrey');
-
-            // $('#PetNameError').css('color', 'lightgrey');
-            // $('#PetAgeError').css('color', 'lightgrey');
-            // $('#PetGenderError').css('color', 'lightgrey');
-            // $('#imagePreview').css('color', 'lightgrey');
-            // $('#fileUploadError').css('color', 'lightgrey');
+            
 
             $.ajax({
                 url: "/Team/GetbyId/" + teamId,
@@ -472,7 +479,11 @@
                     $('#description').val(result.description);
                     $('#title').val(result.title);
                     $('#bio').val(result.bio);
-                    $('#creatdAt').val(result.creatdAt);
+                    // $('#creatdAt').val(result.creatdAt);
+                    // Format the createdAt date using toLocaleDateString
+                    var formattedDate = new Date(result.createdAt).toLocaleDateString();
+
+                    $('#createdAt').val(formattedDate);
 
                     // Set the image preview
                     var imagePreview = $('#imagePreview');

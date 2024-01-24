@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 // Add services for repository
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Add services for connecting to SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

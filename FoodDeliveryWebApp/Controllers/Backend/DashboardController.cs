@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-	[Authorize]
+	//[Authorize]
 	public class DashboardController : Controller
     {
         public IActionResult Index()
