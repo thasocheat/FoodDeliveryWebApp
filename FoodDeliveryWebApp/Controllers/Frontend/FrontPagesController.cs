@@ -24,8 +24,8 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
 
 			// If a category ID is specified, filter products by category, otherwise get all products
 			List<Product> products = categoryId.HasValue
-				? _context.Products.Where(p => p.CategoryId == categoryId.Value).ToList()
-				: _context.Products.ToList();
+				? _context.Products.Where(p => p.CategoryId == categoryId.Value && p.IsActive).ToList()
+				: _context.Products.Where(p => p.IsActive).ToList();
 
             // Create a ViewModel and assign products and categories
             var viewModel = new ProductCategoryViewModel
@@ -42,6 +42,19 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
         public IActionResult GetFilteredProducts(int categoryId)
         {
             List<Product> products = _context.Products.Where(p => p.CategoryId == categoryId).ToList();
+            return Json(products);
+        }
+
+        [HttpGet]
+        public IActionResult GetMoreProducts(int categoryId, int totalLoaded)
+        {
+            // Fetch the next batch of products based on category and totalLoaded
+            List<Product> products = _context.Products
+                .Where(p => p.CategoryId == categoryId && p.IsActive)
+                .Skip(totalLoaded)
+                .Take(4)
+                .ToList();
+
             return Json(products);
         }
     }

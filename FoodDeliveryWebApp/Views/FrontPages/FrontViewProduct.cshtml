@@ -67,8 +67,8 @@
                        
                     }
 
-                    <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
-                        <a class="btn btn-primary rounded-pill py-3 px-5" href="">Browse More Products</a>
+                    <div class="col-12 text-center" data-wow-delay="0.1s" style="visibility: visible;">
+                        <a class="btn btn-primary rounded-pill py-3 px-5" id="loadMoreBtn" href="#">Browse More Products</a>
                     </div>
                 </div>
             </div>
@@ -82,6 +82,9 @@
     <script type="text/javascript">
 
         $(document).ready(function () { 
+            
+           
+
             // Attach a click event to category buttons
             $('.category-btn').on('click', function () {
                 var categoryId = $(this).data('category-id');
@@ -102,7 +105,57 @@
                     // ...
                 });
             });
+
+
+
+            var categoryId = $('#filteredProductListContainer').data('category-id');
+            var totalLoaded = 4;
+
+            $('#loadMoreBtn').on('click', function () {
+                // Make an AJAX request to get more products
+                $.get('/FrontPages/GetMoreProducts', { categoryId: categoryId, totalLoaded: totalLoaded }, function (data) {
+                    console.log(data);
+                    if (data.length > 0) {
+                        uappendProducts(data);
+                        totalLoaded += data.length;
+                    } else {
+                        // No more products to load
+                        $('#loadMoreBtn').prop('disabled', true).text('No More Products');
+                    }
+                });
+            });
+
         });
+
+        function appendProducts(products) {
+            // Append the new products to the existing list
+            var productListContainer = $("#filteredProductListContainer");
+            for (var i = 0; i < products.length; i++) {
+                // Example: Append product name to the product list div
+                $("#productList").append("<p>" + products[i].ProductName + "</p>");
+                var productItem = $('<div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp">').append(
+                    $('<div class="product-item">').append(
+                        $('<div class="position-relative bg-light overflow-hidden">').append(
+                            $('<img class="img-fluid w-100" alt="' + products[i].name + '">').attr('src', products[i].imageUrl),
+                            $('<div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">').text('New')
+                        ),
+                        $('<div class="text-center p-4">').append(
+                            $('<a class="d-block h5 mb-2">').text(products[i].name),
+                            $('<span class="text-primary me-1">').text('$' + products[i].price),
+                            $('<span class="text-body text-decoration-line-through">').text('$29.00')
+                        ),
+                        $('<div class="d-flex border-top">').append(
+                            $('<small class="w-50 text-center border-end py-2">').append(
+                                $('<a class="text-body" href="#">').html('<i class="fa fa-eye text-primary me-2"></i>View detail')
+                            ),
+                            $('<small class="w-50 text-center py-2">').append(
+                                $('<a class="text-body" href="#">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart')
+                            )
+                        )
+                    )
+                );
+            }
+        }
 
             function updateProductList(products) {
                 // console.log(products); // Use to check the data

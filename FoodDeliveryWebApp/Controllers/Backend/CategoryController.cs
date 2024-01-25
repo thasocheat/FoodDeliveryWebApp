@@ -40,12 +40,12 @@ namespace FoodDeliveryWebApp.Controllers.Backend
         {
             try
             {
-                var team = _categoryRepository.GetByIdAsync(id).Result;
-                if (team == null)
+                var category = _categoryRepository.GetByIdAsync(id).Result;
+                if (category == null)
                 {
                     return NotFound(new { error = "Category not found" });
                 }
-                return Json(team);
+                return Json(category);
             }
             catch (Exception ex)
             {

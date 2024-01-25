@@ -1,4 +1,5 @@
-﻿@model IEnumerable<FoodDeliveryWebApp.Models.Product>
+﻿﻿@using FoodDeliveryWebApp.ViewModels
+@model ProductCategoryViewModel
 
 @{
     ViewData["Title"] = "Product Page";
@@ -28,75 +29,28 @@
                     <table id="example" class="display" style="min-width: 845px">
                         <thead>
                             <tr>
-                                <th>@Html.DisplayNameFor(model => model.ProductId)</th>
-                                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                                <th>@Html.DisplayNameFor(model => model.Price)</th>
-                                <th>@Html.DisplayNameFor(model => model.Quantity)</th>
-                                <th>@Html.DisplayNameFor(model => model.ImageUrl)</th>
-                                <th>@Html.DisplayNameFor(model => model.IsActive)</th>
-                                <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>ImageUrl</th>
+                                <th>IsActive</th>
+                                <th>CreatedAt</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="petTableBody">
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.ProductId)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Description)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Price)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Quantity)
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                        {
-                                            <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" width="50" height="50" alt="@item.Name" />
-                                        }
-                                        else
-                                        {
-                                            <img src="~/Images/default.png" width="50" height="50" alt="Default Image" />
-                                        }
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.IsActive)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
-                                        <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
-                                        <a class="btn btn-info btn-sm" asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
-                                        @* <a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + item.ProductId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> |
-                                        <a href="#" class="btn btn-danger btn-sm" onclick="return Delele(' + item.ProductId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a> *@
-
-
-
-                                    </td>
-                                </tr>
-                            }
+                        <tbody id="TbleProduct">
+                           
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>@Html.DisplayNameFor(model => model.ProductId)</th>
-                                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                                <th>@Html.DisplayNameFor(model => model.Price)</th>
-                                <th>@Html.DisplayNameFor(model => model.Quantity)</th>
-                                <th>@Html.DisplayNameFor(model => model.ImageUrl)</th>
-                                <th>@Html.DisplayNameFor(model => model.IsActive)</th>
-                                <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>ImageUrl</th>
+                                <th>IsActive</th>
+                                <th>CreatedAt</th>
                                 <th>Action</th>
                             </tr>
                         </tfoot>
@@ -106,4 +60,514 @@
         </div>
     </div>
 
+    <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Add New Products</h5>
+                    <button type="button" class="btn btn-info close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="basic-form">
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form id="formUpload" enctype="multipart/form-data">
+                                        <div class="form-row">
+                                            <input type="hidden" class="form-control" id="productId" placeholder="Id" />
+                                            <div class="form-group col-md-6">
+                                                <label>Product Name</label>
+                                                <input type="text" class="form-control" placeholder="Product Name" name="name" id="name" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Price</label>
+                                                <input type="number" class="form-control" placeholder="Price" name="price" id="price" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Quantity</label>
+                                                <input type="number" class="form-control" placeholder="QTY" name="quantity" id="quantity" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>State</label>
+                                                <select id="categoryId" class="form-control">
+                                                    @foreach (var category in Model.Categories)
+                                                    {
+                                                        <option value="@category.CategoryId">@category.CategoryName</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                           
+
+                                            <div class="form-group col-md-6">
+                                                <label>Date</label>
+                                                <input type="text" class="datepicker-default form-control picker__input" name="createdAt" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label id="PetAgeError">Description</label>
+                                                <textarea type="text" class="form-control" placeholder="Put some word" rows="4" name="description" id="description"></textarea>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Status</label>
+                                                <div class="toggle">
+                                                    <input type="checkbox" id="isActive" name="isActive" value="1" checked>
+                                                    <label for="isActive"></label>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group col-md-6">
+                                                <label id="fileUploadError">Upload Image</label>
+                                                <div class="input-group mb-3">
+                                                    <img src="~/Images/default.png" style="margin:10px" height="100" width="100" id="imagePreview" />
+                                                    <input type="file" id="fileUpload" name="ImageUpload" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <div class="input-group mb-3">
+                                                    <div id="HiddenDiv" style="visibility: hidden;">
+                                                        <input id="imageUrl" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-primary" id="btnAdd">Add</button>
+                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+            loadData();
+
+            $('#btnAdd').click(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate email and password fields
+                var name = $('#name').val();
+                var description = $('#description').val();
+                var price = $('#price').val();
+                var quantity = $('#quantity').val();
+                var categoryId = $('#categoryId').val();
+                var isActive = $('#isActive').val();
+                var createdAt = $('#createdAt').val();
+                var fileUpload = $('#fileUpload').val();
+
+                if (!name) {
+                    toastr.error("Please enter product name.");
+                    return;
+                }
+
+                if (!description) {
+                    toastr.error("Please enter product description.");
+                    return;
+                }
+
+                if (!price) {
+                    toastr.error("Please enter product price.");
+                    return;
+                }
+
+                if (!quantity) {
+                    toastr.error("Please enter product quantity.");
+                    return;
+                }
+                if (!categoryId) {
+                    toastr.error("Please enter product categoryId." + categoryId);
+                    return;
+                }
+                if (!isActive) {
+                    toastr.error("Please tell is active or not?.");
+                    return;
+                }
+
+                if (!createdAt) {
+                    toastr.error("Please enter date.");
+                    return;
+                }
+                if (!fileUpload) {
+                    toastr.error("Please upload image or photo.");
+                    return;
+                }
+
+                // If all field is have the value then
+                Add();
+            });
+
+
+            // Modal event when modal close
+            $('#myModal').on('hidden.bs.modal', function () {
+                clearTextBox();
+                // clearValidate();
+
+            });
+
+
+        });
+
+        // Function for clearing the textboxes
+        function clearTextBox() {
+            $('#name').val("");
+            $('#description').val("");
+            $('#price').val("");
+            $('#quantity').val("");
+            $('#isActive').val("");
+            $('#createdAt').val("");
+            $('#imagePreview').attr("src", "/Images/default.png");
+            // For file input
+            var fileInput = $('#fileUpload');
+            fileInput.val('');  // Clear the value of the file input
+            $('#btnUpdate').hide();
+            $('#btnAdd').show();
+        }
+
+        // Load Data function
+
+        function loadData() {
+            // Perform AJAX request
+            $.ajax({
+                type: 'GET',
+                url: '/Product/GetProducts',
+                dataType: 'json',
+                success: function (data) {
+                    // Handle the returned JSON data
+                    console.log(data);
+                    // Process the data and update UI as needed
+                    // Update the table body
+                    var tableBody = $('#TbleProduct');
+                    tableBody.empty(); // Clear existing rows
+
+
+
+                    // Loop through the data and append rows to the table
+                    data.forEach(function (products) {
+
+                        // Format the createdAt date using toLocaleDateString
+                        var formattedDate = new Date(products.createdAt).toLocaleDateString();
+
+                        var row = '<tr>' +
+                            '<td>' + products.name + '</td>' +
+                            '<td>' + products.description + '</td>' +
+                            '<td>' + products.price + '</td>' +
+                            '<td>' + products.quantity + '</td>' +
+
+
+                            '<td>';
+
+                        // Add the default image path
+                        var defaultImagePath = '/Images/default.png';
+
+                        // Check if categories.imageUrl is not null, then include the image tag with products.imageUrl, otherwise use the default image
+                        if (products.imageUrl !== null) {
+                            row += '<img src="' + products.imageUrl + '" alt="Pet Image" style="max-width: 50px; max-height: 50px;">';
+                        } else {
+                            row += '<img src="' + defaultImagePath + '" alt="Default Image" style="max-width: 50px; max-height: 50px;">';
+                        }
+
+                        row += '</td>' +
+                            '<td>' +
+                            '<div class="toggle">' +
+                            '<input type="checkbox" id="status_' + products.productId + '" name="status" value="1" ' + (products.isActive ? 'checked' : '') + '>' +
+                            '<label for="status_' + products.productId + '"></label>' +
+                            '</div>' +
+                            '</td>' +
+                            '<td>' + formattedDate + '</td>' +
+                            '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + products.productId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + products.productId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
+                            // Add more columns as needed
+                            '</tr>';
+
+                        tableBody.append(row);
+
+
+                    });
+                    // Attach a single event listener to the table for status toggle
+                    tableBody.on('click', 'input[name="status"]', function () {
+                        var checkbox = $(this);
+                        var productId = checkbox.attr('id').split('_')[1];
+
+                        // Find the corresponding product in the data array
+                        var product = data.find(function (pro) {
+                            return pro.productId == productId;
+                        });
+
+                        // Update the status value in the data object
+                        if (product) {
+                            product.isActive = !product.isActive;
+                            console.log('Status changed:', product.isActive);
+
+                            // Add AJAX request to update status on the server
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Product/UpdateStatus/' + productId,
+                                contentType: 'application/json',
+                                data: JSON.stringify({ id: productId, isActive: product.isActive }),
+                                success: function (response) {
+                                    // console.log('Status updated on the server:', response);
+                                    console.log('Updating status for productId:', productId, 'Current isActive:', product.isActive);
+
+                                    toastr.success("Status updated successfully");
+                                    // // SweetAlert for success
+                                    // Swal.fire({
+                                    //     icon: 'success',
+                                    //     title: 'Status Updated!',
+                                    //     text: 'The status has been updated successfully.',
+                                    // });
+                                },
+                                error: function (error) {
+                                    // console.error('Error updating status:', error);
+
+                                    toastr.error("Error while update status!");
+
+                                    // // SweetAlert for error
+                                    // Swal.fire({
+                                    //     icon: 'error',
+                                    //     title: 'Error',
+                                    //     text: 'An error occurred while updating the status.',
+                                    // });
+                                    // Log additional details of the error
+                                    if (error && error.responseJSON) {
+                                        console.error('Server response:', error.responseJSON);
+                                    }
+                                }
+                            });
+                        }
+
+                        // You can change toggle here for how it look
+                    });
+                    toastr.success("Product is listing successfully");
+                },
+                error: function (error) {
+                    // Handle errors
+                    console.error('Error fetching products:', error);
+                }
+            });
+        }
+
+        // Add Data Function
+        function Add() {
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create
+                var fileData = new FormData();
+               
+                fileData.append('productId', $('#productId').val()); // Include the productId for update
+                fileData.append('name', $('#name').val());
+                fileData.append('description', $('#description').val());
+                fileData.append('price', $('#price').val());
+                fileData.append('quantity', $('#quantity').val());
+                fileData.append('categoryId', $('#categoryId').val());
+                fileData.append('isActive', $('#isActive').prop('checked'));
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
+                }
+
+                // Add();
+                $.ajax({
+                    url: '/Product/Create',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        console.log(result);
+                        loadData();
+                        clearTextBox();
+                        $('#myModal').modal('hide');
+                        toastr.success("Product created successfully");
+                    },
+                    error: function (err) {
+                        console.log(err.statusText);
+                        toastr.error("Error while create new product!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
+        }
+
+
+        // Function for getting the Data Based upon Employee ID
+        function getbyID(productId) {
+
+
+            $.ajax({
+                url: "/Product/GetbyId/" + productId,
+                type: "GET",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+
+                    $('#productId').val(result.productId);
+                    $('#name').val(result.name);
+                    $('#description').val(result.description);
+                    $('#price').val(result.price);
+                    $('#quantity').val(result.quantity);
+                    $('#categoryId').val(result.categoryId);
+                    // Set the checkbox state based on isActive
+                    $('#isActive').prop('checked', result.isActive);
+                    // Format the createdAt date using toLocaleDateString
+                    var formattedDate = new Date(result.createdAt).toLocaleDateString();
+
+                    $('#createdAt').val(formattedDate);
+
+                    // Set the image preview
+                    var imagePreview = $('#imagePreview');
+                    var defaultImagePath = '/Images/default.png';
+
+
+                    if (result.imageUrl !== null) {
+                        imagePreview.attr('src', result.imageUrl);
+                    } else {
+                        imagePreview.attr('src', defaultImagePath);
+                    }
+
+                    $('#myModal').modal('show');
+                    $('#btnUpdate').show();
+                    $('#btnAdd').hide();
+
+                    toastr.success("Successfully geting the product for update");
+                },
+                error: function (errormessage) {
+                    toastr.error("An error occurred while geting the product for update: " + error);
+                }
+            });
+            return false;
+        }
+
+        // Function for updating pet's record
+        function Update() {
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+                fileData.append('productId', $('#productId').val()); // Include the productId for update
+                fileData.append('name', $('#name').val());
+                fileData.append('description', $('#description').val());
+                fileData.append('price', $('#price').val());
+                fileData.append('quantity', $('#quantity').val());
+                fileData.append('categoryId', $('#categoryId').val());
+                fileData.append('isActive', $('#isActive').prop('checked'));
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Loop over files and add them to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
+                }
+
+                // Update();
+                $.ajax({
+                    url: '/Product/GetbyId/' + $('#productId').val(),
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);                        
+                        clearTextBox();
+                        $('#myModal').modal('hide');
+                        loadData();
+                        updateStatus(result.productId, $('#isActive').prop('checked'));
+                        toastr.success("product updated successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while updating product!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
+
+        }
+
+
+
+        function Delete(productId) {
+            // Show the SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, proceed with the deletion
+                    $.ajax({
+                        url: "/Product/Delete/" + productId,
+                        type: "POST",
+                        dataType: "json",
+                        success: function (ajaxResult) {
+                            if (ajaxResult.success) {
+                                // // Redirect to the index page
+                                // window.location.href = '/Team/Index';
+                                loadData();
+
+                                // Show success message
+                                toastr.success(ajaxResult.message);
+
+
+                            } else {
+                                // Show error message
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: ajaxResult.message,
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            toastr.error("An error occurred while deleting the productId: " + errormessage.responseText);
+                        }
+                    });
+                }
+            });
+
+            // Prevent the default link behavior
+            return false;
+        }
+    </script>
+}

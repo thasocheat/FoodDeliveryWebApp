@@ -30,6 +30,11 @@ namespace FoodDeliveryWebApp.Repository
             return await _context.Products.ToListAsync();
         }
 
+        public async Task<Product> GetById(int id)
+        {
+            return await _context.Products.FirstOrDefaultAsync(t => t.ProductId == id);
+        }
+
         public async Task<Product> GetByIdAsync(int id)
         {
             return await _context.Products.FirstOrDefaultAsync(t => t.ProductId == id);

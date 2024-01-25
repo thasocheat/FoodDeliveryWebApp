@@ -1,8 +1,503 @@
-﻿
+﻿@model IEnumerable<FoodDeliveryWebApp.Models.AppUser>
 @{
     ViewData["Title"] = "User Manager Page";
     Layout = "~/Backend/Home/_Layout.cshtml";
 }
 
-<h1>User Manager Page</h1>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Large modal -->
+                <h1>Welcome to CRUD ajax with ASP.Net (Visual Studio 2022)</h1>
+                <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg">Add New Users</button>
+                @* <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="redirectToCreateForm()">Add New</button> *@
+                <script>
+                    function redirectToCreateForm() {
+                        // Assuming your create form action is named "Create"
+                        // var createFormUrl = '@Url.Action("Create", "Category")';
+                        // window.location.href = createFormUrl;
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Basic Datatable</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example" class="display" style="min-width: 845px">
+                        <thead>
+                            <tr>
+                                <th>
+                                    User Name
+                                </th>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Image
+                                </th>
+                                <th>
+                                    Address
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblUsers">
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>
+                                    User Name
+                                </th>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Image
+                                </th>
+                                <th>
+                                    Address
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Add New Category</h5>
+                    <button type="button" class="btn btn-info close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="basic-form">
+                            <div class="card-body">
+                                <div class="basic-form">
+                                    <form id="formUpload" enctype="multipart/form-data">
+                                        <div class="form-row">
+                                            <input type="hidden" class="form-control" id="userId" placeholder="Id" />
+                                            <div class="form-group col-md-6">
+                                                <label>User Name</label>
+                                                <input type="text" class="form-control" placeholder="User Name" name="userName" id="userName" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Phone</label>
+                                                <input type="text" class="form-control" placeholder="Your phone number" name="phone" id="phone" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Email</label>
+                                                <input type="text" class="form-control" placeholder="Your email" name="email" id="email" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Address</label>
+                                                <textarea type="text" class="form-control" placeholder="Tell your address" rows="4" name="address" id="address"></textarea>
+                                            </div>
+
+
+                                            <div class="form-group col-md-6">
+                                                <label>Date</label>
+                                                <input type="text" class="datepicker-default form-control picker__input" name="createdAt" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                            </div>
+
+
+                                            <div class="form-group col-md-6">
+                                                <label id="fileUploadError">Upload Image</label>
+                                                <div class="input-group mb-3">
+                                                    <img src="~/Images/default.png" style="margin:10px" height="100" width="100" id="imagePreview" />
+                                                    <input type="file" id="fileUpload" name="ImageUpload" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <div class="input-group mb-3">
+                                                    <div id="HiddenDiv" style="visibility: hidden;">
+                                                        <input id="imageUrl" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-primary" id="btnAdd">Add</button>
+                                            <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="return Update();">Update</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+            loadData();
+
+            $('#btnAdd').click(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate email and password fields
+                var userName = $('#userName').val();
+                var phone = $('#phone').val();
+                var email = $('#email').val();
+                var address = $('#address').val();
+                var createdAt = $('#createdAt').val();
+                var fileUpload = $('#fileUpload').val();
+
+                if (!userName) {
+                    toastr.error("Please enter your name.");
+                    return;
+                }
+                if (!phone) {
+                    toastr.error("Please enter your phone number.");
+                    return;
+                }
+                if (!email) {
+                    toastr.error("Please enter your email.");
+                    return;
+                }
+                if (!address) {
+                    toastr.error("Please enter your address.");
+                    return;
+                }
+
+                if (!createdAt) {
+                    toastr.error("Please enter date.");
+                    return;
+                }
+                if (!fileUpload) {
+                    toastr.error("Please upload image or photo.");
+                    return;
+                }
+
+                // If all field is have the value then
+                Add();
+            });
+
+
+            // Modal event when modal close
+            $('#myModal').on('hidden.bs.modal', function () {
+                clearTextBox();
+                // clearValidate();
+
+            });
+
+
+        });
+
+        // Function for clearing the textboxes
+        function clearTextBox() {
+            $('#userName').val("");
+            $('#phone').val("");
+            $('#email').val("");
+            $('#address').val("");
+            $('#createdAt').val("");
+            $('#imagePreview').attr("src", "/Images/default.png");
+            // For file input
+            var fileInput = $('#fileUpload');
+            fileInput.val('');  // Clear the value of the file input
+            $('#btnUpdate').hide();
+            $('#btnAdd').show();
+        }
+
+        // Load Data function
+
+        function loadData() {
+            // Perform AJAX request
+            $.ajax({
+                type: 'GET',
+                url: '/User/GetAllUsers',
+                dataType: 'json',
+                success: function (data) {
+                    // Handle the returned JSON data
+                    console.log(data);
+                    // Process the data and update UI as needed
+                    // Update the table body
+                    var tableBody = $('#tblUsers');
+                    tableBody.empty(); // Clear existing rows
+
+
+
+                    // Loop through the data and append rows to the table
+                    data.forEach(function (users) {
+
+                        // Format the createdAt date using toLocaleDateString
+                        var formattedDate = new Date(users.createdAt).toLocaleDateString();
+
+                        var row = '<tr>' +
+                            '<td>' + users.userName + '</td>' +
+                            '<td>' + users.phone + '</td>' +
+                            '<td>' + users.email + '</td>' +
+                            '<td>' + users.address + '</td>' +
+
+
+                            '<td>';
+
+                        // Add the default image path
+                        var defaultImagePath = '/Images/default.png';
+
+                        // Check if users.imageUrl is not null, then include the image tag with users.imageUrl, otherwise use the default image
+                        if (users.imageUrl !== null) {
+                            row += '<img src="' + users.imageUrl + '" alt="Pet Image" style="max-width: 50px; max-height: 50px;">';
+                        } else {
+                            row += '<img src="' + defaultImagePath + '" alt="Default Image" style="max-width: 50px; max-height: 50px;">';
+                        }
+
+                        row += '</td>' +
+                            
+                            '<td>' + formattedDate + '</td>' +
+                            '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + users.userId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + users.userId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
+                            // Add more columns as needed
+                            '</tr>';
+
+                        tableBody.append(row);
+
+
+                    });
+                    
+                    toastr.success("Users is listing successfully");
+                },
+                error: function (error) {
+                    // Handle errors
+                    console.error('Error fetching users:', error);
+                }
+            });
+        }
+
+        // Add Data Function
+        function Add() {
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create
+                var fileData = new FormData();
+
+                fileData.append('userId', $('#userId').val()); // Include the categoryId for update
+                fileData.append('userName', $('#userName').val());
+                fileData.append('phone', $('#phone').val());
+                fileData.append('email', $('#email').val());
+                fileData.append('address', $('#address').val());
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
+                }
+
+                // Add();
+                $.ajax({
+                    url: '/User/Create',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        loadData();
+                        $('#myModal').modal('hide');
+                        clearTextBox();
+                        toastr.success("User created successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while create new user!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
+        }
+
+
+        // Function for getting the Data Based upon Employee ID
+        function getbyID(userId) {
+
+
+            $.ajax({
+                url: "/User/GetbyId/" + userId,
+                type: "GET",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    $('#userId').val(result.userId);
+                    $('#userName').val(result.userName);
+                    $('#phone').val(result.phone);
+                    $('#email').val(result.email);
+                    $('#address').val(result.address);
+                    
+                    // Format the createdAt date using toLocaleDateString
+                    var formattedDate = new Date(result.createdAt).toLocaleDateString();
+
+                    $('#createdAt').val(formattedDate);
+
+                    // Set the image preview
+                    var imagePreview = $('#imagePreview');
+                    var defaultImagePath = '/Images/default.png';
+
+
+                    if (result.imageUrl !== null) {
+                        imagePreview.attr('src', result.imageUrl);
+                    } else {
+                        imagePreview.attr('src', defaultImagePath);
+                    }
+
+                    $('#myModal').modal('show');
+                    $('#btnUpdate').show();
+                    $('#btnAdd').hide();
+
+                    toastr.success("Successfully geting the user for update");
+                },
+                error: function (errormessage) {
+                    toastr.error("An error occurred while geting the user for update: " + error);
+                }
+            });
+            return false;
+        }
+
+        // Function for updating pet's record
+        function Update() {
+            // check
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#fileUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+
+                fileData.append('userId', $('#userId').val()); // Include the categoryId for update
+                fileData.append('userName', $('#userName').val());
+                fileData.append('phone', $('#phone').val());
+                fileData.append('email', $('#email').val());
+                fileData.append('address', $('#address').val());
+                fileData.append('createdAt', $('#createdAt').val());
+
+                // Loop over files and add them to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append('ImageFile', files[i]);
+                }
+
+                // Update();
+                $.ajax({
+                    url: '/User/GetbyId/' + $('#userId').val(),
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        // alert(result);
+                        loadData();
+                        $('#myModal').modal('hide');
+                        clearTextBox();
+                        toastr.success("User updated successfully");
+                    },
+                    error: function (err) {
+                        // alert(err.statusText);
+                        toastr.error("Error while updating user!");
+                    }
+                });
+            } else {
+                // alert("FormData is not supported.");
+                toastr.error("FormData is not supported.");
+            }
+
+        }
+
+
+
+        function Delete(userId) {
+            // Show the SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, proceed with the deletion
+                    $.ajax({
+                        url: "/User/Delete/" + userId,
+                        type: "POST",
+                        dataType: "json",
+                        success: function (ajaxResult) {
+                            if (ajaxResult.success) {
+                                // // Redirect to the index page
+                                // window.location.href = '/Team/Index';
+                                loadData();
+
+                                // Show success message
+                                toastr.success(ajaxResult.message);
+
+
+                            } else {
+                                // Show error message
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: ajaxResult.message,
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            toastr.error("An error occurred while deleting the userId: " + errormessage.responseText);
+                        }
+                    });
+                }
+            });
+
+            // Prevent the default link behavior
+            return false;
+        }
+    </script>
+}
 
