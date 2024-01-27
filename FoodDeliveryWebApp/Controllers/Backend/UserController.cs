@@ -2,7 +2,10 @@
 using FoodDeliveryWebApp.Interfaces;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Repository;
+using FoodDeliveryWebApp.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
@@ -20,8 +23,8 @@ namespace FoodDeliveryWebApp.Controllers.Backend
         }
         public async Task<IActionResult> Index()
         {
-            IEnumerable<AppUser> user = await _userRepository.GetAll();
-            return View(user);
+            IEnumerable<AppUser> users = await _userRepository.GetAll();
+            return View(users);
         }
 
         [HttpGet]
@@ -32,18 +35,33 @@ namespace FoodDeliveryWebApp.Controllers.Backend
         }
 
         [HttpPost]
-        public IActionResult Create(AppUser newUser)
+        public IActionResult Create(UserViewModel newUserViewModel)
         {
             try
             {
+                // Convert UserViewModel to AppUser
+                var newUser = new AppUser
+                {
+                    // Map other properties as needed
+                    UserName = newUserViewModel.UserName,
+                    Phone = newUserViewModel.Phone,
+                    Address = newUserViewModel.Address,
+                    Email = newUserViewModel.Email,
+                    CreateAt = newUserViewModel.CreateAt,
+                    // ... map other properties ...
+
+                    // Set the password using ASP.NET Core Identity's password hasher
+                    PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, newUserViewModel.Password)
+                };
 
                 // Process the uploaded image only if it's provided
-                if (newUser.ImageFile != null && newUser.ImageFile.Length > 0)
+                if (newUserViewModel.ImageFile != null && newUserViewModel.ImageFile.Length > 0)
                 {
-                    string uniqueFileName = GetProfilePhotoFileName(newUser);
+                    string uniqueFileName = GetProfilePhotoFileName(newUserViewModel);
                     newUser.ImageUrl = uniqueFileName;
                 }
-                // Save the new team
+
+                // Save the new user
                 _userRepository.Add(newUser);
                 _userRepository.Save();
 
@@ -57,22 +75,10 @@ namespace FoodDeliveryWebApp.Controllers.Backend
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(string id)
-        {
-            var user = await _userRepository.GetById(id);
 
-            if (user == null)
-            {
-                // Return a JSON result for success
-                return Json(new { success = true, message = "User data not found!" });
-            }
-
-            return View(user);
-        }
 
         [HttpGet]
-        public IActionResult GetbyId(string id)
+        public IActionResult Edit(string id)
         {
             try
             {
@@ -81,6 +87,16 @@ namespace FoodDeliveryWebApp.Controllers.Backend
                 {
                     return NotFound(new { error = "User not found" });
                 }
+
+                //var userDto = new UserViewModel
+                //{
+                //    Id = user.Id,
+                //    UserName = user.UserName,
+
+                //};
+
+                //var serializedUser = JsonConvert.SerializeObject(userDto);
+                //return Content(serializedUser, "application/json");
                 return Json(user);
             }
             catch (Exception ex)
@@ -90,8 +106,11 @@ namespace FoodDeliveryWebApp.Controllers.Backend
             }
         }
 
+       
+
+
         [HttpPost]
-        public async Task<IActionResult> GetbyId(string id, AppUser updatedUser)
+        public async Task<IActionResult> Update(string id, UserViewModel updatedUser)
         {
             try
             {
@@ -105,8 +124,9 @@ namespace FoodDeliveryWebApp.Controllers.Backend
 
                 // Update the properties of the existing team with the new values
                 existingUser.UserName = updatedUser.UserName;
-                existingUser.PhoneNumber = updatedUser.PhoneNumber;
+                existingUser.Phone = updatedUser.Phone;
                 existingUser.Email = updatedUser.Email;
+                existingUser.PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, updatedUser.Password);
                 existingUser.Address = updatedUser.Address;
                 existingUser.CreateAt = updatedUser.CreateAt;
                 // Update other properties as needed
@@ -170,7 +190,7 @@ namespace FoodDeliveryWebApp.Controllers.Backend
             }
         }
 
-        public string GetProfilePhotoFileName(AppUser user)
+        public string GetProfilePhotoFileName(UserViewModel user)
         {
             string uniqueFileName = null;
 

@@ -106,6 +106,11 @@ namespace FoodDeliveryWebApp.Controllers.Auth
 
         }
 
+        public IActionResult ProfileUser()
+        {
+            return View();
+        }
+
 
 
         public IActionResult Register()

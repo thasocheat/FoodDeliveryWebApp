@@ -34,6 +34,9 @@
                     <table id="example" class="display" style="min-width: 845px">
                         <thead>
                             <tr>
+                                @* <th>
+                                    UserID
+                                </th> *@
                                 <th>
                                     User Name
                                 </th>
@@ -59,6 +62,9 @@
                         </tbody>
                         <tfoot>
                             <tr>
+                                @* <th>
+                                    UserID
+                                </th> *@
                                 <th>
                                     User Name
                                 </th>
@@ -103,7 +109,7 @@
                                 <div class="basic-form">
                                     <form id="formUpload" enctype="multipart/form-data">
                                         <div class="form-row">
-                                            <input type="hidden" class="form-control" id="userId" placeholder="Id" />
+                                            <input type="hidden" class="form-control" id="id" placeholder="Id" />
                                             <div class="form-group col-md-6">
                                                 <label>User Name</label>
                                                 <input type="text" class="form-control" placeholder="User Name" name="userName" id="userName" required>
@@ -111,17 +117,22 @@
 
                                             <div class="form-group col-md-6">
                                                 <label>Phone</label>
-                                                <input type="text" class="form-control" placeholder="Your phone number" name="phone" id="phone" required>
+                                                <input type="text" class="form-control" placeholder="User phone number" name="phone" id="phone" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label>Email</label>
-                                                <input type="text" class="form-control" placeholder="Your email" name="email" id="email" required>
+                                                <input type="email" class="form-control" placeholder="User email" name="email" id="email" required>
+                                            </div>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Password</label>
+                                                <input type="text" class="form-control" placeholder="User Password" name="password" id="password" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label>Address</label>
-                                                <textarea type="text" class="form-control" placeholder="Tell your address" rows="4" name="address" id="address"></textarea>
+                                                <textarea type="text" class="form-control" placeholder="User address" rows="4" name="address" id="address"></textarea>
                                             </div>
 
 
@@ -185,24 +196,29 @@
                 var userName = $('#userName').val();
                 var phone = $('#phone').val();
                 var email = $('#email').val();
+                var password = $('#password').val();
                 var address = $('#address').val();
                 var createdAt = $('#createdAt').val();
                 var fileUpload = $('#fileUpload').val();
 
                 if (!userName) {
-                    toastr.error("Please enter your name.");
+                    toastr.error("Please enter user name.");
                     return;
                 }
                 if (!phone) {
-                    toastr.error("Please enter your phone number.");
+                    toastr.error("Please enter user phone number.");
                     return;
                 }
                 if (!email) {
-                    toastr.error("Please enter your email.");
+                    toastr.error("Please enter user email.");
+                    return;
+                }
+                if (!password) {
+                    toastr.error("Please enter user password.");
                     return;
                 }
                 if (!address) {
-                    toastr.error("Please enter your address.");
+                    toastr.error("Please enter user address.");
                     return;
                 }
 
@@ -235,6 +251,7 @@
             $('#userName').val("");
             $('#phone').val("");
             $('#email').val("");
+            $('#password').val("");
             $('#address').val("");
             $('#createdAt').val("");
             $('#imagePreview').attr("src", "/Images/default.png");
@@ -268,32 +285,26 @@
 
                         // Format the createdAt date using toLocaleDateString
                         var formattedDate = new Date(users.createdAt).toLocaleDateString();
-
-                        var row = '<tr>' +
-                            '<td>' + users.userName + '</td>' +
-                            '<td>' + users.phone + '</td>' +
-                            '<td>' + users.email + '</td>' +
-                            '<td>' + users.address + '</td>' +
-
-
-                            '<td>';
-
                         // Add the default image path
                         var defaultImagePath = '/Images/default.png';
-
-                        // Check if users.imageUrl is not null, then include the image tag with users.imageUrl, otherwise use the default image
-                        if (users.imageUrl !== null) {
-                            row += '<img src="' + users.imageUrl + '" alt="Pet Image" style="max-width: 50px; max-height: 50px;">';
-                        } else {
-                            row += '<img src="' + defaultImagePath + '" alt="Default Image" style="max-width: 50px; max-height: 50px;">';
-                        }
-
-                        row += '</td>' +
-                            
-                            '<td>' + formattedDate + '</td>' +
-                            '<td><a href="#" class="btn btn-info btn-sm" onclick="return getbyID(' + users.userId + ')"><i class="fa fa-pencil fa-lg"></i>Edit</a> | <a href="#" class="btn btn-danger btn-sm" onclick="return Delete(' + users.userId + ')"><i class="fa fa-trash fa-lg"></i>Delete</a></td>' +
-                            // Add more columns as needed
-                            '</tr>';
+                        var row = `<tr>
+                            <td>${users.userName}</td>
+                            <td>${users.phone}</td>
+                            <td>${users.email}</td>
+                            <td>${users.address}</td>
+                            <td>
+                                <img src="${users.imageUrl || defaultImagePath}" alt="User Image" style="max-width: 50px; max-height: 50px;">
+                            </td>
+                            <td>${formattedDate}</td>
+                            <td>
+                                <a href="#" class="btn btn-info btn-sm" onclick="return Edit('${users.id}')">
+                                    <i class="fa fa-pencil fa-lg"></i>Edit
+                                </a> |
+                                <a href="#" class="btn btn-danger btn-sm" onclick="return Delete('${users.id}')">
+                                    <i class="fa fa-trash fa-lg"></i>Delete
+                                </a>
+                            </td>
+                        </tr>`;
 
                         tableBody.append(row);
 
@@ -323,6 +334,7 @@
                 fileData.append('userName', $('#userName').val());
                 fileData.append('phone', $('#phone').val());
                 fileData.append('email', $('#email').val());
+                fileData.append('password', $('#password').val());
                 fileData.append('address', $('#address').val());
                 fileData.append('createdAt', $('#createdAt').val());
 
@@ -345,8 +357,9 @@
                         clearTextBox();
                         toastr.success("User created successfully");
                     },
-                    error: function (err) {
+                    error: function (xhr, status, error) {
                         // alert(err.statusText);
+                        console.log(xhr.responseText);
                         toastr.error("Error while create new user!");
                     }
                 });
@@ -358,30 +371,30 @@
 
 
         // Function for getting the Data Based upon Employee ID
-        function getbyID(userId) {
-
+        function Edit(id) {
+            console.log("Received user ID: " + id);
 
             $.ajax({
-                url: "/User/GetbyId/" + userId,
+                url: "/User/Edit/" + id,
                 type: "GET",
                 contentType: "application/json;charset=UTF-8",
                 dataType: "json",
                 success: function (result) {
-                    $('#userId').val(result.userId);
+                    console.log(result);
+                    $('#id').val(result.id);
                     $('#userName').val(result.userName);
+                    $('#password').val(result.password);
                     $('#phone').val(result.phone);
                     $('#email').val(result.email);
                     $('#address').val(result.address);
-                    
+
                     // Format the createdAt date using toLocaleDateString
                     var formattedDate = new Date(result.createdAt).toLocaleDateString();
-
                     $('#createdAt').val(formattedDate);
 
                     // Set the image preview
                     var imagePreview = $('#imagePreview');
                     var defaultImagePath = '/Images/default.png';
-
 
                     if (result.imageUrl !== null) {
                         imagePreview.attr('src', result.imageUrl);
@@ -393,10 +406,10 @@
                     $('#btnUpdate').show();
                     $('#btnAdd').hide();
 
-                    toastr.success("Successfully geting the user for update");
+                    toastr.success("Successfully getting the user for update");
                 },
                 error: function (errormessage) {
-                    toastr.error("An error occurred while geting the user for update: " + error);
+                    toastr.error("An error occurred while geting the user for update: " + errormessage);
                 }
             });
             return false;
@@ -412,10 +425,11 @@
                 // Create FormData object
                 var fileData = new FormData();
 
-                fileData.append('userId', $('#userId').val()); // Include the categoryId for update
+                fileData.append('id', $('#id').val()); // Include the categoryId for update
                 fileData.append('userName', $('#userName').val());
                 fileData.append('phone', $('#phone').val());
                 fileData.append('email', $('#email').val());
+                fileData.append('password', $('#password').val());
                 fileData.append('address', $('#address').val());
                 fileData.append('createdAt', $('#createdAt').val());
 
@@ -426,7 +440,7 @@
 
                 // Update();
                 $.ajax({
-                    url: '/User/GetbyId/' + $('#userId').val(),
+                    url: '/User/Update/' + $('#Id').val(),
                     type: "POST",
                     contentType: false, // Not to set any content header
                     processData: false, // Not to process data
@@ -452,7 +466,7 @@
 
 
 
-        function Delete(userId) {
+        function Delete(id) {
             // Show the SweetAlert confirmation dialog
             Swal.fire({
                 title: 'Are you sure?',
@@ -466,7 +480,7 @@
                 if (result.isConfirmed) {
                     // If the user confirms, proceed with the deletion
                     $.ajax({
-                        url: "/User/Delete/" + userId,
+                        url: "/User/Delete/" + id,
                         type: "POST",
                         dataType: "json",
                         success: function (ajaxResult) {

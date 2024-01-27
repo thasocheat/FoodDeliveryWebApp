@@ -7,8 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Frontend\" />
-    <Folder Include="Helpers\" />
+    <Compile Remove="Frontend\**" />
+    <Compile Remove="Helpers\**" />
+    <Content Remove="Frontend\**" />
+    <Content Remove="Helpers\**" />
+    <EmbeddedResource Remove="Frontend\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Frontend\**" />
+    <None Remove="Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\Images\Users\" />
   </ItemGroup>
 
