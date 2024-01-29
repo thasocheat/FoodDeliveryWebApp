@@ -23,11 +23,15 @@
     <!-- Toastr -->
     <link rel="stylesheet" href="~/assets/vendor/toastr/css/toastr.min.css">
     @*<link href="../../Assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> *@
 
     <!-- Libraries Stylesheet -->
     <link href="~/frontend/lib/animate/animate.min.css" rel="stylesheet">
     <link href="~/frontend/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Pick date -->
+    <link rel="stylesheet" href="~/assets/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/assets/vendor/pickadate/themes/default.date.css">
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/frontend/css/bootstrap.min.css" rel="stylesheet">
@@ -105,6 +109,17 @@
                             var createFormUrl = '@Url.Action("AboutUs", "FrontPages")';
                             window.location.href = createFormUrl;
                         }
+                        function redirectToProfileUser() {
+                            // Assuming your create form action is named "Create"
+                            var createFormUrl = '@Url.Action("ProfileUser", "Account")';
+                            window.location.href = createFormUrl;
+                        }
+
+                        function showCartProducts() {
+                            // Assuming your create form action is named "Create"
+                            var createFormUrl = '@Url.Action("GetCartProducts", "FrontPages")';
+                            window.location.href = createFormUrl;
+                        }
 
                         
                         // function redirectToFrontViewProduct() {
@@ -134,6 +149,9 @@
                             var createFormUrl = '@Url.Action("Login", "Account")';
                             window.location.href = createFormUrl;
                         }
+
+                        
+                       
                     </script>
                 }
                 else
@@ -142,14 +160,16 @@
                         <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
                             <small class="fa fa-search text-body"></small>
                         </a>
-                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
+                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="#" onclick="redirectToProfileUser()">
                             <small class="fa fa-user text-body"></small>
                         </a>
-                        <a class="btn-sm-square bg-white rounded-circle ms-3" href="">
+                        <a class="btn-sm-square bg-white rounded-circle ms-3 position-relative" href="#" onclick="showCartProducts()">
                             <small class="fa fa-shopping-bag text-body"></small>
+                            <span id="cartItemCountContainer"></span>
                         </a>
-                        
+
                     </div>
+
 
                     @if (User.Identity.IsAuthenticated && User.IsInRole("admin") || User.Identity.IsAuthenticated && User.IsInRole("staff"))
                     {
@@ -196,6 +216,26 @@
             else if (ViewData["PageType"] == "ProfileUser")
             {
 
+            }
+            else if (ViewData["PageType"] == "ProductDetail")
+            {
+
+            } 
+            else if (ViewData["PageType"] == "CartPage")
+            {
+
+            }
+            else if (ViewData["PageType"] == "ProfileUser")
+            {
+                @Html.Partial("../Account/Partials/ProfileTab.cshtml")
+            }
+            else if (ViewData["PageType"] == "PasswordTab")
+            {
+                @Html.Partial("../Account/Partials/PasswordTab.cshtml")
+            }
+            else if (ViewData["PageType"] == "OrderHistoryTab")
+            {
+                @Html.Partial("../Account/Partials/OrderHistoryTab.cshtml")
             }
             else
             {             
@@ -381,16 +421,69 @@
     <script src="~/frontend/lib/waypoints/waypoints.min.js"></script>
     <script src="~/frontend/lib/owlcarousel/owl.carousel.min.js"></script>
 
+    <!-- pickdate -->
+    <script src="~/assets/vendor/pickadate/picker.js"></script>
+    <script src="~/assets/vendor/pickadate/picker.time.js"></script>
+    <script src="~/assets/vendor/pickadate/picker.date.js"></script>
 
+    <!-- Pickdate -->
+    <script src="~/assets/js/plugins-init/pickadate-init.js"></script>
+
+    <!-- All init script -->
+    <script src="~/assets/js/plugins-init/toastr-init.js"></script>
+
+    <!-- Toastr -->
+    <script src="~/assets/vendor/toastr/js/toastr.min.js"></script>
+    <script src="~/assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+
+	<script src="~/js/script.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        $(document).ready(function (){
+            updateCartItemCount();
+
+            function updateCartItemCount() {
+                $.ajax({
+                    url: '/FrontPages/CountCarts',
+                    type: 'GET',
+                    success: function (data) {
+                        // Check if CartItemCount is present in the response
+                        console.log(data);
+                        if (data && data.cartItemCount !== undefined) {
+                            // Update the UI with the cart count
+                            $('#cartItemCountContainer').html(
+                                `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                ${data.cartItemCount}
+                                <span class="visually-hidden">unread messages</span>
+                            </span>`
+                            );
+                        } else {
+                            // No cart found, show 0
+                            $('#cartItemCountContainer').html(
+                                `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0
+                                <span class="visually-hidden">unread messages</span>
+                            </span>`
+                            );
+                        }
+                        
+                    },
+                    error: function () {
+                        console.error('Error fetching cart count.');
+                    }
+                });
+            }
+
+            
+
+        });
+    </script>
 
 	<!-- All init script -->
 	<script src="~/js/script.js"></script>
     <script src="~/assets/js/plugins-init/toastr-init.js"></script>
 	<script src="~/js/script.js"></script>
-    <!-- Toastr -->
-    <script src="~/assets/vendor/toastr/js/toastr.min.js"></script>
-    <script src="~/assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    
 	<script src="~/js/script.js"></script>
     <!-- Template Javascript -->
     <script src="~/frontend/js/main.js"></script>

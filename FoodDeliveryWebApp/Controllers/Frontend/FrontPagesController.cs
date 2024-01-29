@@ -1,7 +1,10 @@
 ﻿using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FoodDeliveryWebApp.Controllers.Frontend
 {
@@ -37,6 +40,185 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
 
 			return View(viewModel);
         }
+
+        public IActionResult CheckLogin()
+        {
+            bool isLoggedIn = User.Identity.IsAuthenticated;
+            return Json(isLoggedIn);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult AddToCart(int productId)
+        {
+            // Get the current user logged-in 
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Check if the product and user is exist
+            var product = _context.Products.Find(productId);
+            var user = _context.Users.Find(userId);
+
+            if (product == null || user == null)
+            {
+                return Json(new { success = false, message = "Product or user not found." });
+            }
+
+            // Check if the product is already in the user's cart
+            var existingCartItem = _context.Carts
+                .Where(c => c.ProductId == productId && c.UserId == userId)
+                .FirstOrDefault();
+
+            if(existingCartItem != null)
+            {
+                // Product already in your cart
+                existingCartItem.Quantity++;
+                return Json(new { success = true, message = "Product alreaady in your cart." });
+            }
+            else
+            {
+                // If not, add the product to the cart
+                var newCartItem = new Cart
+                {
+                    ProductId = productId,
+                    UserId = userId,
+                    Quantity = 1
+                };
+
+                _context.Carts.Add(newCartItem);
+            }
+
+            
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Product added to cart successfully." });
+        }
+
+        [HttpGet]
+        public IActionResult ProductDetail(int productId)
+        {
+            // Retrieve product details from the database based on id
+            var product = _context.Products
+                .Include(p => p.Category).FirstOrDefault(p => p.ProductId == productId);
+
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult IsProductInCart(int productId)
+        {
+            // Get the current user logged-in 
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Check if the product is in the user's cart
+            var isInCart = _context.Carts
+                .Any(c => c.ProductId == productId && c.UserId == userId);
+
+            return Json(isInCart);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult RemoveFromCart(int productId)
+        {
+            // Get the current user logged-in 
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Check if the product and user exist
+            var product = _context.Products.Find(productId);
+            var user = _context.Users.Find(userId);
+
+            if (product == null || user == null)
+            {
+                return Json(new { success = false, message = "Product or user not found." });
+            }
+
+            // Check if the product is in the user's cart
+            var existingCartItem = _context.Carts
+                .Where(c => c.ProductId == productId && c.UserId == userId)
+                .FirstOrDefault();
+
+            if (existingCartItem != null)
+            {
+                // If the product is in the cart, remove it
+                _context.Carts.Remove(existingCartItem);
+                _context.SaveChanges();
+
+                return Json(new { success = true, message = "Product removed from your cart." });
+            }
+            else
+            {
+                // Product is not in the cart
+                return Json(new { success = false, message = "Product is not in your cart." });
+            }
+        }
+
+
+        [Authorize]
+        public IActionResult CountCarts()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Get the count of products in the user's cart
+            int cartItemCount = _context.Carts
+                .Where(c => c.UserId == userId)
+                .Sum(c => c.Quantity);
+
+            return Json(new { CartItemCount = cartItemCount });
+
+        }
+
+        public IActionResult GetCartProducts()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Assuming you have an exchange rate (e.g., 1 USD = 4100 KHR)
+            double exchangeRate = 4100;
+
+            // Get the cart items for the user
+            var cartItems = _context.Carts
+                .Where(c => c.UserId == userId)
+                .Select(c => new CartViewModel
+                {
+                    ImageUrl = c.Product.ImageUrl,
+                    Name = c.Product.Name,
+                    Description = c.Product.Description,
+                    FormattedPrice = $"{c.Product.Price:C}", // Format price as currency
+                    Quantity = c.Quantity,
+                    FormattedTotal = $"{c.Quantity * c.Product.Price:C}", // Format total as currency
+                    KhmerPrice = c.Product.Price * exchangeRate,
+                })
+                .ToList();
+
+            return View(cartItems);
+        }
+
+        //public IActionResult GetCartItems()
+        //{
+        //    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //    // Get the cart items for the user
+        //    var cartItems = _context.Carts
+        //        .Where(c => c.UserId == userId)
+        //        .Select(c => new
+        //        {
+        //            c.Product.ImageUrl,
+        //            c.Product.Name,
+        //            c.Product.Description,
+        //            FormattedPrice = $"{c.Product.Price:C}", // Format price as currency
+        //            c.Quantity,
+        //            FormattedTotal = $"{c.Quantity * c.Product.Price:C}" // Format total as currency
+        //        })
+        //        .ToList();
+
+        //    return Json(cartItems);
+        //}
 
         [HttpGet]
         public IActionResult GetFilteredProducts(int categoryId)

@@ -1,21 +1,25 @@
 ﻿using FoodDeliveryWebApp.Data;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Controllers.Auth
-{    
+{
+    //[Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IWebHostEnvironment _webHost;
         private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IWebHostEnvironment webHost)
         {
             _context = context;
             _signInManager = signInManager;
+            _webHost = webHost;
             _userManager = userManager;
         }
 
@@ -55,7 +59,7 @@ namespace FoodDeliveryWebApp.Controllers.Auth
 
             // Get user id
             var user = await _userManager.FindByEmailAsync(loginVM.Email);
-            if(user != null)
+            if (user != null)
             {
                 var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
                 if (result.Succeeded)
@@ -66,18 +70,18 @@ namespace FoodDeliveryWebApp.Controllers.Auth
                     var roles = await _userManager.GetRolesAsync(user);
                     if (roles.Contains("Admin"))
                     {
-						return Json(new { success = true, message = "Admin login successful", redirectUrl = Url.Action("Index", "Dashboard") });
-					}else if (roles.Contains("Staff"))
+                        return Json(new { success = true, message = "Admin login successful", redirectUrl = Url.Action("Index", "Dashboard") });
+                    } else if (roles.Contains("Staff"))
                     {
-						return Json(new { success = true, message = "Staff login successful", redirectUrl = Url.Action("Index", "Dashboard") });
+                        return Json(new { success = true, message = "Staff login successful", redirectUrl = Url.Action("Index", "Dashboard") });
 
                     }
                     else
                     {
-						return Json(new { success = true, message = "Login successful", redirectUrl = Url.Action("Index", "Home") });
+                        return Json(new { success = true, message = "Login successful", redirectUrl = Url.Action("Index", "Home") });
 
-					}
-				}
+                    }
+                }
 
                 if (result.IsLockedOut)
                 {
@@ -106,11 +110,162 @@ namespace FoodDeliveryWebApp.Controllers.Auth
 
         }
 
-        public IActionResult ProfileUser()
+        [HttpGet]
+        public async Task<IActionResult> ProfileUser()
         {
-            return View();
+            // Get the currently logged-id user
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (currentUser == null)
+            {
+                // Redirect to login page if the user is not logged in
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Get the user data
+            var userViewModel = new UserViewModel
+            {
+                UserName = currentUser.UserName,
+                Phone = currentUser.Phone,
+                Email = currentUser.Email,
+                Address = currentUser.Address,
+                CreateAt = currentUser.CreateAt,
+                ImageUrl = currentUser.ImageUrl,
+            };
+
+            return View(userViewModel);
         }
 
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePassword(UserViewModel model)
+        {
+            try
+            {
+                // Get the current user
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                if (currentUser == null)
+                {
+                    // User not found
+                    return Json(new { success = false, message = "User not found" });
+                }
+
+                // Verify the old password
+                var result = await _userManager.ChangePasswordAsync(currentUser, model.OldPassword, model.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    // Password updated successfully
+                    await _signInManager.SignInAsync(currentUser, isPersistent: false);
+                    return Json(new { success = true, message = "Password updated successfully" });
+                }
+                else
+                {
+                    // Password update failed
+                    return Json(new { success = false, message = "Invalid old password or password update failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return an error response
+                // Log the exception details
+                return Json(new { success = false, error = "Internal Server Error" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfileAjax(UserViewModel updatedProfile)
+        {
+            try
+            {
+                // Get the currently logged-in user
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                if (currentUser == null)
+                {
+                    // Redirect to login page or handle the case where the user is not logged in
+                    return Json(new { success = false, message = "User not found" });
+                }
+
+                // Update the properties of the current user with the new values
+                currentUser.UserName = updatedProfile.UserName;
+                currentUser.Phone = updatedProfile.Phone;
+                currentUser.Email = updatedProfile.Email;
+                currentUser.Address = updatedProfile.Address;
+                currentUser.CreateAt = updatedProfile.CreateAt;
+                // Update other properties as needed
+
+                // Process the updated image only if a new image is provided
+                if (updatedProfile.ImageFile != null && updatedProfile.ImageFile.Length > 0)
+                {
+                    // Delete the existing image file
+                    DeleteImageFile(currentUser.ImageUrl);
+
+                    string uniqueFileName = GetProfilePhotoFileName(updatedProfile);
+                    currentUser.ImageUrl = uniqueFileName;
+                }
+
+                // Save the changes to the database
+                await _userManager.UpdateAsync(currentUser);
+
+                return Json(new { success = true, message = "Profile updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return an error response
+                // Log the exception details
+                return Json(new { success = false, error = "Internal Server Error" });
+            }
+        }
+
+        private void DeleteImageFile(string imageUrl)
+        {
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                string imagePath = Path.Combine(_webHost.WebRootPath, imageUrl.TrimStart('/'));
+
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+        }
+
+        public string GetProfilePhotoFileName(UserViewModel user)
+        {
+            string uniqueFileName = null;
+
+            // Process the uploaded image only if it's provided
+            if (user.ImageFile != null && user.ImageFile.Length > 0)
+            {
+                // Ensure _webHost.WebRootPath is not null
+                if (!string.IsNullOrEmpty(_webHost.WebRootPath))
+                {
+                    // Combine the web root path with the "Images/Teams" folder
+                    string uploadsFolder = Path.Combine(_webHost.WebRootPath, "Images/Users");
+
+                    // Generate a unique file name
+                    string fileName = Path.GetFileName(user.ImageFile.FileName);
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(user.ImageFile.FileName);
+
+                    // Combine the uploads folder with the unique file name
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    // Save the uploaded file to the "wwwroot/Images/Teams" folder
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        user.ImageFile.CopyTo(fileStream);
+                    }
+
+                    // Include the relative path in the ImageUrl
+                    return $"/Images/Users/{uniqueFileName}";
+                }
+            }
+
+            return uniqueFileName;
+        }
 
 
         public IActionResult Register()

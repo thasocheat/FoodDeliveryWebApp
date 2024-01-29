@@ -26,6 +26,16 @@ namespace FoodDeliveryWebApp.ViewModels
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Display(Name = "Old Password")]
+        [Required]
+        [DataType(DataType.Password)]
+        public string OldPassword { get; set; }
+
+        [Display(Name = "New Password")]
+        [Required]
+        [DataType(DataType.Password)]
+        public string NewPassword { get; set; }
+
         [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "Confirm password is required")]
         [DataType(DataType.Password)]

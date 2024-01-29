@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-	//[Authorize]
-	public class ProductController : Controller
+    [Authorize]
+    public class ProductController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;

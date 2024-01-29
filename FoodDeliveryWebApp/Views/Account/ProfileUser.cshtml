@@ -1,4 +1,4 @@
-﻿
+﻿@model FoodDeliveryWebApp.ViewModels.UserViewModel
 @{
     ViewData["Title"] = "ProfileUser";
     ViewData["PageType"] = "ProfileUser";
@@ -9,41 +9,78 @@
 }
 
 <style>
-    .image-container {
-        position: relative;
+    .img-account-profile {
+        height: 10rem;
     }
 
-    .image {
-        opacity: 1;
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+        .card .card-header {
+            font-weight: 500;
+        }
+
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+
+    .form-control, .dataTable-input {
         display: block;
         width: 100%;
-        height: auto;
-        transition: .5s ease;
-        backface-visibility: hidden;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #69707a;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #c5ccd6;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.35rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
 
-    .middle {
-        transition: .5s ease;
-        opacity: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        text-align: center;
+    .nav-borders .nav-link.active {
+        color: #0061f2;
+        border-bottom-color: #0061f2;
     }
 
-    .image-container:hover .image {
-        opacity: 0.3;
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
     }
 
-    .image-container:hover .middle {
-        opacity: 1;
+    .card-header{
+        color: #69707a;
+    }
+
+    label {
+        color: #69707a;
     }
 </style>
-@* <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> *@
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-@* <link rel="stylesheet" href="https://bootswatch.com/4/simplex/bootstrap.min.css" /> *@
+
 
 
 <div class="container-xxl py-5">
@@ -51,155 +88,316 @@
     </div>
 </div>
 
-<div class="container-xxl py-5">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-
-                <div class="card-body">
-                    <div class="card-title mb-4">
-                        <div class="d-flex justify-content-start">
-                            <div class="image-container">
-                                <img src="http://placehold.it/150x150" id="imgProfile" style="width: 150px; height: 150px" class="img-thumbnail" />
-                                <div class="middle">
-                                    <input type="button" class="btn btn-secondary" id="btnChangePicture" value="Change" />
-                                    <input type="file" style="display: none;" id="profilePicture" name="file" />
-                                </div>
-                            </div>
-                            <div class="userData ml-3">
-                                <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold"><a href="javascript:void(0);">Some Name</a></h2>
-                                <h6 class="d-block"><a href="javascript:void(0)">1,500</a> Video Uploads</h6>
-                                <h6 class="d-block"><a href="javascript:void(0)">300</a> Blog Posts</h6>
-                            </div>
-                            <div class="ml-auto">
-                                <input type="button" class="btn btn-primary d-none" id="btnDiscard" value="Discard Changes" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="basicInfo-tab" data-toggle="tab" href="#basicInfo" role="tab" aria-controls="basicInfo" aria-selected="true">Basic Info</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="connectedServices-tab" data-toggle="tab" href="#connectedServices" role="tab" aria-controls="connectedServices" aria-selected="false">Connected Services</a>
-                                </li>
-                            </ul>
-                            <div class="tab-content ml-1" id="myTabContent">
-                                <div class="tab-pane fade show active" id="basicInfo" role="tabpanel" aria-labelledby="basicInfo-tab">
 
 
-                                    <div class="row">
-                                        <div class="col-sm-3 col-md-2 col-5">
-                                            <label style="font-weight:bold;">Full Name</label>
-                                        </div>
-                                        <div class="col-md-8 col-6">
-                                            Jamshaid Kamran
-                                        </div>
-                                    </div>
-                                    <hr />
+<div class="container-xxl py-5 px-4 mt-4">
 
-                                    <div class="row">
-                                        <div class="col-sm-3 col-md-2 col-5">
-                                            <label style="font-weight:bold;">Birth Date</label>
-                                        </div>
-                                        <div class="col-md-8 col-6">
-                                            March 22, 1994.
-                                        </div>
-                                    </div>
-                                    <hr />
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab" aria-controls="password" aria-selected="false">Password</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="orderHistory-tab" data-bs-toggle="tab" data-bs-target="#orderHistory" type="button" role="tab" aria-controls="orderHistory" aria-selected="false">Order History</button>
+        </li>
+    </ul>
 
+    <div class="tab-content">
+        <div class="tab-pane active py-5 px-4 mt-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <form id="profileForm" enctype="multipart/form-data">
 
-                                    <div class="row">
-                                        <div class="col-sm-3 col-md-2 col-5">
-                                            <label style="font-weight:bold;">Something</label>
-                                        </div>
-                                        <div class="col-md-8 col-6">
-                                            Something
-                                        </div>
-                                    </div>
-                                    <hr />
-                                    <div class="row">
-                                        <div class="col-sm-3 col-md-2 col-5">
-                                            <label style="font-weight:bold;">Something</label>
-                                        </div>
-                                        <div class="col-md-8 col-6">
-                                            Something
-                                        </div>
-                                    </div>
-                                    <hr />
-                                    <div class="row">
-                                        <div class="col-sm-3 col-md-2 col-5">
-                                            <label style="font-weight:bold;">Something</label>
-                                        </div>
-                                        <div class="col-md-8 col-6">
-                                            Something
-                                        </div>
-                                    </div>
-                                    <hr />
-
-                                </div>
-                                <div class="tab-pane fade" id="connectedServices" role="tabpanel" aria-labelledby="ConnectedServices-tab">
-                                    Facebook, Google, Twitter Account that are connected to this account
-                                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <!-- Profile picture card-->
+                        <div class="card mb-4 mb-xl-0">
+                            <div class="card-header">Profile Picture</div>
+                            <div class="card-body text-center">
+                                <!-- Profile picture image-->
+                                <img id="imagePreview" class="img-account-profile rounded-circle mb-2" src="@Model.ImageUrl" alt="@Model.UserName">
+                                <!-- Profile picture help block-->
+                                <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                                <!-- Profile picture upload button-->
+                                <input class="btn btn-primary" type="file" id="fileUpload" name="ImageFile" accept="image/jpeg, image/png" onchange="showImagePreview(this,document.getElementById('imagePreview'))" />
+                                @* <button class="btn btn-primary" type="button">Upload new image</button> *@
                             </div>
                         </div>
                     </div>
+                    <div class="col-xl-8">
+                        <!-- Account details card-->
+                        <div class="card mb-4">
+                            <div class="card-header">Account Details</div>
+                            <div class="card-body">
+                                <!-- Form Group (username)-->
+                                <div class="mb-3">
+                                    <label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
+                                    <input class="form-control" id="inputUsername" type="text" placeholder="Enter your username" name="UserName" value="@Model.UserName">
+                                </div>
+                                <!-- Form Row-->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (first name)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputPhone">Phone</label>
+                                        <input class="form-control" id="inputPhone" type="text" placeholder="Enter your phone number" name="Phone" value="@Model.Phone">
+                                    </div>
+                                    <!-- Form Group (last name)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputEmail">Email</label>
+                                        <input class="form-control" id="inputEmail" type="email" placeholder="Enter your email" name="Email" value="@Model.Email">
+                                    </div>
+                                </div>
+                                <!-- Form Row        -->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (organization name)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputAddress">Address</label>
+                                        <input class="form-control" id="inputAddress" type="text" placeholder="Enter your address" name="Address" value="@Model.Address">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="createAt">Date</label>
+                                        <input type="text" class="datepicker-default form-control picker__input" value="@Model.CreateAt.ToString("yyyy-MM-dd")" name="createAt" id="createAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                    </div>
+                                    <!-- Form Group (location)-->
+                                    @*  <div class="col-md-6">
+                                    <label class="small mb-1" for="inputLocation">Password</label>
+                                    <input class="form-control" id="inputLocation" type="password" placeholder="Enter your new password" value="San Francisco, CA">
+                                    </div> *@
+                                </div>
 
 
+                                <!-- Save changes button-->
+                                <button class="btn btn-primary" type="submit">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </form>
+        </div>
+        <div class="tab-pane py-5 px-4 mt-4" id="password" role="tabpanel" aria-labelledby="password-tab">
+            <form id="passwordChange">
+                <div class="col-xl-8">
+                    <!-- Account details card-->
+                    <div class="card mb-4">
+                        <div class="card-header">Change Password</div>
+                        <div class="card-body"
+                            <!-- Form Row        -->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="oldPass">Old Password</label>
+                                    <input class="form-control" id="oldPass" type="password" placeholder="Enter your old password" name="oldPass" value="">
+                                </div>
+                                <!-- Form Group (location)-->
+                                 <div class="col-md-6">
+                                    <label class="small mb-1" for="newPass">New Password</label>
+                                    <input class="form-control" id="newPass" name="newPass" type="password" placeholder="Enter your new password" value="">
+                                </div>
+                                 <div class="col-md-6">
+                                    <label class="small mb-1" for="confirmPass">Confirm Password</label>
+                                    <input class="form-control" id="confirmPass" name="confirmPass" type="password" placeholder="Confirm your new password" value="">
+                                </div>
+                            </div>
 
-            </div>
+
+                            <!-- Save changes button-->
+                            <button class="btn btn-primary" type="submit">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane py-5 px-4 mt-4" id="orderHistory" role="tabpanel" aria-labelledby="orderHistory-tab">
+            <h1>Your order History is here</h1>
         </div>
     </div>
+
+    <script>
+        var firstTabEl = document.querySelector('#myTab li:last-child a')
+        var firstTab = new bootstrap.Tab(firstTabEl)
+
+        firstTab.show()
+    </script>
+    @* <!-- Account page navigation-->
+    <nav class="nav nav-borders">
+        <a class="nav-link active ms-0" id="profileTab" href="#" onclick="redirectToProfileTab()">Profile</a>
+        <a class="nav-link" href="#" id="passwordTab" onclick="redirectToPasswordTab()">Password</a>
+        <a class="nav-link" href="#" id="orderHistoryTab" onclick="redirectToOrderHistoryTab()">Order History</a>
+        <script>
+
+
+            function redirectToProfileTab() {
+                // Assuming your create form action is named "Create"
+                var createFormUrl = '@Url.Action("ProfileUser", "Account")';
+                window.location.href = createFormUrl;
+            }
+            function redirectToPasswordTab() {
+                // Assuming your create form action is named "Create"
+                var createFormUrl = '@Url.Action("PasswordTab", "Account")';
+                window.location.href = createFormUrl;
+            }
+            function redirectToOrderHistoryTab() {
+                // Assuming your create form action is named "Create"
+                var createFormUrl = '@Url.Action("OrderHistoryTab", "Account")';
+                window.location.href = createFormUrl;
+            }
+        </script>
+    </nav>
+    <hr class="mt-0 mb-4">
+
+    @if (ViewData["PageType"] == "ProfileUser")
+    {
+        @Html.Partial("ProfileTab.cshtml")
+    }
+    else if (ViewData["PageType"] == "PasswordTab")
+    {
+        @Html.Partial("PasswordTab.cshtml")
+    }
+    else if (ViewData["PageType"] == "OrderHistoryTab")
+    {
+        @Html.Partial("OrderHistoryTab.cshtml")
+    }
+
+    <div id="profileTabContent">
+       
+    </div>
+
+    <div id="passwordTabContent" class="tab-content">
+        <!-- Password tab content here -->
+    </div>
+
+    <div id="orderHistoryTabContent" class="tab-content">
+        <!-- Order History tab content here -->
+    </div> *@
+
 </div>
 
 @section Scripts
 {
     <script type="text/javascript">
-
         $(document).ready(function () {
-            $imgSrc = $('#imgProfile').attr('src');
-            function readURL(input) {
 
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
+            // Handle form submission using AJAX
+            $("#passwordChange").submit(function (e) {
+                e.preventDefault();
 
-                    reader.onload = function (e) {
-                        $('#imgProfile').attr('src', e.target.result);
-                    };
+                var oldPassword = $('#oldPass').val();
+                var newPassword = $('#newPass').val();
+                var confirmPassword = $('#confirmPass').val();
 
-                    reader.readAsDataURL(input.files[0]);
+                
+
+                // Check if user didn't provided the old password and new passowrd
+                if (!oldPassword) {
+                    // alert("Please! put the old password first.");
+                    toastr.error("Please! put the old password first.");
+                    // Swal.fire({
+                    //     // position: "top-end",
+                    //     icon: "warning",
+                    //     title: "Please! put the old password first.",
+                    //     showConfirmButton: true,
+                    //     timer: 1500
+                    // });
+                    return;
                 }
+                if (!newPassword) {
+                    alert("Please! put new password.");
+                    toastr.error("Please! put new password.");
+                    return;
+                }
+                if (!confirmPassword) {
+                    alert("Please! confirm password to change.");
+                    toastr.error("Please! confirm password to change.");
+                    return;
+                }
+
+                // Check if new password matches confirmation
+                if (newPassword !== confirmPassword) {
+                    alert("New password and confirm password do not match.");
+                    toastr.error("New password and confirm password do not match.");
+                    return;
+                }
+
+                updatePassword(oldPassword, newPassword, confirmPassword);
+
+
+
+            });
+
+
+            function updatePassword(oldPassword, newPassword, confirmPassword) {
+                // Use AJAX to submit the password update form
+                $.ajax({
+                    url: '/Account/UpdatePassword',
+                    type: 'POST',
+                    data: { oldPassword: oldPassword, newPassword: newPassword, confirmPassword: confirmPassword },
+                    success: function (response) {
+                        if (response.success) {
+                            alert("Password updated successfully");
+                        } else {
+                            alert("Error updating password: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        console.error('Error updating password.');
+                    }
+                });
             }
-            $('#btnChangePicture').on('click', function () {
-                // document.getElementById('profilePicture').click();
-                if (!$('#btnChangePicture').hasClass('changing')) {
-                    $('#profilePicture').click();
-                }
-                else {
-                    // change
-                }
+
+            // Handle form submission using AJAX
+            $("#profileForm").submit(function (e) {
+                e.preventDefault();
+
+                // Serialize form data
+                var formData = new FormData($(this)[0]);
+
+                // Make AJAX request
+                $.ajax({
+                    url: '/Account/UpdateProfileAjax/',
+                    // url: '@Url.Action("UpdateProfileAjax", "User")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // console.log("Update profile successfully" + response);
+                            $("#imagePreview").attr("src", response.imageUrl);
+                            // Update profile data in the UI
+                            updateProfileUI(response.updatedProfile);
+                            toastr.success("User updated successfully");
+                        } else {
+                           
+                            toastr.error("Error updating profile: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error while updating user!");
+                    }
+                });
             });
-            $('#profilePicture').on('change', function () {
-                readURL(this);
-                $('#btnChangePicture').addClass('changing');
-                $('#btnChangePicture').attr('value', 'Confirm');
-                $('#btnDiscard').removeClass('d-none');
-                // $('#imgProfile').attr('src', '');
-            });
-            $('#btnDiscard').on('click', function () {
-                // if ($('#btnDiscard').hasClass('d-none')) {
-                $('#btnChangePicture').removeClass('changing');
-                $('#btnChangePicture').attr('value', 'Change');
-                $('#btnDiscard').addClass('d-none');
-                $('#imgProfile').attr('src', $imgSrc);
-                $('#profilePicture').val('');
-                // }
-            });
+
+
+
+
+
         });
+
+        
+
+        function updateProfileUI(updatedProfile) {
+            // Update the profile fields with the new data
+            $("#inputUsername").val(updatedProfile.UserName);
+            $("#inputPhone").val(updatedProfile.Phone);
+            $("#inputEmail").val(updatedProfile.Email);
+            $("#inputAddress").val(updatedProfile.Address);
+            $("#createAt").val(updatedProfile.CreateAt);
+
+            // Optionally, update the profile picture
+            $("#imagePreview").attr("src", updatedProfile.ImageUrl);
+        }
+       
 
     </script>
 }

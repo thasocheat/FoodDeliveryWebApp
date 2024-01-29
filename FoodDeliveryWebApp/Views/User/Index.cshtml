@@ -112,33 +112,33 @@
                                             <input type="hidden" class="form-control" id="id" placeholder="Id" />
                                             <div class="form-group col-md-6">
                                                 <label>User Name</label>
-                                                <input type="text" class="form-control" placeholder="User Name" name="userName" id="userName" required>
+                                                <input type="text" class="form-control" placeholder="User Name" name="UserName" id="userName" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label>Phone</label>
-                                                <input type="text" class="form-control" placeholder="User phone number" name="phone" id="phone" required>
+                                                <input type="text" class="form-control" placeholder="User phone number" name="Phone" id="phone" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label>Email</label>
-                                                <input type="email" class="form-control" placeholder="User email" name="email" id="email" required>
+                                                <input type="email" class="form-control" placeholder="User email" name="Email" id="email" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label>Password</label>
-                                                <input type="text" class="form-control" placeholder="User Password" name="password" id="password" required>
+                                                <input type="text" class="form-control" placeholder="User Password" name="Password" id="password" required>
                                             </div>
 
                                             <div class="form-group col-md-6">
                                                 <label>Address</label>
-                                                <textarea type="text" class="form-control" placeholder="User address" rows="4" name="address" id="address"></textarea>
+                                                <textarea type="text" class="form-control" placeholder="User address" rows="4" name="aAdress" id="address"></textarea>
                                             </div>
 
 
                                             <div class="form-group col-md-6">
                                                 <label>Date</label>
-                                                <input type="text" class="datepicker-default form-control picker__input" name="createdAt" id="createdAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
+                                                <input type="text" class="datepicker-default form-control picker__input" name="CreateAt" id="createAt" readonly="" aria-haspopup="true" aria-expanded="false" aria-readonly="false" aria-owns="datepicker_root" required>
                                             </div>
 
 
@@ -198,7 +198,7 @@
                 var email = $('#email').val();
                 var password = $('#password').val();
                 var address = $('#address').val();
-                var createdAt = $('#createdAt').val();
+                var createAt = $('#createAt').val();
                 var fileUpload = $('#fileUpload').val();
 
                 if (!userName) {
@@ -253,7 +253,7 @@
             $('#email').val("");
             $('#password').val("");
             $('#address').val("");
-            $('#createdAt').val("");
+            $('#createAt').val("");
             $('#imagePreview').attr("src", "/Images/default.png");
             // For file input
             var fileInput = $('#fileUpload');
@@ -284,7 +284,7 @@
                     data.forEach(function (users) {
 
                         // Format the createdAt date using toLocaleDateString
-                        var formattedDate = new Date(users.createdAt).toLocaleDateString();
+                        var formattedDate = new Date(users.createAt).toLocaleDateString();
                         // Add the default image path
                         var defaultImagePath = '/Images/default.png';
                         var row = `<tr>
@@ -336,7 +336,7 @@
                 fileData.append('email', $('#email').val());
                 fileData.append('password', $('#password').val());
                 fileData.append('address', $('#address').val());
-                fileData.append('createdAt', $('#createdAt').val());
+                fileData.append('createAt', $('#createAt').val());
 
                 // Looping over all files and add it to FormData object
                 for (var i = 0; i < files.length; i++) {
@@ -389,8 +389,8 @@
                     $('#address').val(result.address);
 
                     // Format the createdAt date using toLocaleDateString
-                    var formattedDate = new Date(result.createdAt).toLocaleDateString();
-                    $('#createdAt').val(formattedDate);
+                    var formattedDate = new Date(result.createAt).toLocaleDateString();
+                    $('#createAt').val(formattedDate);
 
                     // Set the image preview
                     var imagePreview = $('#imagePreview');
@@ -431,7 +431,7 @@
                 fileData.append('email', $('#email').val());
                 fileData.append('password', $('#password').val());
                 fileData.append('address', $('#address').val());
-                fileData.append('createdAt', $('#createdAt').val());
+                fileData.append('createAt', $('#createAt').val());
 
                 // Loop over files and add them to FormData object
                 for (var i = 0; i < files.length; i++) {
@@ -440,7 +440,7 @@
 
                 // Update();
                 $.ajax({
-                    url: '/User/Update/' + $('#Id').val(),
+                    url: '/User/Update/' + $('#id').val(),
                     type: "POST",
                     contentType: false, // Not to set any content header
                     processData: false, // Not to process data

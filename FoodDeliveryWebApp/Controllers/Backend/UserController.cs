@@ -3,12 +3,14 @@ using FoodDeliveryWebApp.Interfaces;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.Repository;
 using FoodDeliveryWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
@@ -126,9 +128,23 @@ namespace FoodDeliveryWebApp.Controllers.Backend
                 existingUser.UserName = updatedUser.UserName;
                 existingUser.Phone = updatedUser.Phone;
                 existingUser.Email = updatedUser.Email;
-                existingUser.PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, updatedUser.Password);
+                // Check if a new password is provided
+                if (!string.IsNullOrEmpty(updatedUser.Password))
+                {
+                    // Set the new password using ASP.NET Core Identity's password hasher
+                    existingUser.PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, updatedUser.Password);
+                }
+                //else
+                //{
+                //    existingUser.PasswordHash = existingUser.PasswordHash;
+                //}
                 existingUser.Address = updatedUser.Address;
-                existingUser.CreateAt = updatedUser.CreateAt;
+                
+                // Update date if a new data is provided
+                if(updatedUser.CreateAt != null)
+                {
+                    existingUser.CreateAt = updatedUser.CreateAt;
+                }
                 // Update other properties as needed
 
                 // Process the updated image only if a new image is provided

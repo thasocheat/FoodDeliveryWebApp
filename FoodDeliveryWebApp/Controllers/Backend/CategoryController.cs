@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryWebApp.Controllers.Backend
 {
-    //[Authorize]
-    //[Route("Category")]
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
