@@ -4,6 +4,7 @@ using FoodDeliveryWebApp.ViewModels;
 //using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryWebApp.Controllers.Auth
 {
@@ -135,6 +136,46 @@ namespace FoodDeliveryWebApp.Controllers.Auth
 
             return View(userViewModel);
         }
+
+        //[HttpGet]
+        //public IActionResult GetUserDetails()
+        //{
+        //    try
+        //    {
+        //        // Retrieve user details including payment information based on the authenticated user
+        //        string userId = User.Identity.Name;
+
+        //        // Retrieve user details from the database
+        //        var userDetails = _context.Users
+        //            .Where(u => u.Id == userId)
+        //            .Select(u => new
+        //            {
+        //                u.Name,
+        //                u.CardNo,         // Adjust property names based on your User model
+        //                u.ExpiryDate,
+        //                u.CvvNo,
+        //                u.Address,
+        //                u.PaymentMode
+        //                // Add other user-related properties as needed
+        //            })
+        //            .FirstOrDefault();
+
+        //        if (userDetails == null)
+        //        {
+        //            return Json(new { success = false, message = "User details not found" });
+        //        }
+
+        //        return Json(new { success = true, userDetails });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception for debugging purposes
+        //        Console.Error.WriteLine(ex);
+
+        //        // Handle exceptions
+        //        return Json(new { success = false, message = "Error retrieving user details" });
+        //    }
+        //}
 
 
 

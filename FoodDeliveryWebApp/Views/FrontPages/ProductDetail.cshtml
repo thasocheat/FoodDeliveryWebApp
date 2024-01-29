@@ -31,7 +31,7 @@
                 </a>
             </div>
             <div>
-                <button class="btn btn-outline-secondary btn-sm" type="button">Order and Checkout</button>
+                <button class="btn btn-outline-secondary btn-sm orderCheckoutBtn" type="submit">Order and Checkout</button>
             </div>
         </div>
     </div>
@@ -216,7 +216,81 @@
                 });
             }
 
-           
+
+            $('.orderCheckoutBtn').on('click', function () {
+                // Collect product ID, user ID, and payment details
+
+                // Send AJAX request to save order and payment
+                $.ajax({
+                    url: '/Orders/CreateOrder',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(orderData),
+                    success: function (orderResult) {
+                        console.log('Order placed successfully:', orderResult);
+
+                        // Redirect to a payment page or order confirmation page based on your logic
+                        window.location.href = '/Orders/PaymentPage'; // Replace with your URL
+
+                    },
+                    error: function () {
+                        console.error('Error placing order.');
+                        // Handle error
+                    }
+                });
+            });
+
+            // $('#orderCheckoutBtn').on('click', function () {
+            //     var quantity = parseInt($('input.form-control').val());
+            //     var productId = @Model.ProductId;
+            //     var userId = '@User.Identity.Name';
+
+            //     // Send AJAX request to get user details (modify with your endpoint)
+            //     $.ajax({
+            //         url: '/Account/GetUserDetails', // Replace with your endpoint to get user details
+            //         type: 'GET',
+            //         success: function (userDetails) {
+            //             // userDetails should contain the necessary user information including payment details
+
+            //             var paymentData = {
+            //                 Name: userDetails.Name,
+            //                 CardNo: userDetails.CardNo,
+            //                 ExpiryDate: userDetails.ExpiryDate,
+            //                 CvvNo: userDetails.CvvNo,
+            //                 Address: userDetails.Address,
+            //                 PaymentMode: userDetails.PaymentMode
+            //                 // Add other payment details as needed
+            //             };
+
+            //             var orderData = {
+            //                 ProductId: productId,
+            //                 Quantity: quantity,
+            //                 UserId: userId,
+            //                 Payment: paymentData
+            //             };
+
+            //             // Send AJAX request to save order and payment
+            //             $.ajax({
+            //                 url: '/Orders/CreateOrder',
+            //                 type: 'POST',
+            //                 contentType: 'application/json',
+            //                 data: JSON.stringify(orderData),
+            //                 success: function (orderResult) {
+            //                     console.log('Order placed successfully:', orderResult);
+            //                     // Handle success (e.g., redirect to order confirmation page)
+            //                 },
+            //                 error: function () {
+            //                     console.error('Error placing order.');
+            //                     // Handle error
+            //                 }
+            //             });
+            //         },
+            //         error: function () {
+            //             console.error('Error getting user details.');
+            //             // Handle error
+            //         }
+            //     });
+            // });
 
 
 

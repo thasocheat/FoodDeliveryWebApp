@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="~/assets/vendor/toastr/css/toastr.min.css">
     @*<link href="../../Assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">*@
     @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> *@
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" />
 
     <!-- Libraries Stylesheet -->
     <link href="~/frontend/lib/animate/animate.min.css" rel="stylesheet">
@@ -222,6 +223,10 @@
 
             } 
             else if (ViewData["PageType"] == "CartPage")
+            {
+
+            } 
+            else if (ViewData["PageType"] == "PaymentPage")
             {
 
             }
@@ -433,6 +438,8 @@
     <script src="~/assets/js/plugins-init/toastr-init.js"></script>
 
     <!-- Toastr -->
+    <sript src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></sript>
+    <script src="~/assets/js/plugins-init/toastr-init.js"></script>
     <script src="~/assets/vendor/toastr/js/toastr.min.js"></script>
     <script src="~/assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
 
@@ -481,7 +488,7 @@
 
 	<!-- All init script -->
 	<script src="~/js/script.js"></script>
-    <script src="~/assets/js/plugins-init/toastr-init.js"></script>
+    
 	<script src="~/js/script.js"></script>
     
 	<script src="~/js/script.js"></script>

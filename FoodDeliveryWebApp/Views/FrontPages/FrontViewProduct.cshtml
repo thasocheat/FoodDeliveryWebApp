@@ -49,13 +49,13 @@
                                         <div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">New</div>
                                     </div>
                                     <div class="text-center p-4">
-                                        <a class="d-block h5 mb-2" href="">@product.Name</a>
+                                        <a class="d-block h5 mb-2 view-detail-product" href="#" data-product-id="@product.ProductId">@product.Name</a>
                                         <span class="text-primary me-1">៛@(product.Price * 4000) / </span>
                                         <span class="text-primary me-1">$@product.Price</span>
                                     </div>
                                     <div class="d-flex border-top">
                                         <small class="w-50 text-center border-end py-2">
-                                            <a class="text-body" href="#" data-product-id="@product.ProductId"><i class="fa fa-eye text-primary me-2"></i>View detail</a>
+                                            <a class="text-body view-detail-product" href="#" data-product-id="@product.ProductId"><i class="fa fa-eye text-primary me-2"></i>View detail</a>
                                             <script>
                                                 function redirectToProductDetailPage() {
                                                     // Assuming your create form action is named "Create"
@@ -116,6 +116,7 @@
                     // Update the product list
                     // $('#filteredProductListContainer').empty();
                     updateProductList(data);
+                    IsProductInCart(productId);
                     // Add your code to append the new products to the list
                     // ...
                 });
@@ -152,10 +153,11 @@
                         // User is logged in
                         // alert('Product added to your cart.');
                         toastr.success("Product added to your cart.");
-                        console.log(isLoggedIn);
+                       
+                        // console.log(isLoggedIn);
                         addToCart(productId, button);
-                        updateCartItemCount();
-                        console.log(productId, button);
+                        // updateCartItemCount();
+                        // console.log(productId, button);
                     }else{
                         // User not logged in
                         toastr.error("Please log in to add the product to your cart.");
@@ -263,7 +265,7 @@
                 });
             }
 
-            $('.text-body').on('click', function () {
+            $('.view-detail-product').on('click', function () {
                 // Get the product ID from the clicked element's data attribute or another source
                 var productId = $(this).data('product-id');
 
@@ -316,30 +318,64 @@
                 // Iterate over the products and append them to the container
                 $.each(products, function (index, product) {
                     var productItem = $('<div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp">').append(
-                    $('<div class="product-item img-thumbnail">').append(
-                        $('<div class="position-relative bg-light overflow-hidden" style="height: 200px;">').append(
-                                $('<img class="img-fluid w-100" alt="' + product.name + '">').attr('src', product.imageUrl),
-                                $('<div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">').text('New')
-                            ),
-                            $('<div class="text-center p-4">').append(
-                                $('<a class="d-block h5 mb-2">').text(product.name),
-                                $('<span class="text-primary me-1">').text('$' + product.price),
-                                $('<span class="text-body text-decoration-line-through">').text('$29.00')
-                            ),
-                            $('<div class="d-flex border-top">').append(
-                                $('<small class="w-50 text-center border-end py-2">').append(
-                                    $('<a class="text-body" href="#">').html('<i class="fa fa-eye text-primary me-2"></i>View detail')
+                        $('<div class="product-item img-thumbnail">').append(
+                            $('<div class="position-relative bg-light overflow-hidden" style="height: 200px;">').append(
+                                    $('<img class="img-fluid w-100" alt="' + product.name + '">').attr('src', product.imageUrl),
+                                    $('<div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">').text('New')
                                 ),
-                                $('<small class="w-50 text-center py-2">').append(
-                                    $('<a class="text-body" href="#">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart')
+                                $('<div class="text-center p-4">').append(
+                                    $('<a class="d-block h5 mb-2">').text(product.name),
+                                    $('<span class="text-primary me-1">').text('$' + product.price),
+                                    $('<span class="text-body text-decoration-line-through">').text('$29.00')
+                                ),
+                                $('<div class="d-flex border-top">').append(
+                                    $('<small class="w-50 text-center border-end py-2">').append(
+                                        $('<a class="text-body" href="#">').html('<i class="fa fa-eye text-primary me-2"></i>View detail')
+                                    ),
+                                    $('<small class="w-50 text-center py-2">').append(
+                                        $('<a class="addToCartBtn text-body" href="#"  data-product-id="' + product.productId + '">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart')
+                                
+                                    ),
+                                    $('<small class="w-50 text-center py-2">').append(
+                                            $('<a class="removeFromCartBtn Btn text-body" href="#"  data-product-id="' + product.productId + '">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Remove from cart')
+
+                                    ),
                                 )
                             )
-                        )
-                    );
+                        );
+                           
 
                     productListContainer.append(productItem);
                 });
+
+            // Attach click event to cart buttons after updating the product list
+            attachCartButtonClickEvents();
             }
+
+        // Function to attach click events to cart buttons
+        function attachCartButtonClickEvents() {
+            // $('.cartBtn').off('click').on('click', function () {
+            //     var productId = $(this).data('product-id');
+            //     var button = $(this);
+
+                // Check if the product is in the cart
+                $.get('/FrontPages/IsProductInCart', { productId: productId }, function (isInCart) {
+                    if (isInCart) {
+                        // Product is in the cart, remove it
+                        removeFromCart(productId, button);
+                        // Product is in the cart, update button accordingly
+                        IsProductInCart(productId);
+                        updateProductList(products)
+                    } else {
+                        // Product is not in the cart, add it
+                        addToCart(productId, button);
+                        // Product is not in the cart, update button accordingly
+                        IsProductInCart(productId);
+                        updateProductList(products)
+                    }
+                });
+            // });
+        }
 
     </script>
 }
