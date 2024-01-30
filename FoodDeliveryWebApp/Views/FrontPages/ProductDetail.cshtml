@@ -1,4 +1,5 @@
-﻿@model FoodDeliveryWebApp.Models.Product
+﻿@using System.Security.Claims
+@model FoodDeliveryWebApp.Models.Product
 @{
     ViewData["Title"] = "Product Deatil Page";
     ViewData["PageType"] = "ProductDetail";
@@ -10,81 +11,83 @@
     </div>
 </div>
 
-<div class="container-xxl py-5">
-    <div class="row">
-        <div class="col-lg-6">
-            <img src="@Model.ImageUrl" class="img-fluid" alt="Product Image">
-        </div>
-        <div class="col-lg-6">
-            <h2 class="fw-bold">@Model.Name</h2>
-            <p class="text-muted">Category Name: <span class="badge rounded-pill bg-success">@Model.Category.CategoryName</span></p>
-            <h3 class="my-4">៛@(Model.Price * 4100) / $@Model.Price</h3>
-            <p class="mb-4">@Model.Description</p>
-            <div class="d-flex gap-3 mb-4">
-                <input type="number" class="form-control" value="1" style="max-width: 80px;">
-                @* <button class="btn btn-primary" type="button">Add to Cart</button> *@
-                <a class="addToCartBtn text-body btn btn-outline-success" href="#" data-product-id="@Model.ProductId">
-                    <i class="fa fa-shopping-bag text-primary me-2"></i>Add to Cart
-                </a>
-                <a class="removeFromCartBtn text-body btn btn-outline-success" href="#" data-product-id="@Model.ProductId" style="display: none;">
-                    <i class="fa fa-shopping-bag text-primary me-2"></i>Remove from Cart
-                </a>
+@* <form id="orderForm"> *@
+    <div class="container-xxl py-5">
+        <div class="row">
+            <div class="col-lg-6">
+                <img src="@Model.ImageUrl" class="img-fluid" alt="Product Image">
             </div>
-            <div>
-                <button class="btn btn-outline-secondary btn-sm orderCheckoutBtn" type="submit">Order and Checkout</button>
+            <div class="col-lg-6">
+                <h2 class="fw-bold">@Model.Name</h2>
+                <p class="text-muted">Category Name: <span class="badge rounded-pill bg-success">@Model.Category.CategoryName</span></p>
+                <h3 class="my-4">៛@(Model.Price * 4100) / $@Model.Price</h3>
+                <p class="mb-4">@Model.Description</p>
+                <div class="d-flex gap-3 mb-4">
+                    <input type="number" class="form-control" value="1" style="max-width: 80px;">
+                    @* <button class="btn btn-primary" type="button">Add to Cart</button> *@
+                    <a class="addToCartBtn text-body btn btn-outline-success" href="#" data-product-id="@Model.ProductId">
+                        <i class="fa fa-shopping-bag text-primary me-2"></i>Add to Cart
+                    </a>
+                    <a class="removeFromCartBtn text-body btn btn-outline-success" href="#" data-product-id="@Model.ProductId" style="display: none;">
+                        <i class="fa fa-shopping-bag text-primary me-2"></i>Remove from Cart
+                    </a>
+                </div>
+                <div>
+                    <button class="btn btn-outline-secondary btn-sm orderCheckoutBtn" type="submit">Order and Checkout</button>
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-tabs mt-5" id="productTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description"
+                        type="button" role="tab" aria-controls="description" aria-selected="true">
+                    Description
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button"
+                        role="tab" aria-controls="specs" aria-selected="false">
+                    Specifications
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button"
+                        role="tab" aria-controls="reviews" aria-selected="false">
+                    Reviews
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="productTabContent">
+            <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                <p class="mt-3">
+                    @Model.Description
+                </p>
+            </div>
+            <div class="tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                <table class="table mt-3">
+                    <tr>
+                        <th>Weight</th>
+                        <td>1kg</td>
+                    </tr>
+                    <tr>
+                        <th>Dimensions</th>
+                        <td>10 x 20 x 5 cm</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                <div class="mt-3">
+                    <h5>John Doe</h5>
+                    <p>I loved this product! It really changed the way I work.</p>
+                    <h5>Jane Smith</h5>
+                    <p>Great quality and excellent after-sales service.</p>
+
+                </div>
             </div>
         </div>
     </div>
-    <ul class="nav nav-tabs mt-5" id="productTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description"
-                    type="button" role="tab" aria-controls="description" aria-selected="true">
-                Description
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button"
-                    role="tab" aria-controls="specs" aria-selected="false">
-                Specifications
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button"
-                    role="tab" aria-controls="reviews" aria-selected="false">
-                Reviews
-            </button>
-        </li>
-    </ul>
-    <div class="tab-content" id="productTabContent">
-        <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-            <p class="mt-3">
-                @Model.Description
-            </p>
-        </div>
-        <div class="tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
-            <table class="table mt-3">
-                <tr>
-                    <th>Weight</th>
-                    <td>1kg</td>
-                </tr>
-                <tr>
-                    <th>Dimensions</th>
-                    <td>10 x 20 x 5 cm</td>
-                </tr>
-            </table>
-        </div>
-        <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-            <div class="mt-3">
-                <h5>John Doe</h5>
-                <p>I loved this product! It really changed the way I work.</p>
-                <h5>Jane Smith</h5>
-                <p>Great quality and excellent after-sales service.</p>
-
-            </div>
-        </div>
-    </div>
-</div>
-
+   @*  @Html.AntiForgeryToken()
+</form> *@
 @section Scripts
 {
     <script type="text/javascript">
@@ -219,26 +222,64 @@
 
             $('.orderCheckoutBtn').on('click', function () {
                 // Collect product ID, user ID, and payment details
+                var quantity = parseInt($('input.form-control').val()); // Get quantity from input
+                var productId = @Model.ProductId; // Get product ID from the model
+                var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
+                var productName = '@Model.Name';
+                var productPrice = @Model.Price;
+                var productImageUrl = '@Model.ImageUrl'; // Assuming you have an ImageUrl property in your model
 
-                // Send AJAX request to save order and payment
-                $.ajax({
-                    url: '/Orders/CreateOrder',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(orderData),
-                    success: function (orderResult) {
-                        console.log('Order placed successfully:', orderResult);
+                var orderData = {
+                    ProductId: productId,
+                    Quantity: quantity,
+                    UserId: userId,
+                    // ProductName: productName,
+                    // ProductPrice: productPrice,
+                    // ProductImageUrl: productImageUrl
+                };
 
-                        // Redirect to a payment page or order confirmation page based on your logic
-                        window.location.href = '/Orders/PaymentPage'; // Replace with your URL
+                console.log('Order Data:', orderData); // Log orderData for debugging
 
-                    },
-                    error: function () {
-                        console.error('Error placing order.');
-                        // Handle error
-                    }
-                });
+                // Store order information temporarily (using localStorage for simplicity)
+                localStorage.setItem('tempOrder', JSON.stringify(orderData));
+
+                // Encode each part of the order data for the query parameter
+                var encodedProductId = encodeURIComponent(productId);
+                var encodedQuantity = encodeURIComponent(quantity);
+                var encodedUserId = encodeURIComponent(userId);
+                // var encodedProductName = encodeURIComponent(productName);
+                // var encodedProductPrice = encodeURIComponent(productPrice);
+                // var encodedProductImageUrl = encodeURIComponent(productImageUrl);
+
+                // Redirect to the payment page with order data as query parameters
+                window.location.href = '/Orders/PaymentPage?' +
+                    'productId=' + encodedProductId +
+                    '&quantity=' + encodedQuantity +
+                    '&userId=' + encodedUserId;
+                    // '&productName=' + encodedProductName +
+                    // '&productPrice=' + encodedProductPrice +
+                    // '&productImageUrl=' + encodedProductImageUrl;
             });
+
+
+            // // Send AJAX request to save order and payment
+            // $.ajax({
+            //     url: '/Orders/CreateOrder',
+            //     type: 'POST',
+            //     contentType: 'application/json',
+            //     data: JSON.stringify(orderData),
+            //     success: function (orderResult) {
+            //         console.log('Order placed successfully:', orderResult);
+
+            //         // Redirect to a payment page or order confirmation page based on your logic
+            //         window.location.href = '/Orders/PaymentPage?orderId=' + orderResult.orderId; // Replace with your URL
+
+            //     },
+            //     error: function () {
+            //         console.error('Error placing order.');
+            //         // Handle error
+            //     }
+            // });
 
             // $('#orderCheckoutBtn').on('click', function () {
             //     var quantity = parseInt($('input.form-control').val());

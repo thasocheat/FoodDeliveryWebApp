@@ -27,5 +27,6 @@ namespace FoodDeliveryWebApp.Models
         public Product Product { get; set; }
         public AppUser AppUser { get; set; }
         public Payment Payment { get; set; }
+
     }
 }

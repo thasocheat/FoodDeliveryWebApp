@@ -1,8 +1,12 @@
-﻿
+﻿@using FoodDeliveryWebApp.ViewModels
+@model OrderItemViewModel
 @{
     ViewData["Title"] = "Payment Page";
     ViewData["PageType"] = "PaymentPage";
     // Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // var orderData = TempData["OrderData"] as Order;
+    var orderData = TempData["OrderData"] as OrderViewModel;
 }
 
 <style>
@@ -29,267 +33,358 @@
     .bold {
         font-weight: bold
     }
+
+    .card{
+    max-width: 1000px;
+    margin: 2vh;
+}
+.card-top{
+    padding: 0.7rem 5rem;
+}
+.card-top a{
+    float: left;
+    margin-top: 0.7rem;
+}
+#logo{
+    font-family: 'Dancing Script';
+    font-weight: bold;
+    font-size: 1.6rem;
+}
+/* .card-body{
+    padding: 0 5rem 5rem 5rem;
+    background-image: url("https://i.imgur.com/4bg1e6u.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+} */
+
+.row{
+    margin: 0;
+}
+.upper{
+    padding: 1rem 0;
+    justify-content: space-evenly;
+}
+#three{
+    border-radius: 1rem;
+        width: 22px;
+    height: 22px;
+    margin-right:3px;
+    border: 1px solid blue;
+    text-align: center;
+    display: inline-block;
+}
+#payment{
+    margin:0;
+    color: blue;
+}
+.icons{
+    margin-left: auto;
+}
+form span{
+    color: rgb(179, 179, 179);
+}
+form{
+    padding: 2vh 0;
+}
+input{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input:focus::-webkit-input-placeholder
+{
+      color:transparent;
+}
+.header{
+    font-size: 1.5rem;
+}
+.left{
+    background-color: #ffffff;
+    padding: 2vh;   
+}
+.left img{
+    width: 2rem;
+}
+.left .col-4{
+    padding-left: 0;
+}
+.right .item{
+    padding: 0.3rem 0;
+}
+.right{
+    background-color: #ffffff;
+    padding: 2vh;
+}
+.col-8{
+    padding: 0 1vh;
+}
+.lower{
+    line-height: 2;
+}
+.btn-order{
+    background-color: rgb(23, 4, 189);
+    border-color: rgb(23, 4, 189);
+    color: white;
+    width: 100%;
+    font-size: 0.7rem;
+    margin: 4vh 0 1.5vh 0;
+    padding: 1.5vh;
+    border-radius: 0;
+}
+
+.btn-order:focus {
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    -webkit-box-shadow: none;
+    -webkit-user-select: none;
+    transition: none; 
+}
+
+.btn-order:hover {
+    color: white;
+}
+a{
+    color: black;
+}
+a:hover{
+    color: black;
+    text-decoration: none;
+}
+input[type=checkbox]{
+    width: unset;
+    margin-bottom: unset;
+}
+#cvv{
+    background-image: linear-gradient(to left, rgba(255, 255, 255, 0.575) , rgba(255, 255, 255, 0.541)), url("https://img.icons8.com/material-outlined/24/000000/help.png");
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: center;
+} 
+#cvv:hover{
+
+}
 </style>
 
 <div class="container-xxl py-5">
-    <!-- For demo purpose -->
-    <div class="row mb-4">
-        <div class="col-lg-8 mx-auto text-center">
-            <h1 class="display-6">Bootstrap Payment Forms</h1>
+    <div class="container">
+    </div>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="card">
+        <div class="card-top border-bottom text-center">
+            <a href="#"> Back to shop</a>
+            <span id="logo">Your can pay here</span>
         </div>
-    </div> <!-- End -->
-    <div class="row">
-        <div class="col-lg-6 mx-auto">
-            <div class="card ">
-                <div class="card-header">
-                    <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
-                        <!-- Credit card form tabs -->
-                        <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
-                            <li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active "> <i class="fas fa-credit-card mr-2"></i> Credit Card </a> </li>
-                            <li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "> <i class="fab fa-paypal mr-2"></i> Paypal </a> </li>
-                            <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fas fa-mobile-alt mr-2"></i> Net Banking </a> </li>
-                        </ul>
-                    </div> <!-- End -->
-                    <!-- Credit card form content -->
-                    <div class="tab-content">
-                        <!-- credit card info-->
-                        <div id="credit-card" class="tab-pane fade show active pt-3">
-                            <form role="form" onsubmit="event.preventDefault()">
-                                <div class="form-group">
-                                    <label for="username">
-                                        <h6>Card Owner</h6>
-                                    </label> <input type="text" name="username" placeholder="Card Owner Name" required class="form-control ">
-                                </div>
-                                <div class="form-group">
-                                    <label for="cardNumber">
-                                        <h6>Card number</h6>
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="text" name="cardNumber" placeholder="Valid card number" class="form-control " required>
-                                        <div class="input-group-append"> <span class="input-group-text text-muted"> <i class="fab fa-cc-visa mx-1"></i> <i class="fab fa-cc-mastercard mx-1"></i> <i class="fab fa-cc-amex mx-1"></i> </span> </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <div class="form-group">
-                                            <label>
-                                                <span class="hidden-xs">
-                                                    <h6>Expiration Date</h6>
-                                                </span>
-                                            </label>
-                                            <div class="input-group"> <input type="number" placeholder="MM" name="" class="form-control" required> <input type="number" placeholder="YY" name="" class="form-control" required> </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group mb-4">
-                                            <label data-toggle="tooltip" title="Three digit CV code on the back of your card">
-                                                <h6>CVV <i class="fa fa-question-circle d-inline"></i></h6>
-                                            </label> <input type="text" required class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer"> <button type="button" class="subscribe btn btn-primary btn-block shadow-sm"> Confirm Payment </button>
-                            </form>
+        <div class="card-body">
+            <div class="row upper">
+                <span><i class="fa fa-check-circle-o"></i> Shopping bag</span>
+                <span><i class="fa fa-check-circle-o"></i> Order details</span>
+                <span id="payment"><span id="three">3</span>Payment</span>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="left border">
+                        <div class="row">
+                            <span class="header">Payment</span>
+                            <div class="icons">
+                                <img src="https://img.icons8.com/color/48/000000/visa.png" />
+                                <img src="https://img.icons8.com/color/48/000000/mastercard-logo.png" />
+                                <img src="https://img.icons8.com/color/48/000000/maestro.png" />
+                            </div>
                         </div>
-                    </div> <!-- End -->
-                    <!-- Paypal info -->
-                    <div id="paypal" class="tab-pane fade pt-3">
-                        <h6 class="pb-2">Select your paypal account type</h6>
-                        <div class="form-group "> <label class="radio-inline"> <input type="radio" name="optradio" checked> Domestic </label> <label class="radio-inline"> <input type="radio" name="optradio" class="ml-5">International </label></div>
-                        <p> <button type="button" class="btn btn-primary "><i class="fab fa-paypal mr-2"></i> Log into my Paypal</button> </p>
-                        <p class="text-muted"> Note: After clicking on the button, you will be directed to a secure gateway for payment. After completing the payment process, you will be redirected back to the website to view details of your order. </p>
-                    </div> <!-- End -->
-                    <!-- bank transfer info -->
-                    <div id="net-banking" class="tab-pane fade pt-3">
-                        <div class="form-group ">
-                            <label for="Select Your Bank">
-                                <h6>Select your Bank</h6>
-                            </label> <select class="form-control" id="ccmonth">
-                                <option value="" selected disabled>--Please select your Bank--</option>
-                                <option>Bank 1</option>
-                                <option>Bank 2</option>
-                                <option>Bank 3</option>
-                                <option>Bank 4</option>
-                                <option>Bank 5</option>
-                                <option>Bank 6</option>
-                                <option>Bank 7</option>
-                                <option>Bank 8</option>
-                                <option>Bank 9</option>
-                                <option>Bank 10</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <p> <button type="button" class="btn btn-primary "><i class="fas fa-mobile-alt mr-2"></i> Proceed Payment</button> </p>
-                        </div>
-                        <p class="text-muted">Note: After clicking on the button, you will be directed to a secure gateway for payment. After completing the payment process, you will be redirected back to the website to view details of your order. </p>
-                    </div> <!-- End -->
-                    <!-- End -->
+                        <form>
+                            <span>Cardholder's name:</span>
+                            <input id="cardholderName" placeholder="Linda Williams">
+                            <span>Card Number:</span>
+                            <input id="cardNumber" placeholder="0125 6780 4567 9909">
+                            <div class="row">
+                                <div class="col-4">
+                                    <span>Expiry date:</span>
+                                    <input id="expiryDate" placeholder="YY/MM">
+                                </div>
+                                <div class="col-4">
+                                    <span>CVV:</span>
+                                    <input id="cvv">
+                                </div>
+                            </div>
+                            <input type="checkbox" id="save_card" class="align-left">
+                            <label for="save_card">Save card details to wallet</label>
+                        </form>
+                    </div>
                 </div>
+                <div class="col-md-5">
+                    <div class="right border">
+                        <div class="header">Order Summary</div>
+
+                        
+                                <div class="row item">
+                            <div class="col-4 align-self-center"><img class="img-fluid" src="@Model.ProductImageUrl" alt="image name"></div>
+                                    <div class="col-8">
+                                        <div class="row"><b>Price</b></div>
+                                        <div class="row text-muted">Product name</div>
+                                        <div class="row">Qty: </div>
+                                    </div>
+                                </div>
+
+                                
+
+                            <hr>
+                            <div class="row lower">
+                                <div class="col text-left">Subtotal</div>
+                                <div class="col text-right">...</div>
+                            </div>
+                            <div class="row lower">
+                                <div class="col text-left">Delivery</div>
+                                <div class="col text-right">Free</div>
+                            </div>
+                            <div class="row lower">
+                                <div class="col text-left"><b>Total to pay</b></div>
+                                <div class="col text-right"><b>...</b></div>
+                            </div>
+                            <div class="row lower">
+                                <div class="col text-left"><a href="#"><u>Add promo code</u></a></div>
+                            </div>
+                        <button class="btn-order payButton" type="submit">Place order</button>
+                        <p class="text-muted text-center">Complimentary Shipping & Returns</p>
+                    </div>
+                </div>
+
             </div>
         </div>
+
+        <div>
+        </div>
     </div>
+</div>
 
     @section Scripts
     {
         <script type="text/javascript">
 
+        $(document).ready(function () {
+            // Retrieve stored order information
+            var tempOrder = JSON.parse(localStorage.getItem('tempOrder'));
+
+            // Handle payment details and order completion
+            $('.payButton').on('click', function () {
+                // Collect payment details from the user
+                var paymentData = {
+                    CardholderName: $('#cardholderName').val(),
+                    CardNumber: $('#cardNumber').val(),
+                    ExpiryDate: $('#expiryDate').val(),
+                    CVV: $('#cvv').val(),
+                };
+
+                // Validate payment details
+                if (!validatePaymentDetails(paymentData)) {
+                    // Display error message or handle invalid details
+                    return;
+                }
+
+                // Disable the pay button during processing
+                $(this).prop('disabled', true);
+
+                // Simulate processing delay (replace with actual AJAX request)
+                setTimeout(function () {
+                    // Continue with order placement
+                    placeOrder(tempOrder, paymentData);
+                }, 2000); // Simulated delay of 2 seconds (adjust as needed)
+            });
+
+            // Function to validate payment details
+            function validatePaymentDetails(paymentData) {
+                // Example: Add validation logic for card number, expiry date, and CVV
+                if (!isValidCardNumber(paymentData.CardNumber) || !isValidExpiryDate(paymentData.ExpiryDate) || !isValidCVV(paymentData.CVV)) {
+                    // Display error message or alert
+                    alert('Invalid payment details. Please check and try again.');
+                    return false;
+                }
+                return true;
+            }
+
+            // Function to check if the card number is valid (modify based on your validation logic)
+            function isValidCardNumber(cardNumber) {
+                // Example: Check if the card number follows a valid format
+                return /^\d{16}$/.test(cardNumber);
+            }
+
+            // Function to check if the expiry date is valid (modify based on your validation logic)
+            function isValidExpiryDate(expiryDate) {
+                // Example: Check if the expiry date follows a valid format
+                return /^\d{2}\/\d{2}$/.test(expiryDate);
+            }
+
+            // Function to check if the CVV is valid (modify based on your validation logic)
+            function isValidCVV(cvv) {
+                // Example: Check if the CVV follows a valid format
+                return /^\d{3,4}$/.test(cvv);
+            }
+
+            // Function to place the order (replace with actual AJAX request)
+            function placeOrder(orderData, paymentData) {
+                $.ajax({
+                    url: '/Orders/ProcessOrder',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ Order: orderData, Payment: paymentData }),
+                    success: function (orderResult) {
+                        console.log('Order placed successfully:', orderResult);
+
+                        // Display success message or redirect to a confirmation page
+                        alert('Order placed successfully!');
+                        window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+                    },
+                    error: function () {
+                        console.error('Error placing order.');
+                        // Handle error
+                    },
+                    complete: function () {
+                        // Re-enable the pay button after processing
+                        $('.payButton').prop('disabled', false);
+                    }
+                });
+            }
+        });
+
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip()
             })
 
-            // $(document).ready(function () {
+        // Use SweetAlert to confirm the order
+        // Swal.fire({
+        //     title: 'Confirm Order',
+        //     text: 'Are you sure you want to place this order?',
+        //     // icon: 'question',
+        //     showCancelButton: true,
+        //     confirmButtonText: 'Yes, place order',
+        //     cancelButtonText: 'Cancel',
+        // }).then((result) => {
+        //     if (result.isConfirmed) {
+        //         // Save order and payment details to the server
+        //         $.ajax({
+        //             url: '/Orders/CompleteOrder',
+        //             type: 'POST',
+        //             contentType: 'application/json',
+        //             data: JSON.stringify({ Order: tempOrder, Payment: paymentData }),
+        //             success: function (orderResult) {
+        //                 console.log('Order placed successfully:', orderResult);
 
-            //     initializeCartState();
-            //     updateCartItemCount();
-
-
-            //     $('.addToCartBtn').on('click', function () {
-            //         var button = $(this);
-            //         var productId = $(this).data('product-id');
-
-            //         // Check if user is logged in or not
-            //         $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
-            //             if (isLoggedIn) {
-            //                 // User is logged in
-            //                 // alert('Product added to your cart.');
-            //                 toastr.success("Product added to your cart.");
-            //                 console.log(isLoggedIn);
-            //                 addToCart(productId, button);
-            //                 updateCartItemCount();
-            //                 console.log(productId, button);
-            //             } else {
-            //                 // User not logged in
-            //                 toastr.error("Please log in to add the product to your cart.");
-            //                 // alert('Please log in to add the product to your cart.');
-            //                 window.location.href = '/Account/Login';
-
-            //             }
-            //         });
-            //     });
-
-            //     // Attach click event to Remove from Cart buttons
-            //     $('.removeFromCartBtn').on('click', function (isLoggedIn) {
-            //         var productId = $(this).data('product-id');
-            //         if (isLoggedIn) {
-            //             // User is logged in
-            //             toastr.success("Product removed from your cart.");
-            //             console.log(isLoggedIn);
-            //             removeFromCart(productId, $(this));
-            //         } else {
-            //             // User not logged in
-            //             toastr.error("Please log in to add the product to remove your cart.");
-            //             // alert('Please log in to add the product to your cart.');
-            //             window.location.href = '/Account/Login';
-
-            //         }
-
-            //     });
-
-            //     function updateCartItemCount() {
-            //         $.ajax({
-            //             url: '/FrontPages/CountCarts',
-            //             type: 'GET',
-            //             success: function (data) {
-            //                 // Check if CartItemCount is present in the response
-            //                 console.log(data);
-            //                 if (data && data.cartItemCount !== undefined) {
-            //                     // Update the UI with the cart count
-            //                     $('#cartItemCountContainer').html(
-            //                         `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            //                             ${data.cartItemCount}
-            //                             <span class="visually-hidden">unread messages</span>
-            //                         </span>`
-            //                     );
-            //                 } else {
-            //                     // No cart found, show 0
-            //                     $('#cartItemCountContainer').html(
-            //                         `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            //                             0
-            //                             <span class="visually-hidden">unread messages</span>
-            //                         </span>`
-            //                     );
-            //                 }
-            //             },
-            //             error: function () {
-            //                 console.error('Error fetching cart count.');
-            //             }
-            //         });
-            //     }
-
-            //     function addToCart(productId, button) {
-            //         $.post('/FrontPages/AddToCart', { productId: productId }, function (data) {
-            //             if (data.success) {
-            //                 // Update button
-            //                 button.removeClass('addToCartBtn').addClass('removeFromCartbtn').text('Remove from Cart');
-            //                 console.log(data);
-            //             } else {
-            //                 alert(data.message);
-            //             }
-            //         });
-            //     }
-
-            //     // Function to remove product from cart
-            //     function removeFromCart(productId, button) {
-            //         $.post('/FrontPages/RemoveFromCart', { productId: productId }, function (data) {
-            //             if (data.success) {
-            //                 // Update button
-            //                 button.hide();
-            //                 $('.addToCartBtn[data-product-id="' + productId + '"]').show();
-            //             } else {
-            //                 alert(data.message);
-            //             }
-            //         });
-            //     }
-
-            //     function initializeCartState() {
-            //         $('.addToCartBtn').each(function () {
-            //             var productId = $(this).data('product-id');
-            //             IsProductInCart(productId); // Call the function to update button visibility
-            //         });
-            //     }
-
-
-            //     function IsProductInCart(productId) {
-            //         // Make an AJAX request to check if the product is in the cart
-            //         $.get('/FrontPages/IsProductInCart', { productId: productId }, function (isInCart) {
-            //             if (isInCart) {
-            //                 // Product is in the cart, update button accordingly
-            //                 $('.addToCartBtn[data-product-id="' + productId + '"]').hide();
-            //                 $('.removeFromCartBtn[data-product-id="' + productId + '"]').show();
-            //             } else {
-            //                 // Product is not in the cart, update button accordingly
-            //                 $('.addToCartBtn[data-product-id="' + productId + '"]').show();
-            //                 $('.removeFromCartBtn[data-product-id="' + productId + '"]').hide();
-            //             }
-            //         });
-            //     }
-
-
-            //     $('.orderCheckoutBtn').on('click', function () {
-            //         // Collect product ID, user ID, and payment details
-
-            //         // Send AJAX request to save order and payment
-            //         $.ajax({
-            //             url: '/Orders/CreateOrder',
-            //             type: 'POST',
-            //             contentType: 'application/json',
-            //             data: JSON.stringify(orderData),
-            //             success: function (orderResult) {
-            //                 console.log('Order placed successfully:', orderResult);
-
-            //                 // Redirect to a payment page or order confirmation page based on your logic
-            //                 window.location.href = '/Orders/PaymentPage'; // Replace with your URL
-
-            //             },
-            //             error: function () {
-            //                 console.error('Error placing order.');
-            //                 // Handle error
-            //             }
-            //         });
-            //     });
-
-
-            // });
+        //                 // Redirect to a confirmation page or handle as needed
+        //                 window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+        //             },
+        //             error: function () {
+        //                 console.error('Error placing order.');
+        //                 // Handle error
+        //             }
+        //         });
+        //     }
+        // });
 
 
 
