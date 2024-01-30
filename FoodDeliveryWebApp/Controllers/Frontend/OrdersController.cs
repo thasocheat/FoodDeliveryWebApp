@@ -22,9 +22,9 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             _productRepository = productRepository;
         }
 
-        public IActionResult PaymentPage(int productId, int quantity, string userId)
+        public async Task<IActionResult> PaymentPage(int productId, int quantity, string userId, string productName, double productPrice, string productImageUrl)
         {
-            var product = _productRepository.GetById(productId);
+            var product = await _productRepository.GetById(productId);
 
             // Check if the product is found
             if (product == null)
@@ -35,12 +35,12 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             // Create a PaymentViewModel with the retrieved product details
             var orderViewItemModel = new OrderItemViewModel
             {
-                //ProductId = product.ProductId,
+                ProductId = product.ProductId,
                 Quantity = quantity,
                 UserId = userId,
-                //ProductName = product.Name,
-                //ProductPrice = product.Price,
-                //ProductImageUrl = product.ImageUrl
+                ProductName = productName,
+                ProductPrice = productPrice,
+                ProductImageUrl = productImageUrl
             };
 
             // Pass the paymentViewModel to the view

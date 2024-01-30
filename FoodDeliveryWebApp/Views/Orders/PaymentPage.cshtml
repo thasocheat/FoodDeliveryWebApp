@@ -175,6 +175,7 @@ input[type=checkbox]{
     </div>
 </div>
 
+
 <div class="container-xxl py-5">
     <div class="card">
         <div class="card-top border-bottom text-center">
@@ -202,15 +203,21 @@ input[type=checkbox]{
                             <span>Cardholder's name:</span>
                             <input id="cardholderName" placeholder="Linda Williams">
                             <span>Card Number:</span>
-                            <input id="cardNumber" placeholder="0125 6780 4567 9909">
+                            @* <input id="cardNumber" placeholder="0125 6780 4567 9909"> *@
+                            <input id="cardNumber" placeholder="Card Number (16 digits)" pattern="\d{16}" title="Enter a 16-digit card number">
+                            
+
                             <div class="row">
                                 <div class="col-4">
                                     <span>Expiry date:</span>
-                                    <input id="expiryDate" placeholder="YY/MM">
+                                    @* <input id="expiryDate" placeholder="YY/MM"> *@
+                                    <input id="expiryDate" placeholder="MM/YY" pattern="\d{2}/\d{2}" title="Enter expiry date in MM/YY format">
+                                    
                                 </div>
                                 <div class="col-4">
                                     <span>CVV:</span>
-                                    <input id="cvv">
+                                    @* <input id="cvv"> *@
+                                    <input id="cvv" placeholder="3 or 4" pattern="\d{3,4}" title="Enter a 3 or 4-digit CVV">
                                 </div>
                             </div>
                             <input type="checkbox" id="save_card" class="align-left">
@@ -222,37 +229,41 @@ input[type=checkbox]{
                     <div class="right border">
                         <div class="header">Order Summary</div>
 
-                        
-                                <div class="row item">
+                        <div class="row item">
                             <div class="col-4 align-self-center"><img class="img-fluid" src="@Model.ProductImageUrl" alt="image name"></div>
-                                    <div class="col-8">
-                                        <div class="row"><b>Price</b></div>
-                                        <div class="row text-muted">Product name</div>
-                                        <div class="row">Qty: </div>
-                                    </div>
-                                </div>
+                            <div class="col-8">
+                                <div class="row"><b>@($"{Model.ProductPrice * 4100}៛") / @Model.ProductPrice.ToString("C")</b></div>
+                                <div class="row text-muted">@Model.ProductName</div>
+                                <div class="row">Qty: @Model.Quantity</div>
+                            </div>
+                        </div>
 
-                                
+                        <hr>
 
-                            <hr>
-                            <div class="row lower">
-                                <div class="col text-left">Subtotal</div>
-                                <div class="col text-right">...</div>
-                            </div>
-                            <div class="row lower">
-                                <div class="col text-left">Delivery</div>
-                                <div class="col text-right">Free</div>
-                            </div>
-                            <div class="row lower">
-                                <div class="col text-left"><b>Total to pay</b></div>
-                                <div class="col text-right"><b>...</b></div>
-                            </div>
-                            <div class="row lower">
-                                <div class="col text-left"><a href="#"><u>Add promo code</u></a></div>
-                            </div>
+                        <div class="row lower">
+                            <div class="col text-left">Subtotal</div>
+                            <div class="col text-right">@($"{Model.ProductPrice * Model.Quantity * 4100}៛") / @($"{Model.ProductPrice * Model.Quantity}$")</div>
+                        </div>
+
+                        <div class="row lower">
+                            <div class="col text-left">Delivery</div>
+                            <div class="col text-right">Free</div>
+                        </div>
+
+                        <div class="row lower">
+                            <div class="col text-left"><b>Total to pay</b></div>
+                            <div class="col text-right"><b>@($"{Model.ProductPrice * Model.Quantity * 4100}៛") / @($"{Model.ProductPrice * Model.Quantity}$")</b></div>
+                        </div>
+
+                        @* <div class="row lower">
+                            <div class="col text-left"><a href="#"><u>Add promo code</u></a></div>
+                        </div> *@
+
                         <button class="btn-order payButton" type="submit">Place order</button>
+
                         <p class="text-muted text-center">Complimentary Shipping & Returns</p>
                     </div>
+
                 </div>
 
             </div>
@@ -302,7 +313,15 @@ input[type=checkbox]{
                 // Example: Add validation logic for card number, expiry date, and CVV
                 if (!isValidCardNumber(paymentData.CardNumber) || !isValidExpiryDate(paymentData.ExpiryDate) || !isValidCVV(paymentData.CVV)) {
                     // Display error message or alert
-                    alert('Invalid payment details. Please check and try again.');
+                    // alert('Invalid payment details. Please check and try again.');
+                    console.log('Invalid Payment Details:', paymentData);
+                    // Display error message using SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Invalid payment details. Please check and try again.' + paymentData,
+                    });
+                    // return false;
                     return false;
                 }
                 return true;
@@ -328,6 +347,8 @@ input[type=checkbox]{
 
             // Function to place the order (replace with actual AJAX request)
             function placeOrder(orderData, paymentData) {
+                console.log('Order Data:', orderData);
+                console.log('Payment Data:', paymentData);
                 $.ajax({
                     url: '/Orders/ProcessOrder',
                     type: 'POST',
@@ -336,9 +357,54 @@ input[type=checkbox]{
                     success: function (orderResult) {
                         console.log('Order placed successfully:', orderResult);
 
-                        // Display success message or redirect to a confirmation page
-                        alert('Order placed successfully!');
-                        window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+                        // // Display success message or redirect to a confirmation page
+                        // alert('Order placed successfully!');
+                        // window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+
+                        // Use SweetAlert to confirm the order
+                        Swal.fire({
+                            title: 'Confirm Order',
+                            text: 'Are you sure you want to place this order?',
+                            // icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, place order',
+                            cancelButtonText: 'Cancel',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Save order and payment details to the server
+                                $.ajax({
+                                    url: '/Orders/CompleteOrder',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ Order: tempOrder, Payment: paymentData }),
+                                    success: function (orderResult) {
+                                        console.log('Order placed successfully:', orderResult);
+                                        // Display success message using SweetAlert
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Order Placed Successfully',
+                                            text: 'Your order has been successfully placed!',
+                                        }).then((result) => {
+                                            // Redirect to a confirmation page or handle as needed
+                                            window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+                                        });
+
+                                        // // Redirect to a confirmation page or handle as needed
+                                        // window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+                                    },
+                                    error: function () {
+                                        console.error('Error placing order.');
+                                        // Display error message using SweetAlert
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error Placing Order',
+                                            text: 'An error occurred while placing your order. Please try again later.',
+                                        });
+                                        // Handle error
+                                    }
+                                });
+                            }
+                        });
                     },
                     error: function () {
                         console.error('Error placing order.');
@@ -356,35 +422,7 @@ input[type=checkbox]{
                 $('[data-toggle="tooltip"]').tooltip()
             })
 
-        // Use SweetAlert to confirm the order
-        // Swal.fire({
-        //     title: 'Confirm Order',
-        //     text: 'Are you sure you want to place this order?',
-        //     // icon: 'question',
-        //     showCancelButton: true,
-        //     confirmButtonText: 'Yes, place order',
-        //     cancelButtonText: 'Cancel',
-        // }).then((result) => {
-        //     if (result.isConfirmed) {
-        //         // Save order and payment details to the server
-        //         $.ajax({
-        //             url: '/Orders/CompleteOrder',
-        //             type: 'POST',
-        //             contentType: 'application/json',
-        //             data: JSON.stringify({ Order: tempOrder, Payment: paymentData }),
-        //             success: function (orderResult) {
-        //                 console.log('Order placed successfully:', orderResult);
-
-        //                 // Redirect to a confirmation page or handle as needed
-        //                 window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
-        //             },
-        //             error: function () {
-        //                 console.error('Error placing order.');
-        //                 // Handle error
-        //             }
-        //         });
-        //     }
-        // });
+       
 
 
 

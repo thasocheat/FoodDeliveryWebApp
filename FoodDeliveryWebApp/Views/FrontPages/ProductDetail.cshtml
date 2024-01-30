@@ -233,9 +233,9 @@
                     ProductId: productId,
                     Quantity: quantity,
                     UserId: userId,
-                    // ProductName: productName,
-                    // ProductPrice: productPrice,
-                    // ProductImageUrl: productImageUrl
+                    ProductName: productName,
+                    ProductPrice: productPrice,
+                    ProductImageUrl: productImageUrl
                 };
 
                 console.log('Order Data:', orderData); // Log orderData for debugging
@@ -247,18 +247,18 @@
                 var encodedProductId = encodeURIComponent(productId);
                 var encodedQuantity = encodeURIComponent(quantity);
                 var encodedUserId = encodeURIComponent(userId);
-                // var encodedProductName = encodeURIComponent(productName);
-                // var encodedProductPrice = encodeURIComponent(productPrice);
-                // var encodedProductImageUrl = encodeURIComponent(productImageUrl);
+                var encodedProductName = encodeURIComponent(productName);
+                var encodedProductPrice = encodeURIComponent(productPrice);
+                var encodedProductImageUrl = encodeURIComponent(productImageUrl);
 
                 // Redirect to the payment page with order data as query parameters
                 window.location.href = '/Orders/PaymentPage?' +
                     'productId=' + encodedProductId +
                     '&quantity=' + encodedQuantity +
-                    '&userId=' + encodedUserId;
-                    // '&productName=' + encodedProductName +
-                    // '&productPrice=' + encodedProductPrice +
-                    // '&productImageUrl=' + encodedProductImageUrl;
+                    '&userId=' + encodedUserId +
+                    '&productName=' + encodedProductName +
+                    '&productPrice=' + encodedProductPrice +
+                    '&productImageUrl=' + encodedProductImageUrl;
             });
 
 
