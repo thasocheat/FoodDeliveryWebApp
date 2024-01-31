@@ -24,71 +24,38 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
 
         public async Task<IActionResult> PaymentPage(int productId, int quantity, string userId, string productName, double productPrice, string productImageUrl)
         {
-            var product = await _productRepository.GetById(productId);
-
-            // Check if the product is found
-            if (product == null)
-            {
-                return NotFound(); // Or handle appropriately
-            }
-
-            // Create a PaymentViewModel with the retrieved product details
-            var orderViewItemModel = new OrderItemViewModel
-            {
-                ProductId = product.ProductId,
-                Quantity = quantity,
-                UserId = userId,
-                ProductName = productName,
-                ProductPrice = productPrice,
-                ProductImageUrl = productImageUrl
-            };
-
-            // Pass the paymentViewModel to the view
-            return View(orderViewItemModel);
-        }
-
-
-
-
-
-        [HttpPost]
-        public IActionResult CreateOrder(Order orderRequest)
-        {
             try
             {
-                // Validate the order request model
-                if (orderRequest == null || !ModelState.IsValid)
+                var product = await _productRepository.GetById(productId);
+
+                // Check if the product is found
+                if (product == null)
                 {
-                    return BadRequest(new { success = false, message = "Invalid order data" });
+                    return NotFound(); // Or handle appropriately
                 }
 
-                // Retrieve user ID from the authenticated user
-                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                // Create an Order entity
-                Order newOrder = new Order
+                // Create a PaymentViewModel with the retrieved product details
+                var orderViewItemModel = new OrderItemViewModel
                 {
-                    ProductId = orderRequest.ProductId,
-                    Quantity = orderRequest.Quantity,
+                    ProductId = product.ProductId,
+                    Quantity = quantity,
                     UserId = userId,
-                    OrderAt = DateTime.Now,
-                    Status = "Pending" // Set the initial status based on your workflow
+                    ProductName = productName,
+                    ProductPrice = productPrice,
+                    ProductImageUrl = productImageUrl
                 };
 
-                // Save the order to the database
-                _context.Orders.Add(newOrder);
-                _context.SaveChanges();
-
-                return Json(new { success = true, orderId = newOrder.OrderId });
+                // Pass the paymentViewModel to the view
+                return View(orderViewItemModel);
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex);
-
-                // Handle exceptions
-                return Json(new { success = false, message = "Error placing order" });
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "Internal Server Error"); // Or redirect to an error page
             }
         }
+
+
 
         [HttpPost]
         public IActionResult ProcessOrder([FromBody] OrderAndPaymentViewModel orderAndPayment)

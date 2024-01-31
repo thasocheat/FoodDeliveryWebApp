@@ -6,6 +6,19 @@
     // Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .addToCartBtn{
+        cursor: pointer;
+    }
+    .removeFromCartBtn{
+        cursor: pointer;
+    }
+
+    .view-detail-product {
+        cursor: pointer;
+    }
+</style>
+
 <div class="container-xxl py-5">
     <div class="container">
     </div>
@@ -49,13 +62,13 @@
                                         <div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">New</div>
                                     </div>
                                     <div class="text-center p-4">
-                                        <a class="d-block h5 mb-2 view-detail-product" href="#" data-product-id="@product.ProductId">@product.Name</a>
+                                        <a class="d-block h5 mb-2 view-detail-product" data-product-id="@product.ProductId">@product.Name</a>
                                         <span class="text-primary me-1">៛@(product.Price * 4000) / </span>
                                         <span class="text-primary me-1">$@product.Price</span>
                                     </div>
                                     <div class="d-flex border-top">
                                         <small class="w-50 text-center border-end py-2">
-                                            <a class="text-body view-detail-product" href="#" data-product-id="@product.ProductId"><i class="fa fa-eye text-primary me-2"></i>View detail</a>
+                                            <a class="text-body view-detail-product" data-product-id="@product.ProductId"><i class="fa fa-eye text-primary me-2"></i>View detail</a>
                                             <script>
                                                 function redirectToProductDetailPage() {
                                                     // Assuming your create form action is named "Create"
@@ -66,10 +79,10 @@
                                             </script>
                                         </small>
                                         <small class="w-50 text-center py-2">
-                                            <a class="addToCartBtn text-body" href="#" data-product-id="@product.ProductId">
+                                            <a class="addToCartBtn text-body" data-product-id="@product.ProductId">
                                                 <i class="fa fa-shopping-bag text-primary me-2"></i>Add to Cart
                                             </a>
-                                            <a class="removeFromCartBtn text-body" href="#" data-product-id="@product.ProductId" style="display: none;">
+                                            <a class="removeFromCartBtn text-body" data-product-id="@product.ProductId" style="display: none;">
                                                 <i class="fa fa-shopping-bag text-primary me-2"></i>Remove from Cart
                                             </a>
 
@@ -99,6 +112,7 @@
 
             initializeCartState();
             updateCartItemCount();
+            updateCategoryButtonStates();
 
             // Attach a click event to category buttons
             $('.category-btn').on('click', function () {
@@ -117,11 +131,33 @@
                     // $('#filteredProductListContainer').empty();
                     updateProductList(data);
                     IsProductInCart(productId);
+                    updateCategoryButtonStates();
                     // Add your code to append the new products to the list
                     // ...
                 });
             });
 
+            // Function to update category button states based on cart content
+            function updateCategoryButtonStates() {
+                $('.category-btn').each(function () {
+                    var categoryId = $(this).data('category-id');
+                    IsCategoryInCart(categoryId, $(this));
+                });
+            }
+
+            // Function to check if a category is in the cart
+            function IsCategoryInCart(categoryId, button) {
+                // Make an AJAX request to check if any product in the category is in the cart
+                $.get('/FrontPages/IsCategoryInCart', { categoryId: categoryId }, function (isInCart) {
+                    if (isInCart) {
+                        // Products in the category are in the cart, update button accordingly
+                        button.addClass('active');
+                    } else {
+                        // No products in the category are in the cart
+                        button.removeClass('active');
+                    }
+                });
+            }
 
 
             var categoryId = $('#filteredProductListContainer').data('category-id');
@@ -132,7 +168,7 @@
                 $.get('/FrontPages/GetMoreProducts', { categoryId: categoryId, totalLoaded: totalLoaded }, function (data) {
                     console.log(data);
                     if (data.length > 0) {
-                        uappendProducts(data);
+                        // updateProductList(products);
                         totalLoaded += data.length;
                     } else {
                         // No more products to load
@@ -143,49 +179,218 @@
 
 
 
-            $('.addToCartBtn').on('click', function (){
+            // $('.addToCartBtn').on('click', function (){
+            //     var button = $(this);
+            //     var productId = $(this).data('product-id');
+
+            //     // Check if user is logged in or not
+            //     $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
+            //         if(isLoggedIn){
+            //             // User is logged in
+            //             // alert('Product added to your cart.');
+            //             // toastr.success("Product added to your cart.");
+            //             Swal.fire({
+            //                 icon: 'success',
+            //                 title: 'Add to cart',
+            //                 text: 'Your product has been added to cart successfully.',
+            //             }).then((result) => {
+            //                 addToCart(productId, button);
+            //                 updateCartItemCount();
+            //                 // Attach click event to cart buttons after updating the product list
+            //                 attachCartButtonClickEvents();
+            //             });
+                       
+            //             // console.log(isLoggedIn);
+                        
+            //             // updateCartItemCount();
+            //             // console.log(productId, button);
+            //         }else{
+            //             // User not logged in
+            //             // toastr.error("Please log in to add the product to your cart.");
+            //             // alert('Please log in to add the product to your cart.');
+            //             Swal.fire({
+            //                 icon: 'error',
+            //                 title: 'Error add to cart',
+            //                 text: 'Please log in to add the product to your cart.',
+            //             }).then((result) => {
+            //                 // Redirect to login page
+            //                 window.location.href = '/Account/Login';
+            //             });
+
+            //         }
+            //     });
+            // });
+
+            // // Attach click event to Remove from Cart buttons
+            // $('.removeFromCartBtn').on('click', function (isLoggedIn) {
+            //     var productId = $(this).data('product-id');
+            //     if (isLoggedIn) {
+            //         // User is logged in
+            //         // toastr.success("Product removed from your cart.");
+            //         // console.log(isLoggedIn);
+            //         Swal.fire({
+            //             icon: 'success',
+            //             title: 'Remove from cart',
+            //             text: 'Your product has been removed from cart successfully.',
+            //         }).then((result) => {
+            //                 removeFromCart(productId, $(this));
+            //                 // Attach click event to cart buttons after updating the product list
+            //                 attachCartButtonClickEvents();
+            //                 updateCartItemCount();
+            //             });
+            //     } else {
+            //         // User not logged in
+            //         // toastr.error("Please log in to add the product to remove your cart.");
+            //         // alert('Please log in to add the product to your cart.');
+            //         Swal.fire({
+            //             icon: 'error',
+            //             title: 'Error remove from cart',
+            //             text: 'You are not login!',
+            //         }).then((result) => {
+            //             // Redirect to login page
+            //             window.location.href = '/Account/Login';
+            //         });
+
+            //     }
+                
+            // });
+
+            // ...
+
+            // $('.addToCartBtn, .removeFromCartBtn').on('click', function () {
+            //     var button = $(this);
+            //     var productId = button.data('product-id');
+
+            //     // Check if user is logged in or not
+            //     $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
+            //         if (isLoggedIn) {
+            //             // User is logged in
+            //             Swal.fire({
+            //                 icon: 'success',
+            //                 title: (button.hasClass('addToCartBtn') ? 'Add to cart' : 'Remove from cart'),
+            //                 text: 'Your product has been ' + (button.hasClass('addToCartBtn') ? 'added' : 'removed') + ' from cart successfully.',
+            //             }).then((result) => {
+            //                 // Toggle button class and text
+            //                 button.toggleClass('addToCartBtn removeFromCartBtn').html('<i class="fa fa-shopping-bag text-primary me-2"></i>' + (button.hasClass('addToCartBtn') ? 'Add to Cart' : 'Remove from Cart'));
+
+            //                 // Call the common function to handle cart state
+            //                 attachCartButtonClickEvents(productId, button);
+
+            //                 // Update cart item count
+            //                 updateCartItemCount();
+            //             });
+            //         } else {
+            //             // User not logged in
+            //             Swal.fire({
+            //                 icon: 'error',
+            //                 title: 'Error ' + (button.hasClass('addToCartBtn') ? 'add to cart' : 'remove from cart'),
+            //                 text: 'Please log in to ' + (button.hasClass('addToCartBtn') ? 'add the product to your cart' : 'remove the product from your cart') + '.',
+            //             }).then((result) => {
+            //                 // Redirect to login page
+            //                 window.location.href = '/Account/Login';
+            //             });
+            //         }
+            //     });
+            // });
+
+
+            // Attach click event to Add to Cart buttons
+            $('.addToCartBtn').on('click', function () {
                 var button = $(this);
-                var productId = $(this).data('product-id');
+                var productId = button.data('product-id');
 
                 // Check if user is logged in or not
                 $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
-                    if(isLoggedIn){
+                    if (isLoggedIn) {
                         // User is logged in
-                        // alert('Product added to your cart.');
-                        toastr.success("Product added to your cart.");
-                       
-                        // console.log(isLoggedIn);
-                        addToCart(productId, button);
-                        // updateCartItemCount();
-                        // console.log(productId, button);
-                    }else{
-                        // User not logged in
-                        toastr.error("Please log in to add the product to your cart.");
-                        // alert('Please log in to add the product to your cart.');
-                        window.location.href = '/Account/Login';
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Add to cart',
+                            text: 'Your product has been added to cart successfully.',
+                        }).then((result) => {
+                            // Toggle visibility of Add to Cart and Remove from Cart buttons
+                            button.hide();
+                            button.siblings('.removeFromCartBtn').show();
 
+                            // Add the product to the cart
+                            addToCart(productId);
+                            // Update cart item count
+                            updateCartItemCount();
+                        });
+                    } else {
+                        // User not logged in
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error add to cart',
+                            text: 'Please log in to add the product to your cart.',
+                        }).then((result) => {
+                            // Redirect to login page
+                            window.location.href = '/Account/Login';
+                        });
                     }
                 });
             });
 
             // Attach click event to Remove from Cart buttons
-            $('.removeFromCartBtn').on('click', function (isLoggedIn) {
-                var productId = $(this).data('product-id');
-                if (isLoggedIn) {
-                    // User is logged in
-                    toastr.success("Product removed from your cart.");
-                    console.log(isLoggedIn);
-                    removeFromCart(productId, $(this));
-                } else {
-                    // User not logged in
-                    toastr.error("Please log in to add the product to remove your cart.");
-                    // alert('Please log in to add the product to your cart.');
-                    window.location.href = '/Account/Login';
+            $('.removeFromCartBtn').on('click', function () {
+                var button = $(this);
+                var productId = button.data('product-id');
 
-                }
-                
+                // Check if user is logged in or not
+                $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
+                    if (isLoggedIn) {
+                        // User is logged in
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Remove from cart',
+                            text: 'Your product has been removed from cart successfully.',
+                        }).then((result) => {
+                            // Toggle visibility of Add to Cart and Remove from Cart buttons
+                            button.hide();
+                            button.siblings('.addToCartBtn').show();
+
+                            // Remove the product from the cart
+                            removeFromCart(productId);
+                            // Update cart item count
+                            updateCartItemCount();
+                        });
+                    } else {
+                        // User not logged in
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error remove from cart',
+                            text: 'You are not login!',
+                        }).then((result) => {
+                            // Redirect to login page
+                            window.location.href = '/Account/Login';
+                        });
+                    }
+                });
             });
 
+            // ...
+
+           
+
+
+
+            $('.view-detail-product').on('click', function () {
+                // Get the product ID from the clicked element's data attribute or another source
+                var productId = $(this).data('product-id');
+
+                // Redirect to the product detail page
+                window.location.href = '/FrontPages/ProductDetail?productId=' + productId;
+            });
+
+
+
+        });
+
+
+
+        
+
+            
             function updateCartItemCount() {
                 $.ajax({
                     url: '/FrontPages/CountCarts',
@@ -221,8 +426,10 @@
                 $.post('/FrontPages/AddToCart', {productId: productId}, function(data){
                     if(data.success){
                         // Update button
-                        button.removeClass('addToCartBtn').addClass('removeFromCartbtn').text('Remove from Cart');
-                        console.log(data);
+                        // button.removeClass('addToCartBtn').addClass('removeFromCartbtn').text('Remove from Cart');
+                        // console.log(data);
+                        button.show();
+                        $('.addToCartBtn[data-product-id="' + productId + '"]').hide();
                     }else{
                         alert(data.message);
                     }
@@ -265,18 +472,6 @@
                 });
             }
 
-            $('.view-detail-product').on('click', function () {
-                // Get the product ID from the clicked element's data attribute or another source
-                var productId = $(this).data('product-id');
-
-                // Redirect to the product detail page
-                window.location.href = '/FrontPages/ProductDetail?productId=' + productId;
-            });
-
-
-
-        });
-
         function appendProducts(products) {
             // Append the new products to the existing list
             var productListContainer = $("#filteredProductListContainer");
@@ -307,50 +502,47 @@
             }
         }
 
-            function updateProductList(products) {
-                // console.log(products); // Use to check the data
-                // Assuming you have a container with the ID 'filteredProductListContainer'
-                var productListContainer = $("#filteredProductListContainer");
+        function updateProductList(products) {
+            // Assuming you have a container with the ID 'filteredProductListContainer'
+            var productListContainer = $("#filteredProductListContainer");
 
-                // Clear existing content
-                productListContainer.empty();
+            // Clear existing content
+            productListContainer.empty();
 
-                // Iterate over the products and append them to the container
-                $.each(products, function (index, product) {
+            // Iterate over the products and append them to the container
+            $.each(products, function (index, product) {
+                // Make an AJAX request to check if the product is in the cart
+                $.get('/FrontPages/IsProductInCart', { productId: product.productId }, function (isInCart) {
                     var productItem = $('<div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp">').append(
                         $('<div class="product-item img-thumbnail">').append(
                             $('<div class="position-relative bg-light overflow-hidden" style="height: 200px;">').append(
-                                    $('<img class="img-fluid w-100" alt="' + product.name + '">').attr('src', product.imageUrl),
-                                    $('<div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">').text('New')
+                                $('<img class="img-fluid w-100" alt="' + product.name + '">').attr('src', product.imageUrl),
+                                $('<div class="bg-secondary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">').text('New')
+                            ),
+                            $('<div class="text-center p-4">').append(
+                                $('<a class="d-block h5 mb-2 view-detail-product">').text(product.name),
+                                $('<span class="text-primary me-1">').text('$' + product.price),
+                                $('<span class="text-body text-decoration-line-through">').text('$29.00')
+                            ),
+                            $('<div class="d-flex border-top">').append(
+                                $('<small class="w-50 text-center border-end py-2">').append(
+                                    $('<a class="text-body view-detail-product" href="#">').html('<i class="fa fa-eye text-primary me-2"></i>View detail')
                                 ),
-                                $('<div class="text-center p-4">').append(
-                                    $('<a class="d-block h5 mb-2">').text(product.name),
-                                    $('<span class="text-primary me-1">').text('$' + product.price),
-                                    $('<span class="text-body text-decoration-line-through">').text('$29.00')
-                                ),
-                                $('<div class="d-flex border-top">').append(
-                                    $('<small class="w-50 text-center border-end py-2">').append(
-                                        $('<a class="text-body" href="#">').html('<i class="fa fa-eye text-primary me-2"></i>View detail')
-                                    ),
-                                    $('<small class="w-50 text-center py-2">').append(
-                                        $('<a class="addToCartBtn text-body" href="#"  data-product-id="' + product.productId + '">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart')
-                                
-                                    ),
-                                    $('<small class="w-50 text-center py-2">').append(
-                                            $('<a class="removeFromCartBtn Btn text-body" href="#"  data-product-id="' + product.productId + '">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Remove from cart')
-
-                                    ),
+                                $('<small class="w-50 text-center py-2">').append(
+                                    // Use conditional (ternary) operator to decide which button to show
+                                    isInCart ?
+                                        $('<a class="removeFromCartBtn Btn text-body" data-product-id="' + product.productId + '">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Remove from cart') :
+                                        $('<a class="addToCartBtn text-body" data-product-id="' + product.productId + '">').html('<i class="fa fa-shopping-bag text-primary me-2"></i>Add to cart')
                                 )
                             )
-                        );
-                           
+                        )
+                    );
 
                     productListContainer.append(productItem);
                 });
+            });
+        }
 
-            // Attach click event to cart buttons after updating the product list
-            attachCartButtonClickEvents();
-            }
 
         // Function to attach click events to cart buttons
         function attachCartButtonClickEvents() {
