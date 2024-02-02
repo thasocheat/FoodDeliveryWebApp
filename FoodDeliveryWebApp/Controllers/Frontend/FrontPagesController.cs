@@ -17,7 +17,8 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
         }
 		public IActionResult AboutUs()
         {
-            return View();
+            List<Team> teams = _context.Teams.ToList();
+            return View(teams);
         }
 
         public IActionResult FrontViewProduct(int? categoryId)

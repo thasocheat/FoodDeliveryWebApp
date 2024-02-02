@@ -4,6 +4,7 @@
     ViewData["Title"] = "Front View Product";
     ViewData["PageType"] = "Menu";
     // Layout = "~/Views/Shared/_Layout.cshtml";
+    var khmerCulture = new System.Globalization.CultureInfo("km-KH");
 }
 
 <style>
@@ -63,7 +64,10 @@
                                     </div>
                                     <div class="text-center p-4">
                                         <a class="d-block h5 mb-2 view-detail-product" data-product-id="@product.ProductId">@product.Name</a>
-                                        <span class="text-primary me-1">៛@(product.Price * 4000) / </span>
+                                        @{
+                                            double InKhmer = product.Price * 4100;
+                                        }
+                                        <span class="text-primary me-1">@(string.Format(khmerCulture, "{0:C2}", InKhmer)) / </span>
                                         <span class="text-primary me-1">$@product.Price</span>
                                     </div>
                                     <div class="d-flex border-top">
