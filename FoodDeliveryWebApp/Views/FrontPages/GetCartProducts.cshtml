@@ -8,22 +8,22 @@
 
 <style>
     .icon-hover-primary:hover {
-        border-color: #3b71ca !important;
-        background-color: white !important;
+    border-color: #3b71ca !important;
+    background-color: white !important;
     }
 
-        .icon-hover-primary:hover i {
-            color: #3b71ca !important;
-        }
+    .icon-hover-primary:hover i {
+    color: #3b71ca !important;
+    }
 
     .icon-hover-danger:hover {
-        border-color: #dc4c64 !important;
-        background-color: white !important;
+    border-color: #dc4c64 !important;
+    background-color: white !important;
     }
 
-        .icon-hover-danger:hover i {
-            color: #dc4c64 !important;
-        }
+    .icon-hover-danger:hover i {
+    color: #dc4c64 !important;
+    }
 </style>
 
 
@@ -34,24 +34,26 @@
 
 @* <div class="container-xxl py-5 mt-5"> *@
 <div class="container-xxl py-5 mt-5">
-        <!-- cart + summary -->
-        <section class="bg-light my-5">
-            <div class="container">
-                <div class="row">
-                    <!-- cart -->
-                    <div class="col-lg-9">
-                        <div class="card border shadow-0">
-                            <div class="m-4">
-                                <h4 class="card-title mb-4">Your shopping cart</h4>
+    <!-- cart + summary -->
+    <section class="bg-light my-5">
+        <div class="container">
+            <div class="row">
+                <!-- cart -->
+                <div class="col-lg-9">
+                    <div class="card border shadow-0">
+                        <div class="m-4">
+                            <h4 class="card-title mb-4">Your shopping cart</h4>
+                            @if (Model.Any())
+                            {
                                 @foreach (var cartItem in Model)
                                 {
-                                <div class="row gy-3 mb-4 cart-item-container" id="cartItemsContainer">
+                                    <div class="row gy-3 mb-4 cart-item-container" id="cartItemsContainer">
                                         <div class="col-lg-5">
                                             <div class="me-lg-5">
                                                 <div class="d-flex">
                                                     <img src="@cartItem.ImageUrl" alt="@cartItem.Name" class="border rounded me-3" style="width: 96px; height: 96px;" />
                                                     <div class="">
-                                                    <a href="#" class="nav-link">@cartItem.Name</a>
+                                                        <a href="#" class="nav-link">@cartItem.Name</a>
                                                         <p class="text-muted">@cartItem.Description</p>
                                                     </div>
                                                 </div>
@@ -64,7 +66,7 @@
                                             <div class="">
                                                 <text class="h6">@cartItem.FormattedTotal</text> <br />
                                                 @* <small class="text-muted text-nowrap"> @($"{cartItem.KhmerFormattedTotal}") / per item </small> *@
-                                                    @* <small class="text-muted text-nowrap"> @cartItem.FormattedPrice / per item </small> *@
+                                                @* <small class="text-muted text-nowrap"> @cartItem.FormattedPrice / per item </small> *@
 
                                                 <small class="text-muted text-nowrap price-khr" data-default-price="@cartItem.KhmerPrice">@cartItem.KhmerFormattedTotal / per item</small>
                                                 <br />
@@ -73,7 +75,7 @@
                                         </div>
                                         <div class="col-lg col-sm-3 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
                                             <div class="float-md-end">
-                                                <a class="addToCartBtn text-body btn btn btn-light border text-danger icon-hover-danger" href="#" >
+                                                <a class="addToCartBtn text-body btn btn btn-light border text-danger icon-hover-danger" href="#">
                                                     <i class="fa fa-shopping-bag text-primary me-2"></i>Add to Cart
                                                 </a>
                                                 <a class="removeFromCartBtn text-body btn btn-light border text-danger icon-hover-danger" href="#" style="display: none;">
@@ -84,7 +86,42 @@
 
                                     </div>
                                 }
-                            </div>
+                            }else{
+                                <div class="row gy-3 mb-4">
+                                    <div class="col-lg-5">
+                                        <div class="me-lg-5">
+                                            <div class="d-flex">
+                                                @* <img src="@cartItem.ImageUrl" alt="@cartItem.Name" class="border rounded me-3" style="width: 96px; height: 96px;" /> *@
+                                                @* <div class="">
+                                                    <a href="#" class="nav-link">@cartItem.Name</a>
+                                                    <p class="text-muted">@cartItem.Description</p>
+                                                </div> *@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-9 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                                        <div class="p-2">
+                                            @* <input type="number" class="form-control quantity-input" value="@cartItem.Quantity" style="max-width: 80px;"> *@
+                                        </div>
+                                        <div class="">
+                                            <text class="h6">You don't have any cart products here!!'</text> <br />
+                                            <small class="text-muted text-nowrap">Please add any products to your cart.</small>
+                                            @* <small class="text-muted text-nowrap"> @cartItem.FormattedPrice / per item </small> *@
+
+                                            @* <small class="text-muted text-nowrap price-khr" data-default-price="@cartItem.KhmerPrice">@cartItem.KhmerFormattedTotal / per item</small> *@
+                                            <br />
+                                            @* <small class="text-muted text-nowrap price-usd" data-default-price="@cartItem.USDPrice">@cartItem.FormattedPrice / per item</small> *@
+                                        </div>
+                                    </div>
+                                    <div class="col-lg col-sm-3 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                                        <div class="float-md-end">
+                                            
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
                             <div class="border-top pt-4 mx-4 mb-4">
                                 <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
                                 <p class="text-muted">

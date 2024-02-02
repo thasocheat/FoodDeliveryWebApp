@@ -4,6 +4,7 @@
     ViewData["Title"] = "Confirmation Page";
     ViewData["PageType"] = "ConfirmationPage";
     // Layout = "~/Views/Shared/_Layout.cshtml";
+    var khmerCulture = new System.Globalization.CultureInfo("km-KH");
 }
 
 
@@ -47,6 +48,7 @@
                             <div class="row">
                                 <div class="col-xl-8">
                                     <ul class="list-unstyled">
+                                        <li class="text-muted">From: <span style="color:#5d9fc5 ;">foody@delivery.com</span></li>
                                         <li class="text-muted">To: <span style="color:#5d9fc5 ;">@Model.UserName</span></li>
                                         <li class="text-muted">Email: @Model.Email</li>
                                         <li class="text-muted">@Model.Address</li>
@@ -83,15 +85,19 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @{
+                                            int rowNum = 1;
+                                        }
                                         @foreach (var orderItem in Model.OrderItems)
                                         {
                                             <tr>
-                                                <th scope="row">@orderItem.ProductId</th>
+                                                <th scope="row">@rowNum</th>
                                                 <td>@orderItem.ProductName</td>
                                                 <td>@orderItem.Quantity</td>
                                                 <td>@($"{orderItem.ProductPrice:C}")</td>
                                                 <td>@($"{orderItem.Quantity * orderItem.ProductPrice:C}")</td>
                                             </tr>
+                                            rowNum++;
                                         }
                                     </tbody>
 
@@ -104,12 +110,17 @@
                                 </div>
                                 <div class="col-xl-6">
                                     <ul class="list-unstyled">
-                                        <li class="text-muted ms-3"><span class="text-black me-4">SubTotal</span>@($"{Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice * 4100):C2}៛") / @($"{Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice):C2}$")</li>
+                                        <li class="text-muted ms-3"><span class="text-black me-4">SubTotal</span>
+                                            @(string.Format(khmerCulture, "{0:C2}", Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice * 4100))) /
+                                            @(string.Format("{0:C2}", Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice)))
+                                        </li>
 
-                                        @* <li class="text-muted ms-3 mt-2"><span class="text-black me-4">Tax(15%)</span>$111</li> *@
                                     </ul>
                                     <p class="text-black float-start">
-                                        <span class="text-black me-3"> Total Amount</span><span style="font-size: 25px;">@($"{Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice * 4100):C2}៛") / @($"{Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice):C2}$")</span>
+                                        <span class="text-black me-3"> Total Amount</span><span style="font-size: 20px;">
+                                            @(string.Format(khmerCulture, "{0:C2}", Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice * 4100))) /
+                                            @(string.Format("{0:C2}", Model.OrderItems.Sum(item => item.Quantity * item.ProductPrice)))
+                                        </span>
                                     </p>
                                 </div>
                             </div>
