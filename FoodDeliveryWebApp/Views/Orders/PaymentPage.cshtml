@@ -202,6 +202,8 @@ input[type=checkbox]{
                         <form>
                             <span>Cardholder's name:</span>
                             <input id="cardholderName" placeholder="Linda Williams">
+                            <span>Address:</span>
+                            <input id="address" placeholder="Your address">
                             <span>Card Number:</span>
                             @* <input id="cardNumber" placeholder="0125 6780 4567 9909"> *@
                             <input id="cardNumber" placeholder="Card Number (16 digits)" pattern="\d{16}" title="Enter a 16-digit card number">
@@ -281,15 +283,22 @@ input[type=checkbox]{
         $(document).ready(function () {
             // Retrieve stored order information
             var tempOrder = JSON.parse(localStorage.getItem('tempOrder'));
+            console.log(tempOrder);
+
+            
 
             // Handle payment details and order completion
             $('.payButton').on('click', function () {
+
+                
+
                 // Collect payment details from the user
-                var paymentData = {
-                    CardholderName: $('#cardholderName').val(),
-                    CardNumber: $('#cardNumber').val(),
+                var paymentData = {                    
+                    Name: $('#cardholderName').val(),
+                    Address: $('#address').val(),
+                    CardNo: $('#cardNumber').val(),
                     ExpiryDate: $('#expiryDate').val(),
-                    CVV: $('#cvv').val(),
+                    CvvNo: $('#cvv').val(),
                 };
 
                 // Validate payment details
@@ -301,23 +310,28 @@ input[type=checkbox]{
                 // Disable the pay button during processing
                 $(this).prop('disabled', true);
 
-                // Simulate processing delay (replace with actual AJAX request)
-                setTimeout(function () {
-                    // Continue with order placement
-                    placeOrder(tempOrder, paymentData);
-                }, 2000); // Simulated delay of 2 seconds (adjust as needed)
+                placeOrder(tempOrder, paymentData);
+
+
+                // // Simulate processing delay (replace with actual AJAX request)
+                // setTimeout(function () {
+                //     // Continue with order placement
+                //     placeOrder(tempOrder, paymentData);
+                // }, 2000); // Simulated delay of 2 seconds (adjust as needed)
             });
+
+            
 
             // Function to validate payment details
             function validatePaymentDetails(paymentData) {
                 // Example: Add validation logic for card number, expiry date, and CVV
-                if (!isValidCardNumber(paymentData.CardNumber) || !isValidExpiryDate(paymentData.ExpiryDate) || !isValidCVV(paymentData.CVV)) {
+                if (!isValidCardNumber(paymentData.CardNo) || !isValidExpiryDate(paymentData.ExpiryDate) || !isValidCVV(paymentData.CvvNo)) {
                     // Display error message or alert
                     // alert('Invalid payment details. Please check and try again.');
                     console.log('Invalid Payment Details:', paymentData);
                     // Display error message using SweetAlert
                     Swal.fire({
-                        icon: 'error',
+                        // icon: 'error',
                         title: 'Validation Error',
                         text: 'Invalid payment details. Please check and try again.' + paymentData,
                     });
@@ -358,53 +372,9 @@ input[type=checkbox]{
                         console.log('Order placed successfully:', orderResult);
 
                         // // Display success message or redirect to a confirmation page
-                        // alert('Order placed successfully!');
-                        // window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+                        alert('Order placed successfully!');
+                        window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
 
-                        // Use SweetAlert to confirm the order
-                        Swal.fire({
-                            title: 'Confirm Order',
-                            text: 'Are you sure you want to place this order?',
-                            // icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, place order',
-                            cancelButtonText: 'Cancel',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Save order and payment details to the server
-                                $.ajax({
-                                    url: '/Orders/CompleteOrder',
-                                    type: 'POST',
-                                    contentType: 'application/json',
-                                    data: JSON.stringify({ Order: tempOrder, Payment: paymentData }),
-                                    success: function (orderResult) {
-                                        console.log('Order placed successfully:', orderResult);
-                                        // Display success message using SweetAlert
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Order Placed Successfully',
-                                            text: 'Your order has been successfully placed!',
-                                        }).then((result) => {
-                                            // Redirect to a confirmation page or handle as needed
-                                            window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
-                                        });
-
-                                        // // Redirect to a confirmation page or handle as needed
-                                        // window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
-                                    },
-                                    error: function () {
-                                        console.error('Error placing order.');
-                                        // Display error message using SweetAlert
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error Placing Order',
-                                            text: 'An error occurred while placing your order. Please try again later.',
-                                        });
-                                        // Handle error
-                                    }
-                                });
-                            }
-                        });
                     },
                     error: function () {
                         console.error('Error placing order.');

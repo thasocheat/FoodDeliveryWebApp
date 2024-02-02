@@ -195,30 +195,58 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                     KhmerPrice = c.Product.Price * exchangeRate,
                 })
                 .ToList();
-
+            
             return View(cartItems);
         }
 
-        //public IActionResult GetCartItems()
-        //{
-        //    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        [HttpPost]
+        public ActionResult UpdateCartTotal()
+        {
+            try
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        //    // Get the cart items for the user
-        //    var cartItems = _context.Carts
-        //        .Where(c => c.UserId == userId)
-        //        .Select(c => new
-        //        {
-        //            c.Product.ImageUrl,
-        //            c.Product.Name,
-        //            c.Product.Description,
-        //            FormattedPrice = $"{c.Product.Price:C}", // Format price as currency
-        //            c.Quantity,
-        //            FormattedTotal = $"{c.Quantity * c.Product.Price:C}" // Format total as currency
-        //        })
-        //        .ToList();
+                // Assuming you have an exchange rate (e.g., 1 USD = 4100 KHR)
+                double exchangeRate = 4100;
 
-        //    return Json(cartItems);
-        //}
+                // Perform logic to update the cart total based on the updated quantities
+                double updatedTotalUSD = 0;
+                double updatedTotalKHR = 0;
+
+                // Get the cart items for the user
+                var cartItems = _context.Carts
+                    .Where(c => c.UserId == userId)
+                    .Select(c => new CartViewModel
+                    {
+                        ImageUrl = c.Product.ImageUrl,
+                        Name = c.Product.Name,
+                        Description = c.Product.Description,
+                        FormattedPrice = $"{c.Product.Price:C}", // Format price as currency
+                        Quantity = c.Quantity,
+                        FormattedTotal = $"{c.Quantity * c.Product.Price:C}", // Format total as currency
+                        KhmerPrice = c.Product.Price * exchangeRate,
+                        USDPrice = c.Product.Price,
+                    })
+                    .ToList();
+
+                
+
+                foreach (var cartItem in cartItems)
+                {
+                    // Calculate total based on the provided properties
+                    updatedTotalUSD += cartItem.Quantity * cartItem.USDPrice; // Assuming Price is in USD
+                    updatedTotalKHR += cartItem.Quantity * cartItem.KhmerPrice; // Assuming KhmerPrice is in KHR
+                }
+
+                // Return the updated total prices
+                return Json(new { totalUSD = updatedTotalUSD, totalKHR = updatedTotalKHR });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return Json(new { error = "An error occurred while updating the cart total." });
+            }
+        }
 
         [HttpGet]
         public IActionResult GetFilteredProducts(int categoryId)

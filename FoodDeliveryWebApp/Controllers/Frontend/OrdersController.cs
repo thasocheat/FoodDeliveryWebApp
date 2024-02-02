@@ -2,6 +2,7 @@
 using FoodDeliveryWebApp.Interfaces;
 using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,13 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
     {
         private readonly ApplicationDbContext _context;
         private readonly IProductRepository _productRepository;
-        public OrdersController(ApplicationDbContext context, IProductRepository productRepository)
+        private readonly UserManager<AppUser> _userManager;
+
+        public OrdersController(ApplicationDbContext context, IProductRepository productRepository, UserManager<AppUser> userManager)
         {
             _context = context;
             _productRepository = productRepository;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> PaymentPage(int productId, int quantity, string userId, string productName, double productPrice, string productImageUrl)
@@ -90,14 +94,17 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
         // Function to save order details
         private int SaveOrder(OrderViewModel orderViewModel)
         {
+            var product = _context.Products.Find(orderViewModel.ProductId);
             var order = new Order
             {
                 OrderNo = orderViewModel.OrderNo,
                 ProductId = orderViewModel.ProductId,
+                Quantity = orderViewModel.Quantity,
                 UserId = orderViewModel.UserId,
                 Status = orderViewModel.Status,
                 PaymentId = null, // We'll set this later after saving the payment
-                OrderAt = DateTime.Now
+                OrderAt = DateTime.Now,
+                Product = product // Include associated product information
             };
 
             _context.Orders.Add(order);
@@ -132,26 +139,58 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             }
         }
 
-        public IActionResult ConfirmationPage(OrderAndPaymentViewModel orderAndPayment)
+        
+
+        public async Task<IActionResult> ConfirmationPage(int orderId)
         {
-            var orderData = TempData["OrderData"] as Order;
             try
             {
-                // Save order and payment details
-                var orderId = SaveOrderAndPayment(orderAndPayment);
+                var orderData = _context.Orders
+                    .Include(o => o.Product)
+                    .FirstOrDefault(o => o.OrderId == orderId);
 
-                // Return the order ID (or any other relevant data) to the frontend
-                return Json(new { orderId = orderId });
-
-                if (orderId == null)
+                if (orderData == null)
                 {
                     return NotFound(new { success = false, message = "Order not found" });
                 }
 
-                // Save the changes to the database
-                _context.SaveChanges();
+                // Retrieve user information directly from the database
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == orderData.UserId);
 
-                return Json(new { success = true, message = "Order completed successfully" });
+                // Create OrderViewModel
+                var orderViewModel = new OrderViewModel
+                {
+                    OrderId = orderData.OrderId,
+                    OrderNo = orderData.OrderNo,
+                    ProductId = orderData.ProductId,
+                    Quantity = orderData.Quantity,
+                    PaymentId = orderData.PaymentId,
+                    UserId = orderData.UserId,
+                    Status = orderData.Status,
+                    OrderAt = orderData.OrderAt,
+                    UserName = user?.UserName,
+                    Phone = user?.Phone,
+                    Email = user?.Email,
+                    Name = orderData.Product.Name,
+                    Price = orderData.Product.Price,
+                    OrderItems = new List<OrderItemViewModel>
+            {
+                // Populate OrderItems as needed
+                new OrderItemViewModel
+                {
+                    ProductId = orderData.Product.ProductId,
+                    ProductName = orderData.Product.Name,
+                    ProductImageUrl = orderData.Product.ImageUrl,
+                    ProductPrice = orderData.Product.Price,
+                    UserId = orderData.UserId,
+                    Quantity = orderData.Quantity,
+                }
+                // Add more items as necessary
+            }
+                };
+
+                // Pass the orderViewModel to the view
+                return View(orderViewModel);
             }
             catch (Exception ex)
             {
@@ -160,10 +199,7 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                 // Handle exceptions
                 return Json(new { success = false, message = "Error completing order" });
             }
-
-            return View(orderData);
         }
-
 
 
 

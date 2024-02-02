@@ -23,6 +23,7 @@
                 <h3 class="my-4">៛@(Model.Price * 4100) / $@Model.Price</h3>
                 <p class="mb-4">@Model.Description</p>
                 <div class="d-flex gap-3 mb-4">
+                    <input type="hidden" id="orderNo" name="orderNo" value="" />
                     <input type="number" class="form-control" value="1" style="max-width: 80px;">
                     @* <button class="btn btn-primary" type="button">Add to Cart</button> *@
                     <a class="addToCartBtn text-body btn btn-outline-success" href="#" data-product-id="@Model.ProductId">
@@ -229,7 +230,14 @@
                 var productPrice = @Model.Price;
                 var productImageUrl = '@Model.ImageUrl'; // Assuming you have an ImageUrl property in your model
 
+                // Generate a random order number
+                var orderNo = generateOrderNumber();
+
+                // Set the value of the hidden orderNo field
+                $('#orderNo').val(orderNo);
+
                 var orderData = {
+                    OrderNo: orderNo,
                     ProductId: productId,
                     Quantity: quantity,
                     UserId: userId,
@@ -244,6 +252,7 @@
                 localStorage.setItem('tempOrder', JSON.stringify(orderData));
 
                 // Encode each part of the order data for the query parameter
+                var encodedOrderNo = encodeURIComponent(orderNo);
                 var encodedProductId = encodeURIComponent(productId);
                 var encodedQuantity = encodeURIComponent(quantity);
                 var encodedUserId = encodeURIComponent(userId);
@@ -253,13 +262,19 @@
 
                 // Redirect to the payment page with order data as query parameters
                 window.location.href = '/Orders/PaymentPage?' +
-                    'productId=' + encodedProductId +
+                    'orderNo=' + encodedOrderNo +
+                    '&productId=' + encodedProductId +
                     '&quantity=' + encodedQuantity +
                     '&userId=' + encodedUserId +
                     '&productName=' + encodedProductName +
                     '&productPrice=' + encodedProductPrice +
                     '&productImageUrl=' + encodedProductImageUrl;
             });
+
+            // Function to generate a random order number
+            function generateOrderNumber() {
+                return 'ORD' + Date.now();
+            }
 
 
             // // Send AJAX request to save order and payment
