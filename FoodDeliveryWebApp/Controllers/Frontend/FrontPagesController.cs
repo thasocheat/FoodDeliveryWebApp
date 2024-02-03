@@ -3,6 +3,7 @@ using FoodDeliveryWebApp.Models;
 using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -187,6 +188,7 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                 .Where(c => c.UserId == userId)
                 .Select(c => new CartViewModel
                 {
+                    ProductId = c.Product.ProductId,
                     ImageUrl = c.Product.ImageUrl,
                     Name = c.Product.Name,
                     Description = c.Product.Description,
@@ -194,6 +196,7 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                     Quantity = c.Quantity,
                     FormattedTotal = $"{c.Quantity * c.Product.Price:C}", // Format total as currency
                     KhmerPrice = c.Product.Price * exchangeRate,
+                    USDPrice = c.Product.Price,
                 })
                 .ToList();
             

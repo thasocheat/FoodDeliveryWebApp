@@ -20,7 +20,7 @@
             <div class="col-lg-6">
                 <h2 class="fw-bold">@Model.Name</h2>
                 <p class="text-muted">Category Name: <span class="badge rounded-pill bg-success">@Model.Category.CategoryName</span></p>
-                <h3 class="my-4">៛@(Model.Price * 4100) / $@Model.Price</h3>
+            <h3 class="my-4">@string.Format("{0:#,##0}៛", Model.Price * 4100) / $@Model.Price</h3>
                 <p class="mb-4">@Model.Description</p>
                 <div class="d-flex gap-3 mb-4">
                     <input type="hidden" id="orderNo" name="orderNo" value="" />

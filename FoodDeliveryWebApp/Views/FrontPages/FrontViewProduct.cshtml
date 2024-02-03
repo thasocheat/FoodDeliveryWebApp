@@ -67,7 +67,7 @@
                                         @{
                                             double InKhmer = product.Price * 4100;
                                         }
-                                        <span class="text-primary me-1">@(string.Format(khmerCulture, "{0:C2}", InKhmer)) / </span>
+                                        <span class="text-primary me-1">@string.Format("{0:#,##0}៛", InKhmer) / </span>
                                         <span class="text-primary me-1">$@product.Price</span>
                                     </div>
                                     <div class="d-flex border-top">

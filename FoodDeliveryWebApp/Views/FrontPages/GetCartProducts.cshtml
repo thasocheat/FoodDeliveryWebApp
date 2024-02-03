@@ -1,9 +1,11 @@
 ﻿﻿@using FoodDeliveryWebApp.ViewModels
+@using System.Security.Claims
 @model IEnumerable<CartViewModel>
 @{
     ViewData["Title"] = "Cart Product Page";
     ViewData["PageType"] = "CartPage";
     // Layout = "~/Views/Shared/_Layout.cshtml";
+    var khmerCulture = new System.Globalization.CultureInfo("km-KH");
 }
 
 <style>
@@ -43,12 +45,13 @@
                     <div class="card border shadow-0">
                         <div class="m-4">
                             <h4 class="card-title mb-4">Your shopping cart</h4>
+                            <input type="hidden" id="orderNo" name="orderNo" value="" />
                             @if (Model.Any())
                             {
                                 @foreach (var cartItem in Model)
                                 {
-                                    <div class="row gy-3 mb-4 cart-item-container" id="cartItemsContainer">
-                                        <div class="col-lg-5">
+                                    <div class="row gy-3 mb-4 cart-item-container" id="cartItemsContainer" data-product-id="@cartItem.ProductId">
+                                        <div class="col-lg-4">
                                             <div class="me-lg-5">
                                                 <div class="d-flex">
                                                     <img src="@cartItem.ImageUrl" alt="@cartItem.Name" class="border rounded me-3" style="width: 96px; height: 96px;" />
@@ -59,21 +62,23 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-sm-9 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                                        <div class="col-lg-5 col-sm-9 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
                                             <div class="p-2">
                                                 <input type="number" class="form-control quantity-input" value="@cartItem.Quantity" style="max-width: 80px;">
                                             </div>
                                             <div class="">
-                                                <text class="h6">@cartItem.FormattedTotal</text> <br />
-                                                @* <small class="text-muted text-nowrap"> @($"{cartItem.KhmerFormattedTotal}") / per item </small> *@
-                                                @* <small class="text-muted text-nowrap"> @cartItem.FormattedPrice / per item </small> *@
+                                                <text class="h6" id="totalItem_@cartItem.ProductId" data-default-price-USD="@cartItem.USDPrice" data-default-price-KHR="@cartItem.KhmerPrice">
+                                                    @string.Format("{0:C} / {1:#,##0}៛", cartItem.Quantity * cartItem.USDPrice, cartItem.Quantity * cartItem.KhmerPrice)
+                                                </text>
 
-                                                <small class="text-muted text-nowrap price-khr" data-default-price="@cartItem.KhmerPrice">@cartItem.KhmerFormattedTotal / per item</small>
+                                                <br />
+
+                                                <small class="text-muted text-nowrap price-khr" data-default-price="@cartItem.KhmerPrice">@string.Format("{0:#,##0}៛", cartItem.KhmerPrice) / per item</small>
                                                 <br />
                                                 <small class="text-muted text-nowrap price-usd" data-default-price="@cartItem.USDPrice">@cartItem.FormattedPrice / per item</small>
                                             </div>
                                         </div>
-                                        <div class="col-lg col-sm-3 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                                        <div class="col-lg-0 col-sm-3 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
                                             <div class="float-md-end">
                                                 <a class="addToCartBtn text-body btn btn btn-light border text-danger icon-hover-danger" href="#">
                                                     <i class="fa fa-shopping-bag text-primary me-2"></i>Add to Cart
@@ -173,7 +178,7 @@
                             
 
                                 <div class="mt-3">
-                                    <a href="#" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
+                                <a href="#" class="btn btn-success w-100 shadow-0 mb-2 make-purchase-btn"> Make Purchase </a>
                                     <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a>
                                 </div>
                             </div>
@@ -283,6 +288,48 @@
 
         $(document).ready(function () {
 
+            // Attach event handler to quantity change
+            $(document).on('input', '.quantity-input', function () {
+                calculateTotalPrice();
+
+                // console.log('Quantity changed!');
+
+                // Retrieve the parent container of the quantity input
+                var $container = $(this).closest('.cart-item-container');
+
+                // Get the updated quantity and total price from the container
+                var quantity = parseInt($(this).val());
+                var priceUSD = parseFloat($container.find('.price-usd').data('default-price'));
+                var priceKH = parseFloat($container.find('.price-khr').data('default-price'));
+                var productId = $container.data('product-id');
+
+                // Log the retrieved values for debugging
+                // console.log('Retrieved values - Quantity:', quantity, 'Price USD:', priceUSD, 'Product ID:', productId);
+
+                // Calculate the updated total
+                var totalUSD = quantity * priceUSD;
+                var totalKhmer = quantity * priceKH;
+
+                // Update the displayed total in the UI
+                // Update the displayed total in the UI
+                $('#totalItem_' + productId).text(
+                    `${totalUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} / ${totalKhmer.toLocaleString('km-KH', { style: 'currency', currency: 'KHR' }).replace('KHR', '៛')}`
+                );
+
+                // // Update the displayed total in the UI
+                // $('#totalItem_' + productId).text(updatedTotal.toFixed(2)); // Assuming 2 decimal places for USD
+
+                // Inside the quantity change event handler
+                // console.log('Retrieved price:', priceUSD);
+                // console.log('Updated total:', updatedTotal);
+
+                // Add this line to see if the event handler is triggered
+                // console.log('Quantity input event handled!');
+
+                // Call the function to calculate and display total prices
+
+            });
+
             // Function to calculate total price
             function calculateTotalPrice() {
                 var totalUSD = 0;
@@ -290,6 +337,8 @@
 
                 // Create an array to store updated cart items
                 var updatedCartItems = [];
+
+                // console.log('Before Ajax - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
 
                 // Iterate through each cart item and calculate totals
                 $('.cart-item-container').each(function () {
@@ -300,6 +349,8 @@
 
                     var totalItemUSD = quantity * priceUSD;
                     var totalItemKHR = quantity * priceKHR;
+
+                   
 
 
                     // Add the updated cart item to the array
@@ -312,274 +363,140 @@
                     totalKHR += totalItemKHR;
                 });
 
-                // Make Ajax call to update the cart items
-                $.ajax({
-                    url: '/FrontPages/UpdateCartTotal',
-                    type: 'POST',
-                    data: { cartItems: updatedCartItems },
-                    success: function (data) {
-                        // Update the total prices
-                        totalUSD = data.totalUSD;
-                        totalKHR = data.totalKHR;
-                        updateTotalPrices(totalUSD, totalKHR);
-                    },
-                    error: function () {
-                        console.error('Error updating cart total.');
-                    }
-                });
+                // Update the overall total directly
+                updateTotalPrices(totalUSD, totalKHR);
+
+                // // Make Ajax call to update the cart items
+                // $.ajax({
+                //     url: '/FrontPages/UpdateCartTotal',
+                //     type: 'POST',
+                //     data: { cartItems: updatedCartItems },
+                //     success: function (data) {
+                //         // Update the total prices
+                //         totalUSD = data.totalUSD;
+                //         totalKHR = data.totalKHR;
+                //         console.log('After Ajax - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
+                //         // updateTotalPrices(totalUSD, totalKHR);
+                //     },
+                //     error: function () {
+                //         console.error('Error updating cart total.');
+                //     }
+                // });
                 // updateTotalPrices(totalUSD, totalKHR);
             }
 
             // Function to update total prices in the UI
             function updateTotalPrices(totalUSD, totalKHR) {
+
+                // console.log('Inside updateTotalPrices - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
+
+                // Format the totalKHR value with commas and append the currency symbol
+                var formattedTotalKHR = new Intl.NumberFormat('km-KH', { style: 'currency', currency: 'KHR' }).format(totalKHR);
+
                 $('#totalUSD').text('$' + totalUSD.toFixed(2));
-                $('#totalKHR').text(totalKHR.toFixed(0) + '៛');
+                $('#totalKHR').text(formattedTotalKHR);
             }
 
-            // Attach event handler to quantity change
-            $(document).on('input', '.quantity-input', function () {
-                calculateTotalPrice();
-            });
+           
 
             // Call the function to calculate and display total prices
             calculateTotalPrice();
 
-            
-            
 
 
-            // var cartItems = updateCartItems();
+            // $(document).on('click', '.make-purchase-btn', function () {
+            //     // Create an array to store cart item details
+            //     var cartItems = [];
 
-            // // Function to render cart items in HTML
-            // function renderCartItems(cartItems) {
-            //     // Clear existing items
-            //     $('#cartItemsContainer').empty();
-
-            //     // Iterate over the cart items and append them to the container
-            //     for (var i = 0; i < cartItems.length; i++) {
-            //         var cartItemHtml = `
-            //                 <div class="col-lg-5">
-            //                     <div class="me-lg-5">
-            //                         <div class="d-flex">
-            //                             <img src="${cartItems[i].imageUrl}" alt="${cartItems[i].name}" class="border rounded me-3" style="width: 96px; height: 96px;" />
-            //                             <div class="">
-            //                                 <a href="#" class="nav-link">${cartItems[i].name}</a>
-            //                                 <p class="text-muted">${cartItems[i].description}</p>
-            //                             </div>
-            //                         </div>
-            //                     </div>
-            //                 </div>
-            //                 <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-            //                     <div class="">
-            //                         <input type="text" class="form-control" placeholder="${cartItems[i].quantity}">
-            //                     </div>
-            //                     <div class="">
-            //                         <text class="h6">${cartItems[i].formattedTotal}</text> <br />
-            //                         <small class="text-muted text-nowrap">${cartItems[i].formattedPrice} / per item</small>
-            //                     </div>
-            //                 </div>
-            //                 <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-            //                     <div class="float-md-end">
-            //                         <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
-            //                         <a href="#" class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
-            //                     </div>
-            //                 </div>
-            //             `;
-
-            //         $('#cartItemsContainer').append(cartItemHtml);
-            //     }
-            // }
-
-            // // Call the function to render cart items
-            // renderCartItems(cartItems);
-
-            // function updateCartItems() {
-            //     $.ajax({
-            //         url: '/FrontPages/GetCartProducts',
-            //         type: 'GET',
-            //         success: function (data) {
-            //             console.log(data);
-            //             // Check if data is an array
-            //             if (Array.isArray(data)) {
-            //                 // Update the UI with the cart items
-            //                 if (data.length > 0) {
-            //                     // Clear existing items
-            //                     $('#cartItemsContainer').empty();
-
-            //                     // Iterate over the cart items using $.each
-            //                     $.each(data, function (index, cartItem) {
-            //                         // Append each cart item to the container using template literals
-            //                         var cartItemHtml = `
-            //                         <div class="col-lg-5">
-            //                             <div class="me-lg-5">
-            //                                 <div class="d-flex">
-            //                                     <img src="${cartItem.ImageUrl}" alt="${cartItem.Name}" class="border rounded me-3" style="width: 96px; height: 96px;" />
-            //                                     <div class="">
-            //                                         <a href="#" class="nav-link">${cartItem.Name}</a>
-            //                                         <p class="text-muted">${cartItem.Description}</p>
-            //                                     </div>
-            //                                 </div>
-            //                             </div>
-            //                         </div>
-            //                         <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-            //                             <div class="">
-            //                                 <input type="text" class="form-control" placeholder="${cartItem.Quantity}">
-            //                             </div>
-            //                             <div class="">
-            //                                 <text class="h6">${cartItem.FormattedTotal}</text> <br />
-            //                                 <small class="text-muted text-nowrap">${cartItem.FormattedPrice} / per item</small>
-            //                             </div>
-            //                         </div>
-            //                         <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-            //                             <div class="float-md-end">
-            //                                 <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
-            //                                 <a href="#" class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
-            //                             </div>
-            //                         </div>
-            //                     `;
-
-            //                         $('#cartItemsContainer').append(cartItemHtml);
-            //                     });
-            //                 } else {
-            //                     // No items found in the cart
-            //                     $('#cartItemsContainer').html('<tr><td colspan="5">No items in the cart</td></tr>');
-            //                 }
-            //             } else {
-            //                 console.error('Invalid data format. Expected an array.');
-            //             }
-            //         },
-            //         error: function () {
-            //             console.error('Error fetching cart items.');
-            //         }
-            //     });
-            // }
-
-
-
-            // initializeCartState();
-            // updateCartItemCount();
-
-
-            // $('.addToCartBtn').on('click', function () {
-            //     var button = $(this);
-            //     var productId = $(this).data('product-id');
-
-            //     // Check if user is logged in or not
-            //     $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
-            //         if (isLoggedIn) {
-            //             // User is logged in
-            //             // alert('Product added to your cart.');
-            //             toastr.success("Product added to your cart.");
-            //             console.log(isLoggedIn);
-            //             addToCart(productId, button);
-            //             updateCartItemCount();
-            //             console.log(productId, button);
-            //         } else {
-            //             // User not logged in
-            //             toastr.error("Please log in to add the product to your cart.");
-            //             // alert('Please log in to add the product to your cart.');
-            //             window.location.href = '/Account/Login';
-
-            //         }
-            //     });
-            // });
-
-            // // Attach click event to Remove from Cart buttons
-            // $('.removeFromCartBtn').on('click', function (isLoggedIn) {
-            //     var productId = $(this).data('product-id');
-            //     if (isLoggedIn) {
-            //         // User is logged in
-            //         toastr.success("Product removed from your cart.");
-            //         console.log(isLoggedIn);
-            //         removeFromCart(productId, $(this));
-            //     } else {
-            //         // User not logged in
-            //         toastr.error("Please log in to add the product to remove your cart.");
-            //         // alert('Please log in to add the product to your cart.');
-            //         window.location.href = '/Account/Login';
-
-            //     }
-
-            // });
-
-            // function updateCartItemCount() {
-            //     $.ajax({
-            //         url: '/FrontPages/CountCarts',
-            //         type: 'GET',
-            //         success: function (data) {
-            //             // Check if CartItemCount is present in the response
-            //             console.log(data);
-            //             if (data && data.cartItemCount !== undefined) {
-            //                 // Update the UI with the cart count
-            //                 $('#cartItemCountContainer').html(
-            //                     `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            //                         ${data.cartItemCount}
-            //                         <span class="visually-hidden">unread messages</span>
-            //                     </span>`
-            //                 );
-            //             } else {
-            //                 // No cart found, show 0
-            //                 $('#cartItemCountContainer').html(
-            //                     `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            //                         0
-            //                         <span class="visually-hidden">unread messages</span>
-            //                     </span>`
-            //                 );
-            //             }
-            //         },
-            //         error: function () {
-            //             console.error('Error fetching cart count.');
-            //         }
-            //     });
-            // }
-
-            // function addToCart(productId, button) {
-            //     $.post('/FrontPages/AddToCart', { productId: productId }, function (data) {
-            //         if (data.success) {
-            //             // Update button
-            //             button.removeClass('addToCartBtn').addClass('removeFromCartbtn').text('Remove from Cart');
-            //             console.log(data);
-            //         } else {
-            //             alert(data.message);
-            //         }
-            //     });
-            // }
-
-            // // Function to remove product from cart
-            // function removeFromCart(productId, button) {
-            //     $.post('/FrontPages/RemoveFromCart', { productId: productId }, function (data) {
-            //         if (data.success) {
-            //             // Update button
-            //             button.hide();
-            //             $('.addToCartBtn[data-product-id="' + productId + '"]').show();
-            //         } else {
-            //             alert(data.message);
-            //         }
-            //     });
-            // }
-
-            // function initializeCartState() {
-            //     $('.addToCartBtn').each(function () {
+            //     // Iterate through each cart item
+            //     $('.cart-item-container').each(function () {
             //         var productId = $(this).data('product-id');
-            //         IsProductInCart(productId); // Call the function to update button visibility
+            //         var imageUrl = $(this).find('img').attr('src');
+            //         var productName = $(this).find('.nav-link').text();
+            //         var quantity = parseInt($(this).find('.quantity-input').val());
+            //         var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
+
+            //         // Add cart item details to the array
+            //         cartItems.push({
+            //             OrderNo: orderNo,
+            //             productId: productId,
+            //             imageUrl: imageUrl,
+            //             productName: productName,
+            //             quantity: quantity
+            //         });
             //     });
-            // }
+
+            //     // Generate a random order number
+            //     var orderNo = generateOrderNumber();
+
+            //     // Store the cartItems array in local storage
+            //     localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
 
-            // function IsProductInCart(productId) {
-            //     // Make an AJAX request to check if the product is in the cart
-            //     $.get('/FrontPages/IsProductInCart', { productId: productId }, function (isInCart) {
-            //         if (isInCart) {
-            //             // Product is in the cart, update button accordingly
-            //             $('.addToCartBtn[data-product-id="' + productId + '"]').hide();
-            //             $('.removeFromCartBtn[data-product-id="' + productId + '"]').show();
-            //         } else {
-            //             // Product is not in the cart, update button accordingly
-            //             $('.addToCartBtn[data-product-id="' + productId + '"]').show();
-            //             $('.removeFromCartBtn[data-product-id="' + productId + '"]').hide();
-            //         }
-            //     });
+            //     // Encode each part of the order data for the query parameter
+            //     var encodedOrderNo = encodeURIComponent(orderNo);
+            //     var encodedProductId = encodeURIComponent(productId);
+            //     var encodedQuantity = encodeURIComponent(quantity);
+            //     var encodedUserId = encodeURIComponent(userId);
+            //     var encodedProductName = encodeURIComponent(productName);
+            //     // var encodedProductPrice = encodeURIComponent(productPrice);
+            //     var encodedProductImageUrl = encodeURIComponent(imageUrl);
+
+            //     // Redirect to the confirmation page
+            //     // window.location.href = '/Orders/PaymentPageCart'; // Replace with your confirmation page URL
+
+            //     // Redirect to the payment page with order data as query parameters
+            //     window.location.href = '/Orders/PaymentPageCart?' +
+            //         'orderNo=' + encodedOrderNo +
+            //         '&productId=' + encodedProductId +
+            //         '&quantity=' + encodedQuantity +
+            //         '&userId=' + encodedUserId +
+            //         '&productName=' + encodedProductName +
+            //         // '&productPrice=' + encodedProductPrice +
+            //         '&productImageUrl=' + encodedProductImageUrl;
+            // });
+
+            // // Function to generate a random order number
+            // function generateOrderNumber() {
+            //     return 'ORD' + Date.now();
             // }
+
+            $(document).on('click', '.make-purchase-btn', function () {
+                // Create an array to store cart item details
+                var cartItems = [];
+
+                // Iterate through each cart item
+                $('.cart-item-container').each(function () {
+                    var orderNo = generateOrderNumber();
+                    var productId = $(this).data('product-id');
+                    var imageUrl = $(this).find('img').attr('src');
+                    var productName = $(this).find('.nav-link').text();
+                    var quantity = parseInt($(this).find('.quantity-input').val());
+                    var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
+
+                    // Add cart item details to the array
+                    cartItems.push({
+                        orderNo: orderNo,
+                        productId: productId,
+                        imageUrl: imageUrl,
+                        productName: productName,
+                        quantity: quantity,
+                        userId: userId
+                    });
+                });
+
+                // Store the cartItems array in local storage
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+                // Redirect to the payment page with the order data as query parameters
+                window.location.href = '/Orders/PaymentPageCart';
+            });
+
+            // Function to generate a random order number
+            function generateOrderNumber() {
+                return 'ORD' + Date.now();
+            }
+
 
 
 

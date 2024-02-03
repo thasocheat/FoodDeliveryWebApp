@@ -59,6 +59,11 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             }
         }
 
+        public IActionResult PaymentPageCart()
+        {
+            return View();
+        }
+
 
 
         [HttpPost]
