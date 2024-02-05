@@ -59,10 +59,44 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             }
         }
 
-        public IActionResult PaymentPageCart()
+        public async Task<IActionResult> PaymentPageCart(int productId, int quantity, string userId, string productName, double productPrice, string productImageUrl)
         {
-            return View();
+            try
+            {
+                var product = await _productRepository.GetById(productId);
+
+                // Check if the product is found
+                if (product == null)
+                {
+                    return NotFound(); // Or handle appropriately
+                }
+
+                // Create a PaymentViewModel with the retrieved product details
+                var orderViewItemModel = new OrderItemViewModel
+                {
+                    ProductId = product.ProductId,
+                    Quantity = quantity,
+                    UserId = userId,
+                    ProductName = productName,
+                    ProductPrice = productPrice,
+                    ProductImageUrl = productImageUrl
+                };
+
+                // Pass the paymentViewModel to the view
+                return View(orderViewItemModel);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "Internal Server Error"); // Or redirect to an error page
+            }
         }
+
+        //public ActionResult PaymentPageCart()
+        //{
+        //    return View();
+        //}
+
 
 
 
@@ -114,6 +148,8 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
 
             _context.Orders.Add(order);
             _context.SaveChanges();
+
+            
 
             return order.OrderId;
         }
@@ -206,6 +242,103 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             }
         }
 
+
+
+
+
+
+        // Order and Payment Cart Method
+        public IActionResult ProcessOrderCart([FromBody] OrderAndPaymentViewModel model)
+        {
+            using (var dbContextTransaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Save order data to the database
+                    var orderId = 0;
+
+
+
+                    // Save payment data to the database
+                    SavePaymentCart(orderId, model.Payment);
+
+                    // Commit the transaction if everything is successful
+                    dbContextTransaction.Commit();
+
+                    // Return success response
+                    return Ok(new { OrderId = orderId });
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception or handle the error
+                    dbContextTransaction.Rollback();
+                    return BadRequest("Error processing the order. Please try again.");
+                }
+            }
+        }
+
+
+        // Function to save order details
+        private int SaveOrderCart(List<OrderViewModel> orderViewModel)
+        {
+            var product = _context.Products.Find(orderViewModel.First().ProductId);
+            var order = new Order
+            {
+                // Populate properties from the first order item (assuming they are the same for all items)
+                OrderNo = orderViewModel.First().OrderNo,
+                UserId = orderViewModel.First().UserId,
+                ProductId = orderViewModel.First().ProductId,
+                Quantity = orderViewModel.First().Quantity,
+                Status = orderViewModel.First().Status,
+                PaymentId = null, // We'll set this later after saving the payment
+                OrderAt = DateTime.Now,
+                Product = product // Include associated product information
+            };
+
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+
+
+
+
+
+            // Save order items
+            foreach (var orderItem in orderViewModel)
+            {
+                var newOrderItem = new Order
+                {
+                    //OrderId = order.OrderId,
+                    ProductId = orderItem.ProductId,
+                    Quantity = orderItem.Quantity,
+                    //Price = orderItem.Price,
+                    //PriceKH = orderItem.PriceKH,
+                    // Add any other properties as needed
+                };
+
+                // Add order item to the database
+                _context.Orders.Add(newOrderItem);
+            }
+            _context.SaveChanges();
+
+            return order.OrderId;
+        }
+
+        private void SavePaymentCart(int orderId, PaymentViewModel paymentViewModel)
+        {
+            var newPayment = new Payment
+            {
+                Name = paymentViewModel.Name,
+                CardNo = paymentViewModel.CardNo,
+                ExpiryDate = paymentViewModel.ExpiryDate,
+                CvvNo = paymentViewModel.CvvNo,
+                Address = paymentViewModel.Address,
+                PaymentMode = paymentViewModel.PaymentMode,
+                PayAt = DateTime.Now
+            };
+
+            _context.Payments.Add(newPayment);
+            _context.SaveChanges();
+        }
 
 
 

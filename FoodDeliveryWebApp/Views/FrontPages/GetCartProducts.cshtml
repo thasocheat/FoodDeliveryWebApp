@@ -338,7 +338,7 @@
                 // Create an array to store updated cart items
                 var updatedCartItems = [];
 
-                // console.log('Before Ajax - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
+                console.log('Before Ajax - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
 
                 // Iterate through each cart item and calculate totals
                 $('.cart-item-container').each(function () {
@@ -365,6 +365,7 @@
 
                 // Update the overall total directly
                 updateTotalPrices(totalUSD, totalKHR);
+                console.log('After Ajax - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
 
                 // // Make Ajax call to update the cart items
                 // $.ajax({
@@ -391,7 +392,7 @@
                 // console.log('Inside updateTotalPrices - totalUSD:', totalUSD, 'totalKHR:', totalKHR);
 
                 // Format the totalKHR value with commas and append the currency symbol
-                var formattedTotalKHR = new Intl.NumberFormat('km-KH', { style: 'currency', currency: 'KHR' }).format(totalKHR);
+                var formattedTotalKHR = new Intl.NumberFormat('km-KH', { style: 'currency', currency: 'KHR' }).format(totalKHR).replace('KHR', '៛');
 
                 $('#totalUSD').text('$' + totalUSD.toFixed(2));
                 $('#totalKHR').text(formattedTotalKHR);
@@ -465,14 +466,21 @@
                 // Create an array to store cart item details
                 var cartItems = [];
 
+                // Generate orderNo or invoice for entire phrchase
+                var orderNo = generateOrderNumber();
+
                 // Iterate through each cart item
                 $('.cart-item-container').each(function () {
-                    var orderNo = generateOrderNumber();
+                    
                     var productId = $(this).data('product-id');
                     var imageUrl = $(this).find('img').attr('src');
                     var productName = $(this).find('.nav-link').text();
                     var quantity = parseInt($(this).find('.quantity-input').val());
                     var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
+                    var price = parseFloat($(this).find('.price-usd').data('default-price'));
+                    var priceKH = parseFloat($(this).find('.price-khr').data('default-price'));
+
+                   
 
                     // Add cart item details to the array
                     cartItems.push({
@@ -481,15 +489,41 @@
                         imageUrl: imageUrl,
                         productName: productName,
                         quantity: quantity,
-                        userId: userId
+                        userId: userId,
+                        price: price,
+                        priceKH: priceKH
                     });
+
+                    
                 });
 
-                // Store the cartItems array in local storage
+                // // Store the cartItems array in local storage
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
-                // Redirect to the payment page with the order data as query parameters
-                window.location.href = '/Orders/PaymentPageCart';
+                console.log('Order Data:', cartItems);
+               
+
+                // Encode each part of the order data for the query parameter
+                var encodedOrderNo = encodeURIComponent(orderNo); // Assuming orderNo is the same for all items
+                var encodedUserId = encodeURIComponent(userId); // Assuming userId is the same for all items
+                var encodedProductId = encodeURIComponent(productId);
+                var encodedQuantity = encodeURIComponent(quantity);
+                var encodedPrice = encodeURIComponent(price);
+                var encodedProductName = encodeURIComponent(productName);
+                var encodedImageUrl = encodeURIComponent(imageUrl);
+
+                window.location.href = '/Orders/PaymentPageCart?' +
+                    'orderNo=' + encodedOrderNo +
+                    '&productId=' + encodedProductId +
+                    '&quantity=' + encodedQuantity +
+                    '&userId=' + encodedUserId +
+                    '&productName=' + encodedProductName +
+                    '&price=' + encodedPrice +
+                    '&imageUrl=' + encodedImageUrl;
+
+                
+
+                
             });
 
             // Function to generate a random order number

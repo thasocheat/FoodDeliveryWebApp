@@ -4,6 +4,9 @@
     ViewData["Title"] = "Payment Page Cart";
     ViewData["PageType"] = "PaymentPageCart";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // var orderData = TempData["OrderData"] as OrderViewModel;
+    var orderData = TempData["CartItems"] as OrderViewModel;
 }
 
 <style>
@@ -251,17 +254,28 @@
                     <div class="right border">
                         <div class="header">Order Summary</div>
 
-                        <div class="row item">
-                            @* <div class="col-4 align-self-center"><img class="img-fluid" src="@Model.ProductImageUrl" alt="image name"></div> *@
+                        @* @foreach (var item in ViewBag.CartItems)
+                        {
+                            <div class="row item">
+                                <div class="col-4 align-self-center"><img class="img-fluid" src="@item.ImageUrl" alt="@item.ProductName"></div>
+                                <div class="col-8">
+                                    <div class="row"><b>@item.ProductName</b></div>
+                                    <div class="row text-muted">Qty: @item.Quantity</div>
+                                </div>
+                            </div>
+                        } *@
+
+                        <div class="row item" id="orderSummaryContainer">
+                            @* <div class="col-4 align-self-center"><img class="img-fluid" src="@Model.ProductImageUrl" alt="image name"></div>
                             <div class="col-4 align-self-center"><img class="img-fluid" src="...l" alt="image name"></div>
                             <div class="col-8">
                                 <div class="row"><b>0</b></div>
-                                @* <div class="row"><b>@($"{Model.ProductPrice * 4100}៛") / @Model.ProductPrice.ToString("C")</b></div> *@
-                                @* <div class="row text-muted">@Model.ProductName</div> *@
+                                <div class="row"><b>@($"{Model.ProductPrice * 4100}៛") / @Model.ProductPrice.ToString("C")</b></div>
+                                <div class="row text-muted">@Model.ProductName</div>
                                 <div class="row text-muted">ProductName</div>
-                                @* <div class="row">Qty: @Model.Quantity</div> *@
+                                <div class="row">Qty: @Model.Quantity</div>
                                 <div class="row">Qty:0</div>
-                            </div>
+                            </div> *@
                         </div>
 
                         <hr>
@@ -269,7 +283,7 @@
                         <div class="row lower">
                             <div class="col text-left">Subtotal</div>
                             @* <div class="col text-right">@($"{Model.ProductPrice * Model.Quantity * 4100}៛") / @($"{Model.ProductPrice * Model.Quantity}$")</div> *@
-                            <div class="col text-right">0</div>
+                            <div class="col text-right" id="subtotalValue"></div>
                         </div>
 
                         <div class="row lower">
@@ -280,7 +294,7 @@
                         <div class="row lower">
                             <div class="col text-left"><b>Total to pay</b></div>
                             @* <div class="col text-right"><b>@($"{Model.ProductPrice * Model.Quantity * 4100}៛") / @($"{Model.ProductPrice * Model.Quantity}$")</b></div> *@
-                            <div class="col text-right"><b>0</b></div>
+                            <div class="col text-right"><b id="totalValue"></b></div>
                         </div>
 
                         @* <div class="row lower">
@@ -308,8 +322,8 @@
 
         $(document).ready(function () {
             // Retrieve stored order information
-            var tempOrder = JSON.parse(localStorage.getItem('tempOrder'));
-            console.log(tempOrder);
+            var cartItems = JSON.parse(localStorage.getItem('cartItems'));
+            console.log(cartItems);
 
 
 
@@ -336,7 +350,7 @@
                 // Disable the pay button during processing
                 $(this).prop('disabled', true);
 
-                placeOrder(tempOrder, paymentData);
+                placeOrder(cartItems, paymentData);
 
 
                 // // Simulate processing delay (replace with actual AJAX request)
@@ -390,7 +404,7 @@
                 console.log('Order Data:', orderData);
                 console.log('Payment Data:', paymentData);
                 $.ajax({
-                    url: '/Orders/ProcessOrder',
+                    url: '/Orders/ProcessOrderCart',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ Order: orderData, Payment: paymentData }),
@@ -412,13 +426,48 @@
                     }
                 });
             }
+
+
+
+            // Assuming cartItems is available in this scope
+            var cartItems = cartItems;
+
+            // Loop through cartItems and generate order summary HTML
+            var orderSummaryHtml = '';
+            var subtotal = 0;
+            var khSubtotal = 0;
+
+            cartItems.forEach(function (item) {
+                orderSummaryHtml += `
+                            <div class="row item">
+                                <div class="col-4 align-self-center">
+                                    <img class="img-fluid" src="${item.imageUrl}" alt="${item.productName}">
+                                </div>
+                                <div class="col-8">
+                                    <div class="row"><b>${item.productName}</b></div>
+                                    <div class="row text-muted">Qty: ${item.quantity}</div>
+                                </div>
+                            </div>
+                        `;
+
+                // Calculate subtotal based on your data model (adjust this based on your actual data model)
+                subtotal += item.price * item.quantity;
+                khSubtotal += item.priceKH * item.quantity;
+            });
+
+            // Append order summary HTML to the container
+            document.getElementById('orderSummaryContainer').innerHTML = orderSummaryHtml;
+
+            // Display subtotal and total values (adjust this based on your actual data model)
+            document.getElementById('subtotalValue').innerText = `Subtotal Value: ${subtotal}៛`;
+            document.getElementById('totalValue').innerText = `Total Value: ${subtotal}៛`;
         });
 
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-
+        
 
 
 
