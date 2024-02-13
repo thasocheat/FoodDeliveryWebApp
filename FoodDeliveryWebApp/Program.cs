@@ -15,6 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add services for connecting to SQL Server
@@ -66,6 +67,11 @@ app.MapControllerRoute(
 //app.MapControllerRoute(
 //        name: "frontPages",
 //        pattern: "{controller=FrontPages}/{action=GetFilteredProducts}/{id?}");
+
+//app.MapControllerRoute(
+//		name: "paymentPageCart",
+//        pattern: "Orders/PaymentPageCart",
+//        defaults: new { controller = "Orders", action = "PaymentPageCart" });
 
 
 app.Run();

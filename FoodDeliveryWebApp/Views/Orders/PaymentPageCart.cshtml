@@ -1,5 +1,6 @@
 ﻿@using FoodDeliveryWebApp.ViewModels
-@model OrderItemViewModel
+@* @model List<OrderViewModel> *@
+@model List<CartViewModel>
 @{
     ViewData["Title"] = "Payment Page Cart";
     ViewData["PageType"] = "PaymentPageCart";
@@ -254,12 +255,14 @@
                     <div class="right border">
                         <div class="header">Order Summary</div>
 
-                        @* @foreach (var item in ViewBag.CartItems)
+                       @*  @foreach (var item in Model)
                         {
                             <div class="row item">
-                                <div class="col-4 align-self-center"><img class="img-fluid" src="@item.ImageUrl" alt="@item.ProductName"></div>
+                                <div class="col-4 align-self-center">
+                                    <img class="img-fluid" src="@item.ImageUrl" alt="@item.Name">
+                                </div>
                                 <div class="col-8">
-                                    <div class="row"><b>@item.ProductName</b></div>
+                                    <div class="row"><b>@item.Name</b></div>
                                     <div class="row text-muted">Qty: @item.Quantity</div>
                                 </div>
                             </div>
@@ -323,7 +326,7 @@
         $(document).ready(function () {
             // Retrieve stored order information
             var cartItems = JSON.parse(localStorage.getItem('cartItems'));
-            console.log(cartItems);
+            console.log('All the data from GetCartProduct page:', cartItems);
 
 
 
@@ -350,17 +353,46 @@
                 // Disable the pay button during processing
                 $(this).prop('disabled', true);
 
-                placeOrder(cartItems, paymentData);
+
+                // // Combine payment data with cart items
+                // var cartItems = JSON.parse(localStorage.getItem('cartItems'));
+
+                // // placeOrder(cartItems, paymentData);
+                console.log('Data in cartItems:', cartItems);
+                console.log('Data in paymentData:', paymentData);
+
+                // Check if the order is coming from the cart
+                var fromCart = cartItems && cartItems.length > 0;
+
+                // Retrieve the orderId from the URL
+                var orderId = getOrderIdFromUrl();
+
+                // Place order with serialized data
+                placeOrder(cartItems, paymentData, orderId, fromCart);
+                
+
+                
 
 
-                // // Simulate processing delay (replace with actual AJAX request)
-                // setTimeout(function () {
-                //     // Continue with order placement
-                //     placeOrder(tempOrder, paymentData);
-                // }, 2000); // Simulated delay of 2 seconds (adjust as needed)
+                
             });
 
+            // Function to retrieve the orderId from the URL
+            function getOrderIdFromUrl() {
+                // Get the current URL
+                var urlParams = new URLSearchParams(window.location.search);
 
+                // Check if the orderId parameter exists in the URL
+                if (urlParams.has('orderId')) {
+                    // Retrieve the orderId parameter value
+                    var orderId = urlParams.get('orderId');
+                    return orderId;
+                } else {
+                    // Handle the case where the orderId parameter is missing in the URL
+                    console.error('orderId parameter not found in URL');
+                    return null;
+                }
+            }
 
             // Function to validate payment details
             function validatePaymentDetails(paymentData) {
@@ -400,20 +432,22 @@
             }
 
             // Function to place the order (replace with actual AJAX request)
-            function placeOrder(orderData, paymentData) {
+            function placeOrder(orderData, paymentData, orderId, fromCart) {
                 console.log('Order Data:', orderData);
                 console.log('Payment Data:', paymentData);
                 $.ajax({
                     url: '/Orders/ProcessOrderCart',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ Order: orderData, Payment: paymentData }),
+                    data: JSON.stringify({ Orders: orderData, Payment: paymentData, OrderId: orderId, FromCart: fromCart }),
                     success: function (orderResult) {
                         console.log('Order placed successfully:', orderResult);
 
                         // // Display success message or redirect to a confirmation page
                         alert('Order placed successfully!');
-                        window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId;
+                        // window.location.href = '/Orders/ConfirmationPage?orderId=' + orderResult.orderId + '&fromCart=' + fromCart;
+                        window.location.href = '/Orders/ConfirmationPage?orderId=' + encodeURIComponent(orderResult.orderId) + '&fromCart=' + encodeURIComponent(fromCart);
+
 
                     },
                     error: function () {
@@ -461,6 +495,54 @@
             // Display subtotal and total values (adjust this based on your actual data model)
             document.getElementById('subtotalValue').innerText = `Subtotal Value: ${subtotal}៛`;
             document.getElementById('totalValue').innerText = `Total Value: ${subtotal}៛`;
+
+
+
+
+
+
+
+
+
+            // Function to parse the cartItems query parameter from the URL
+            function getCartItemsFromURL() {
+                // Get the current URL
+                var urlParams = new URLSearchParams(window.location.search);
+
+                // Check if the cartItems parameter exists in the URL
+                if (urlParams.has('cartItems')) {
+                    // Retrieve the cartItems parameter value
+                    var cartItemsJSON = urlParams.get('cartItems');
+
+                    // Parse the JSON string to obtain the cart items array
+                    var cartItems = JSON.parse(cartItemsJSON);
+
+                    // Check if cartItems is an array and not empty
+                    if (Array.isArray(cartItems) && cartItems.length > 0) {
+                        // Process the cart items data as needed
+                        displayCartItems(cartItems);
+                    } else {
+                        // Handle the case where cartItems is empty or not an array
+                        console.error('Invalid cart items data:', cartItems);
+                    }
+                } else {
+                    // Handle the case where the cartItems parameter is missing in the URL
+                    console.error('Cart items parameter not found in URL');
+                }
+            }
+
+            // Function to display the cart items data on the payment page
+            function displayCartItems(cartItems) {
+                // Example: Iterate through cart items and display them in a table or list
+                cartItems.forEach(function (item) {
+                    console.log('Product Name:', item.productName);
+                    console.log('Quantity:', item.quantity);
+                    // Display other relevant information as needed
+                });
+            }
+
+            // Call the function to retrieve and process the cartItems parameter from the URL
+            getCartItemsFromURL();
         });
 
         $(function () {

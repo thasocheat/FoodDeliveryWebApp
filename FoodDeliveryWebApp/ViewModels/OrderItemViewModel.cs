@@ -8,5 +8,8 @@
         public double ProductPrice { get; set; }
         public string UserId { get; set; }
         public int Quantity { get; set; }
+
+        public double TotalQuantity { get; set; }
+        public double TotalAmount { get; set; }
     }
 }

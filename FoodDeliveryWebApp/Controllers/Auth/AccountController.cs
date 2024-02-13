@@ -123,7 +123,39 @@ namespace FoodDeliveryWebApp.Controllers.Auth
                 return RedirectToAction("Login", "Account");
             }
 
-            // Get the user data
+            // Retrieve the user's order history
+            var orderHistory = _context.Orders
+                .Where(o => o.UserId == currentUser.Id)
+                .GroupBy(o => new { o.OrderNo, o.PaymentId })
+                .Select(group => new OrderViewModel
+                {
+                    OrderId = group.FirstOrDefault().OrderId,
+                    OrderAt = group.First().OrderAt,
+                    Price = group.First().Product.Price,
+
+                    // Calculate total quantity and total amount form the order goup
+                    TotalQuantity = group.Sum(o => o.Quantity),
+                    TotalAmount = group.Sum(o => o.Quantity * o.Product.Price),
+
+                    Quantity = group.Sum(o => o.Quantity),
+                    OrderNo = group.Key.OrderNo,
+
+                    OrderItems = _context.Orders
+                    .Where(oi => oi.OrderId == group.FirstOrDefault().OrderId)
+                    .Select(oi => new OrderItemViewModel
+                    {
+                        ProductId = oi.ProductId,
+                        ProductName = oi.Product.Name,
+                        ProductImageUrl = oi.Product.ImageUrl,
+                        ProductPrice = oi.Product.Price,
+                        Quantity = oi.Quantity,
+                        TotalQuantity = group.Sum (o => o.Quantity),
+                        TotalAmount = group.Sum(o => o.Quantity * o.Product.Price),
+                    }).ToList()
+
+                }).ToList();
+
+            // Get the user data and order history
             var userViewModel = new UserViewModel
             {
                 UserName = currentUser.UserName,
@@ -132,6 +164,7 @@ namespace FoodDeliveryWebApp.Controllers.Auth
                 Address = currentUser.Address,
                 CreateAt = currentUser.CreateAt,
                 ImageUrl = currentUser.ImageUrl,
+                OrderHistory = orderHistory
             };
 
             return View(userViewModel);

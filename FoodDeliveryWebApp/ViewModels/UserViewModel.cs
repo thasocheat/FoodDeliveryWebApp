@@ -41,5 +41,7 @@ namespace FoodDeliveryWebApp.ViewModels
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Password do not match")]
         public string ConfirmPassword { get; set; }
+
+        public List<OrderViewModel> OrderHistory { get; set; }
     }
 }

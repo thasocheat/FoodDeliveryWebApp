@@ -405,63 +405,6 @@
 
 
 
-            // $(document).on('click', '.make-purchase-btn', function () {
-            //     // Create an array to store cart item details
-            //     var cartItems = [];
-
-            //     // Iterate through each cart item
-            //     $('.cart-item-container').each(function () {
-            //         var productId = $(this).data('product-id');
-            //         var imageUrl = $(this).find('img').attr('src');
-            //         var productName = $(this).find('.nav-link').text();
-            //         var quantity = parseInt($(this).find('.quantity-input').val());
-            //         var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
-
-            //         // Add cart item details to the array
-            //         cartItems.push({
-            //             OrderNo: orderNo,
-            //             productId: productId,
-            //             imageUrl: imageUrl,
-            //             productName: productName,
-            //             quantity: quantity
-            //         });
-            //     });
-
-            //     // Generate a random order number
-            //     var orderNo = generateOrderNumber();
-
-            //     // Store the cartItems array in local storage
-            //     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-
-            //     // Encode each part of the order data for the query parameter
-            //     var encodedOrderNo = encodeURIComponent(orderNo);
-            //     var encodedProductId = encodeURIComponent(productId);
-            //     var encodedQuantity = encodeURIComponent(quantity);
-            //     var encodedUserId = encodeURIComponent(userId);
-            //     var encodedProductName = encodeURIComponent(productName);
-            //     // var encodedProductPrice = encodeURIComponent(productPrice);
-            //     var encodedProductImageUrl = encodeURIComponent(imageUrl);
-
-            //     // Redirect to the confirmation page
-            //     // window.location.href = '/Orders/PaymentPageCart'; // Replace with your confirmation page URL
-
-            //     // Redirect to the payment page with order data as query parameters
-            //     window.location.href = '/Orders/PaymentPageCart?' +
-            //         'orderNo=' + encodedOrderNo +
-            //         '&productId=' + encodedProductId +
-            //         '&quantity=' + encodedQuantity +
-            //         '&userId=' + encodedUserId +
-            //         '&productName=' + encodedProductName +
-            //         // '&productPrice=' + encodedProductPrice +
-            //         '&productImageUrl=' + encodedProductImageUrl;
-            // });
-
-            // // Function to generate a random order number
-            // function generateOrderNumber() {
-            //     return 'ORD' + Date.now();
-            // }
-
             $(document).on('click', '.make-purchase-btn', function () {
                 // Create an array to store cart item details
                 var cartItems = [];
@@ -495,31 +438,27 @@
                     });
 
                     
+
+                    
                 });
 
-                // // Store the cartItems array in local storage
-                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                // Store the cartItems array in local storage
+                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
-                console.log('Order Data:', cartItems);
-               
+                    console.log('Order Data:', cartItems);
 
-                // Encode each part of the order data for the query parameter
-                var encodedOrderNo = encodeURIComponent(orderNo); // Assuming orderNo is the same for all items
-                var encodedUserId = encodeURIComponent(userId); // Assuming userId is the same for all items
-                var encodedProductId = encodeURIComponent(productId);
-                var encodedQuantity = encodeURIComponent(quantity);
-                var encodedPrice = encodeURIComponent(price);
-                var encodedProductName = encodeURIComponent(productName);
-                var encodedImageUrl = encodeURIComponent(imageUrl);
+                // Check if cart is empty
+                if (cartItems.length === 0) {
+                    // Redirect to the cart page or display a message
+                    window.location.href = '/FrontPages/GetCartProducts';
+                } else {
+                    // Redirect to the payment page
+                    // window.location.href = '/Orders/PaymentPageCart';
+                    window.location.href = '/Orders/PaymentPageCart?cartItems=' + JSON.stringify(cartItems);
 
-                window.location.href = '/Orders/PaymentPageCart?' +
-                    'orderNo=' + encodedOrderNo +
-                    '&productId=' + encodedProductId +
-                    '&quantity=' + encodedQuantity +
-                    '&userId=' + encodedUserId +
-                    '&productName=' + encodedProductName +
-                    '&price=' + encodedPrice +
-                    '&imageUrl=' + encodedImageUrl;
+                }
+
+                
 
                 
 

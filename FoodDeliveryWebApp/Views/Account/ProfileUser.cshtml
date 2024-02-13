@@ -209,7 +209,61 @@
             </form>
         </div>
         <div class="tab-pane py-5 px-4 mt-4" id="orderHistory" role="tabpanel" aria-labelledby="orderHistory-tab">
-            <h1>Your order History is here</h1>
+            <div class="row my-2 mx-1 justify-content-center">
+                @if (Model.OrderHistory != null && Model.OrderHistory.Any())
+                {
+                    <div class="row my-2 mx-1 justify-content-center">
+                        <table class="table table-striped table-borderless">
+                            <thead style="background-color:#84B0CA;" class="text-white">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Invoice ID</th>
+                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Total Qty</th>
+                                    <th scope="col">Amount in Khmer</th>
+                                    <th scope="col">Amount in USD</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int rowNum = 1;
+                                }
+                                @foreach (var orderViewModel in Model.OrderHistory)
+                                {
+                                    foreach (var orderItem in orderViewModel.OrderItems)
+                                    {
+                                        <tr>
+                                            <th scope="row">@rowNum</th>
+                                            <td>@orderViewModel.OrderAt.ToString("MM/dd/yyyy")</td>
+                                            <td>@orderViewModel.OrderNo</td>
+                                            <td>@orderItem.ProductName</td>
+                                            <td>@orderItem.TotalQuantity</td>
+                                            @{
+                                                double totalKhmer = orderViewModel.TotalAmount * 4100;
+                                            }
+                                            <td>@string.Format("{0:#,##0}៛", totalKhmer)</td>
+                                            <td>@orderItem.TotalAmount.ToString("C")</td>
+                                           
+                                            <td>
+                                                <a href="@Url.Action("ViewOrder", "Orders", new { orderId = orderViewModel.OrderId })" class="btn btn-primary">View</a>
+                                            </td>
+                                        </tr>
+                                        rowNum++;
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <h1>You have no orders yet.</h1>
+                }
+
+            </div>
         </div>
     </div>
 
@@ -218,6 +272,12 @@
         var firstTab = new bootstrap.Tab(firstTabEl)
 
         firstTab.show()
+
+        function confirmDelete(orderId) {
+            if (confirm("Are you sure you want to delete this order?")) {
+                window.location.href = '@Url.Action("DeleteOrder", "Orders")?orderId=' + orderId;
+            }
+        }
     </script>
     @* <!-- Account page navigation-->
     <nav class="nav nav-borders">
