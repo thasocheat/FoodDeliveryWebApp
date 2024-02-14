@@ -223,6 +223,7 @@
                                     <th scope="col">Total Qty</th>
                                     <th scope="col">Amount in Khmer</th>
                                     <th scope="col">Amount in USD</th>
+                                    <th scope="col">Payment Status</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -245,6 +246,20 @@
                                             }
                                             <td>@string.Format("{0:#,##0}៛", totalKhmer)</td>
                                             <td>@orderItem.TotalAmount.ToString("C")</td>
+                                            <td>
+                                                @if (orderViewModel.Status == "Paid")
+                                                {
+                                                    <span class="badge bg-success">@orderViewModel.Status</span>
+                                                }
+                                                else if (orderViewModel.Status == "Pending")
+                                                {
+                                                    <span class="badge bg-warning text-dark">@orderViewModel.Status</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@orderViewModel.Status</span>
+                                                }
+                                            </td>
                                            
                                             <td>
                                                 <a href="@Url.Action("ViewOrder", "Orders", new { orderId = orderViewModel.OrderId })" class="btn btn-primary">View</a>

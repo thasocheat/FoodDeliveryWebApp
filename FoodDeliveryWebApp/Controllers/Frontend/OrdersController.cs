@@ -83,39 +83,7 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                     return NotFound(new { success = false, message = "Empty cart items" });
                 }
 
-                //var orderViewModels = new List<OrderViewModel>();
-
-                //// Iterate through each cart item to create order view models
-                //foreach (var cartItem in cartItemsList)
-                //{
-                //    var product = await _productRepository.GetById(cartItem.ProductId);
-
-                //    // Check if the product is found
-                //    if (product == null)
-                //    {
-                //        // Log or handle the scenario where the product is not found
-                //        continue; // Skip to the next cart item
-                //    }
-
-                //    // Create an OrderViewModel for the current cart item
-                //    var orderViewModel = new OrderViewModel
-                //    {
-                //        ProductId = product.ProductId,
-                //        Quantity = cartItem.Quantity,
-                //        UserId = cartItem.UserId,
-                //        Name = product.Name,
-                //        Price = product.Price, // Assuming Price is the correct property
-                //        ImageUrl = product.ImageUrl
-                //    };
-
-                //    orderViewModels.Add(orderViewModel);
-                //}
-
-                //// Save orderViewModels to the database or perform further processing
-                //await _orderRepository.CreateOrders(orderViewModels);
-
-                // Optionally, clear the cart after placing the order
-                // ClearCart();
+                
 
                 // Pass the orderViewModels to the payment page view
                 return View(cartItemsList);
@@ -126,14 +94,6 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                 return StatusCode(500, "Internal Server Error"); // Or redirect to an error page
             }
         }
-
-
-
-        //public ActionResult PaymentPageCart()
-        //{
-        //    return View();
-        //}
-
 
 
 
@@ -158,17 +118,28 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
         // Function to save order and payment details
         private int SaveOrderAndPayment(OrderAndPaymentViewModel orderAndPayment)
         {
-            // Save order details
-            var orderId = SaveOrder(orderAndPayment.Order);
+            // Determine the payment mode
+            string paymentMode = orderAndPayment.Payment.PaymentMode;
 
-            // Save payment details
-            SavePayment(orderId, orderAndPayment.Payment);
+            // Save order details
+            var orderId = SaveOrder(orderAndPayment.Order, paymentMode);
+
+
+            // Save payment details if payment mode is card
+            if (orderAndPayment.Payment.PaymentMode == "card")
+            {
+                SaveCardPayment(orderId, orderAndPayment.Payment);
+            }
+            else if (orderAndPayment.Payment.PaymentMode == "cash")
+            {
+                SaveCashPayment(orderId, orderAndPayment.Payment);
+            }
 
             return orderId;
         }
 
         // Function to save order details
-        private int SaveOrder(OrderViewModel orderViewModel)
+        private int SaveOrder(OrderViewModel orderViewModel, string paymentMode)
         {
             var product = _context.Products.Find(orderViewModel.ProductId);
             var order = new Order
@@ -177,7 +148,8 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                 ProductId = orderViewModel.ProductId,
                 Quantity = orderViewModel.Quantity,
                 UserId = orderViewModel.UserId,
-                Status = orderViewModel.Status,
+                // Set status based on payment mode
+                Status = (paymentMode == "card") ? "Paid" : "Pending",
                 PaymentId = null, // We'll set this later after saving the payment
                 OrderAt = DateTime.Now,
                 Product = product // Include associated product information
@@ -218,66 +190,57 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
         }
 
 
+        // Function to save card payment details
+        private void SaveCardPayment(int orderId, PaymentViewModel paymentViewModel)
+        {
+            var payment = new Payment
+            {
+                Name = paymentViewModel.Name,
+                CardNo = paymentViewModel.CardNo,
+                ExpiryDate = paymentViewModel.ExpiryDate,
+                CvvNo = paymentViewModel.CvvNo,
+                PaymentMode = "card",
+                PayAt = DateTime.Now
+            };
 
-        //public async Task<IActionResult> ConfirmationPage(int orderId)
-        //{
-        //    try
-        //    {
-        //        var orderData = _context.Orders
-        //            .Include(o => o.Product)
-        //            .FirstOrDefault(o => o.OrderId == orderId);
+            _context.Payments.Add(payment);
+            _context.SaveChanges();
 
-        //        if (orderData == null)
-        //        {
-        //            return NotFound(new { success = false, message = "Order not found" });
-        //        }
+            // Update the corresponding order with the paymentId
+            var order = _context.Orders.Find(orderId);
+            if (order != null)
+            {
+                order.PaymentId = payment.PaymentId;
+                _context.SaveChanges();
+            }
+        }
 
-        //        // Retrieve user information directly from the database
-        //        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == orderData.UserId);
+        // Function to save cash payment details
+        private void SaveCashPayment(int orderId, PaymentViewModel paymentViewModel)
+        {
+            // For cash payments, you may save only the address or any other relevant information.
+            // You can adjust this method based on your specific requirements.
+            var payment = new Payment
+            {
+                PaymentMode = "cash",
+                Address = paymentViewModel.Address,
+                PayAt = DateTime.Now
+            };
 
-        //        // Create OrderViewModel
-        //        var orderViewModel = new OrderViewModel
-        //        {
-        //            OrderId = orderData.OrderId,
-        //            OrderNo = orderData.OrderNo,
-        //            ProductId = orderData.ProductId,
-        //            Quantity = orderData.Quantity,
-        //            PaymentId = orderData.PaymentId,
-        //            UserId = orderData.UserId,
-        //            Status = orderData.Status,
-        //            OrderAt = orderData.OrderAt,
-        //            UserName = user?.UserName,
-        //            Phone = user?.Phone,
-        //            Email = user?.Email,
-        //            Name = orderData.Product.Name,
-        //            Price = orderData.Product.Price,
-        //            OrderItems = new List<OrderItemViewModel>
-        //    {
-        //        // Populate OrderItems as needed
-        //        new OrderItemViewModel
-        //        {
-        //            ProductId = orderData.Product.ProductId,
-        //            ProductName = orderData.Product.Name,
-        //            ProductImageUrl = orderData.Product.ImageUrl,
-        //            ProductPrice = orderData.Product.Price,
-        //            UserId = orderData.UserId,
-        //            Quantity = orderData.Quantity,
-        //        }
-        //        // Add more items as necessary
-        //    }
-        //        };
+            _context.Payments.Add(payment);
+            _context.SaveChanges();
 
-        //        // Pass the orderViewModel to the view
-        //        return View(orderViewModel);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.Error.WriteLine(ex);
+            // Update the corresponding order with the paymentId
+            var order = _context.Orders.Find(orderId);
+            if (order != null)
+            {
+                order.PaymentId = payment.PaymentId;
+                _context.SaveChanges();
+            }
+        }
 
-        //        // Handle exceptions
-        //        return Json(new { success = false, message = "Error completing order" });
-        //    }
-        //}
+
+        
 
         // This used to handle both scenarios
         public async Task<IActionResult> ConfirmationPage(int orderId, bool fromCart)
@@ -393,9 +356,12 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                 // Extract payment data and cart items data from the model
                 var cartItems = orderAndPayment.Orders;
                 var paymentData = orderAndPayment.Payment;
+                var paymentMode = orderAndPayment.Payment.PaymentMode;
 
                 // Save payment data and cart items data into respective tables
-                var orderId = await SavePaymentAndOrdersToDatabase(paymentData, cartItems);
+                var orderId = await SavePaymentAndOrdersToDatabase(paymentData, cartItems, paymentMode);
+
+                
 
                 // Remove cart items associated with the current user
                 await RemoveCartItemsForCurrentUser(HttpContext);
@@ -410,13 +376,16 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             }
         }
 
-        private async Task<int> SavePaymentAndOrdersToDatabase(PaymentViewModel paymentData, List<OrderViewModel> orderViewModels)
+        private async Task<int> SavePaymentAndOrdersToDatabase(PaymentViewModel paymentData, List<OrderViewModel> orderViewModels, string paymentMode)
         {
             int orderId = 0;
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
+                    // Determine the payment mode
+                    //string paymentMode = paymentData.Payment.PaymentMode;
+
                     // Save payment data into the payment table
                     var paymentId = await SavePaymentToDatabase(paymentData);
 
@@ -424,7 +393,17 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                     //await SavePaymentToDatabase(paymentData);
 
                     // Save order data into the Orders table
-                    orderId = await SaveOrdersToDatabase(orderViewModels, paymentId);
+                    orderId = await SaveOrdersToDatabase(orderViewModels, paymentId, paymentMode);
+
+                    //// Save payment details if payment mode is card
+                    //if (paymentData.PaymentMode == "card")
+                    //{
+                    //    SaveCardPayment(orderId, paymentData.Payment);
+                    //}
+                    //else if (paymentData.PaymentMode == "cash")
+                    //{
+                    //    SaveCashPayment(orderId, paymentData.Payment);
+                    //}
 
                     transaction.Commit(); // Commit the transaction if everything succeeds
                 }
@@ -439,7 +418,7 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
             return orderId;
         }
 
-        private async Task<int> SaveOrdersToDatabase(List<OrderViewModel> orderViewModels, int paymentId)
+        private async Task<int> SaveOrdersToDatabase(List<OrderViewModel> orderViewModels, int paymentId, string paymentMode)
         {
             int orderId = 0;
             // Iterate through each order view model and save it to the database
@@ -455,7 +434,8 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
                         ProductId = orderViewModel.ProductId,
                         Quantity = orderViewModel.Quantity,
                         UserId = orderViewModel.UserId,
-                        Status = orderViewModel.Status,
+                        // Set status based on payment mode
+                        Status = (paymentMode == "card") ? "Paid" : "Pending",
                         PaymentId = paymentId,
                         OrderAt = DateTime.Now,
                         Product = product // Include associated product information

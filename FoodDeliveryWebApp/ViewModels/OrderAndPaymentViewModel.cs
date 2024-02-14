@@ -5,5 +5,7 @@
         public OrderViewModel Order { get; set; }
         public List<OrderViewModel> Orders { get; set; }
         public PaymentViewModel Payment { get; set; }
+
+        public string PaymentMode { get; set; }
     }
 }

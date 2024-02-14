@@ -132,6 +132,7 @@ namespace FoodDeliveryWebApp.Controllers.Auth
                     OrderId = group.FirstOrDefault().OrderId,
                     OrderAt = group.First().OrderAt,
                     Price = group.First().Product.Price,
+                    Status = group.First().Status,
 
                     // Calculate total quantity and total amount form the order goup
                     TotalQuantity = group.Sum(o => o.Quantity),

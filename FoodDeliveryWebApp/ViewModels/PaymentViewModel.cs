@@ -14,5 +14,8 @@
 
         // Additional properties for presentation, if needed
         public double TotalAmount { get; set; }
+
+        public PaymentViewModel Payment { get; set; }
+
     }
 }

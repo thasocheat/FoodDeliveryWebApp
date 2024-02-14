@@ -208,15 +208,22 @@
         </div>
         <div class="card-body">
             <div class="row upper">
-                <span><i class="fa fa-check-circle-o"></i> Shopping bag</span>
-                <span><i class="fa fa-check-circle-o"></i> Order details</span>
-                <span id="payment"><span id="three">3</span>Payment</span>
+                <div class="col-md-3">
+                    <span id="cardTab" class="paymentTab active btn btn-outline-success">Pay by Card</span>
+
+                </div>
+                <div class="col-md-3">
+                    <span id="cashTab" class="paymentTab btn btn-outline-success">Pay by Cash</span>
+
+                </div>
+                <div class="col-md-6">
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-7">
+                <div id="cardPaymentForm" class="col-md-7 paymentForm">
                     <div class="left border">
                         <div class="row">
-                            <span class="header">Payment</span>
+                            <span class="header">Pay by card</span>
                             <div class="icons">
                                 <img src="https://img.icons8.com/color/48/000000/visa.png" />
                                 <img src="https://img.icons8.com/color/48/000000/mastercard-logo.png" />
@@ -251,6 +258,19 @@
                         </form>
                     </div>
                 </div>
+
+                <div id="cashPaymentForm" class="col-md-7 left border paymentForm">
+                    <div class="row">
+                        <span class="header">Pay by cash</span>
+
+                    </div>
+                    <form id="cashForm">
+                        <span>Address:</span>
+                        <input id="cashAddress" placeholder="Your address" required>
+                    </form>
+                </div>
+
+
                 <div class="col-md-5">
                     <div class="right border">
                         <div class="header">Order Summary</div>
@@ -328,21 +348,54 @@
             var cartItems = JSON.parse(localStorage.getItem('cartItems'));
             console.log('All the data from GetCartProduct page:', cartItems);
 
+            // Hide cash payment form initially
+            $("#cashPaymentForm").hide();
 
+            // Toggle visibility of cash payment form when "Pay by Cash" tab is clicked
+            $("#cashTab").click(function () {
+                $("#cashPaymentForm").show();
+                $("#cardPaymentForm").hide();
+                $(this).addClass("active");
+                $("#cardTab").removeClass("active");
+            });
+
+            // Toggle visibility of card payment form when "Pay by Card" tab is clicked
+            $("#cardTab").click(function () {
+                $("#cashPaymentForm").hide();
+                $("#cardPaymentForm").show();
+                $(this).addClass("active");
+                $("#cashTab").removeClass("active");
+            });
+
+            $('.paymentTab').on('click', function () {
+                $('.paymentTab').removeClass('active');
+                $(this).addClass('active');
+                var paymentMethod = $(this).attr('id').replace('Tab', '');
+                $('.paymentForm').hide();
+                $('#' + paymentMethod + 'PaymentForm').show();
+            });
 
             // Handle payment details and order completion
             $('.payButton').on('click', function () {
 
 
 
-                // Collect payment details from the user
-                var paymentData = {
-                    Name: $('#cardholderName').val(),
-                    Address: $('#address').val(),
-                    CardNo: $('#cardNumber').val(),
-                    ExpiryDate: $('#expiryDate').val(),
-                    CvvNo: $('#cvv').val(),
-                };
+                var paymentMode = $('.paymentTab.active').attr('id').replace('Tab', '');
+
+                if (paymentMode === 'card') {
+                    // Collect payment details from the user
+                    var paymentData = {
+                        Name: $('#cardholderName').val(),
+                        Address: $('#address').val(),
+                        CardNo: $('#cardNumber').val(),
+                        ExpiryDate: $('#expiryDate').val(),
+                        CvvNo: $('#cvv').val(),
+                    };
+                } else if (paymentMode === 'cash') {
+                    var paymentData = {
+                        Address: $('#cashAddress').val(),
+                    };
+                }
 
                 // Validate payment details
                 if (!validatePaymentDetails(paymentData)) {
@@ -360,6 +413,7 @@
                 // // placeOrder(cartItems, paymentData);
                 console.log('Data in cartItems:', cartItems);
                 console.log('Data in paymentData:', paymentData);
+                console.log('PaymentMode:', paymentMode);
 
                 // Check if the order is coming from the cart
                 var fromCart = cartItems && cartItems.length > 0;
@@ -368,7 +422,7 @@
                 var orderId = getOrderIdFromUrl();
 
                 // Place order with serialized data
-                placeOrder(cartItems, paymentData, orderId, fromCart);
+                placeOrder(cartItems, paymentData, orderId, fromCart, paymentMode);
                 
 
                 
@@ -395,21 +449,29 @@
             }
 
             // Function to validate payment details
-            function validatePaymentDetails(paymentData) {
-                // Example: Add validation logic for card number, expiry date, and CVV
-                if (!isValidCardNumber(paymentData.CardNo) || !isValidExpiryDate(paymentData.ExpiryDate) || !isValidCVV(paymentData.CvvNo)) {
-                    // Display error message or alert
-                    // alert('Invalid payment details. Please check and try again.');
-                    console.log('Invalid Payment Details:', paymentData);
-                    // Display error message using SweetAlert
-                    Swal.fire({
-                        // icon: 'error',
-                        title: 'Validation Error',
-                        text: 'Invalid payment details. Please check and try again.' + paymentData,
-                    });
-                    // return false;
-                    return false;
+            function validatePaymentDetails(paymentData, paymentMode) {
+                if (paymentMode === 'card') {
+                    if (!isValidCardNumber(paymentData.CardNo) || !isValidExpiryDate(paymentData.ExpiryDate) || !isValidCVV(paymentData.CvvNo)) {
+                        // Display error message or alert
+                        console.log('Invalid Payment Details:', paymentData);
+                        Swal.fire({
+                            title: 'Validation Error',
+                            text: 'Invalid payment details. Please check and try again.',
+                        });
+                        return false;
+                    }
+                } else if (paymentMode === 'cash') {
+                    if (!paymentData.Address) {
+                        // Display error message or alert
+                        console.log('Invalid Payment Details:', paymentData);
+                        Swal.fire({
+                            title: 'Validation Error',
+                            text: 'Please provide your address for cash payment.',
+                        });
+                        return false;
+                    }
                 }
+
                 return true;
             }
 
@@ -432,7 +494,9 @@
             }
 
             // Function to place the order (replace with actual AJAX request)
-            function placeOrder(orderData, paymentData, orderId, fromCart) {
+            function placeOrder(orderData, paymentData, orderId, fromCart, paymentMode) {
+                paymentData.PaymentMode = paymentMode;
+
                 console.log('Order Data:', orderData);
                 console.log('Payment Data:', paymentData);
                 $.ajax({

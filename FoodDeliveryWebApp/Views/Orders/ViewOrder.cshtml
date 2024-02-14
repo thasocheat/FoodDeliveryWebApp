@@ -65,7 +65,9 @@
                                             <i class="fas fa-circle" style="color:#84B0CA ;"></i> <span class="fw-bold">Creation Date: </span>@Model.OrderAt.ToString("MMM dd, yyyy HH:mm tt")
                                         </li>
                                         <li class="text-muted">
-                                            <i class="fas fa-circle" style="color:#84B0CA ;"></i> <span class="me-1 fw-bold">Status:</span><span class="badge bg-warning text-black fw-bold">
+                                            <i class="fas fa-circle" style="color: @(Model.Status == "Paid" ? "#4CAF50" : (Model.Status == "Pending" ? "#FFA500" : "#84B0CA"));"></i>
+                                            <span class="me-1 fw-bold">Status:</span>
+                                            <span class="badge @(Model.Status == "Paid" ? "bg-success" : (Model.Status == "Pending" ? "bg-warning" : "bg-secondary")) text-black fw-bold">
                                                 @Model.Status
                                             </span>
                                         </li>
