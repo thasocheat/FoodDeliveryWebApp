@@ -1,0 +1,139 @@
+﻿@using FoodDeliveryWebApp.ViewModels
+@model List<OrderViewModel>
+@* @model OrderViewModel *@
+
+@{
+    ViewData["Title"] = "Update Orders Status Page";
+    Layout = "~/Backend/Home/_Layout.cshtml";
+
+}
+
+<div class="row">
+    @* <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Large modal -->
+                <h1>Welcome to CRUD ajax with ASP.Net (Visual Studio 2022)</h1>
+                <button type="button" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target=".bd-example-modal-lg">Add New</button>
+                
+            </div>
+        </div>
+    </div> *@
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Basic Datatable</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example" class="display" style="min-width: 845px">
+                        <thead>
+                            <tr>
+                                <th>Order No</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblOrder">
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>@order.OrderNo</td>
+                                    <td>@order.TotalAmount</td>
+                                    <td>@order.Status</td>
+                                    <td>
+                                        <button class="btn btn-primary edit-btn" data-order-id="@order.OrderId">Edit</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Order No</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+
+    <!-- Modal for Updating Order Status -->
+    <div class="modal" id="editOrderModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Order Status</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="editOrderForm">
+                        <div class="form-group">
+                            <label for="status">Status:</label>
+                            <select class="form-control" id="status">
+                                <option value="Paid">Paid</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Handle click on edit button
+            $('.edit-btn').click(function () {
+                var orderId = $(this).data('order-id');
+                $('#editOrderForm').data('order-id', orderId); // Store order ID in form data
+                $('#editOrderModal').modal('show');
+                console.log('Order Id is = ' + orderId);
+            });
+
+            // Handle form submission
+            $('#editOrderForm').submit(function (event) {
+                event.preventDefault();
+                var orderId = $(this).data('order-id');
+                var newStatus = $('#status').val();
+
+                // Make AJAX request to update order status
+                $.ajax({
+                    url: '/UpdateOrdersStatus/UpdateStatus',
+                    method: 'POST',
+                    data: { orderId: orderId, newStatus: newStatus },
+                    success: function (response) {
+                        // Handle success response
+                        console.log(response);
+                        $('#editOrderModal').modal('hide');
+                        // Update status in the table (if needed)
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
+
+
