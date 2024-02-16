@@ -1,4 +1,5 @@
 ﻿using FoodDeliveryWebApp.Models;
+using FoodDeliveryWebApp.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,5 +20,6 @@ namespace FoodDeliveryWebApp.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Team> Teams { get; set; }
+        //public DbSet<OrderViewModel> DailyReports { get; set; }
     }
 }

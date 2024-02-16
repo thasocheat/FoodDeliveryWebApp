@@ -222,53 +222,77 @@
 
 
             $('.orderCheckoutBtn').on('click', function () {
-                // Collect product ID, user ID, and payment details
-                var quantity = parseInt($('input.form-control').val()); // Get quantity from input
-                var productId = @Model.ProductId; // Get product ID from the model
-                var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
-                var productName = '@Model.Name';
-                var productPrice = @Model.Price;
-                var productImageUrl = '@Model.ImageUrl'; // Assuming you have an ImageUrl property in your model
 
-                // Generate a random order number
-                var orderNo = generateOrderNumber();
+                // Check if user is logged in or not
+                $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
+                    if (isLoggedIn) {
+                        // User is logged in
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Make order',
+                            text: 'Your are now log in.',
+                        }).then((result) => {
+                            // Collect product ID, user ID, and payment details
+                            var quantity = parseInt($('input.form-control').val()); // Get quantity from input
+                            var productId = @Model.ProductId; // Get product ID from the model
+                            var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)'; // Get the user ID
+                            var productName = '@Model.Name';
+                            var productPrice = @Model.Price;
+                            var productImageUrl = '@Model.ImageUrl'; // Assuming you have an ImageUrl property in your model
 
-                // Set the value of the hidden orderNo field
-                $('#orderNo').val(orderNo);
+                            // Generate a random order number
+                            var orderNo = generateOrderNumber();
 
-                var orderData = {
-                    OrderNo: orderNo,
-                    ProductId: productId,
-                    Quantity: quantity,
-                    UserId: userId,
-                    ProductName: productName,
-                    ProductPrice: productPrice,
-                    ProductImageUrl: productImageUrl
-                };
+                            // Set the value of the hidden orderNo field
+                            $('#orderNo').val(orderNo);
 
-                console.log('Order Data:', orderData); // Log orderData for debugging
+                            var orderData = {
+                                OrderNo: orderNo,
+                                ProductId: productId,
+                                Quantity: quantity,
+                                UserId: userId,
+                                ProductName: productName,
+                                ProductPrice: productPrice,
+                                ProductImageUrl: productImageUrl
+                            };
 
-                // Store order information temporarily (using localStorage for simplicity)
-                localStorage.setItem('tempOrder', JSON.stringify(orderData));
+                            console.log('Order Data:', orderData); // Log orderData for debugging
 
-                // Encode each part of the order data for the query parameter
-                var encodedOrderNo = encodeURIComponent(orderNo);
-                var encodedProductId = encodeURIComponent(productId);
-                var encodedQuantity = encodeURIComponent(quantity);
-                var encodedUserId = encodeURIComponent(userId);
-                var encodedProductName = encodeURIComponent(productName);
-                var encodedProductPrice = encodeURIComponent(productPrice);
-                var encodedProductImageUrl = encodeURIComponent(productImageUrl);
+                            // Store order information temporarily (using localStorage for simplicity)
+                            localStorage.setItem('tempOrder', JSON.stringify(orderData));
 
-                // Redirect to the payment page with order data as query parameters
-                window.location.href = '/Orders/PaymentPage?' +
-                    'orderNo=' + encodedOrderNo +
-                    '&productId=' + encodedProductId +
-                    '&quantity=' + encodedQuantity +
-                    '&userId=' + encodedUserId +
-                    '&productName=' + encodedProductName +
-                    '&productPrice=' + encodedProductPrice +
-                    '&productImageUrl=' + encodedProductImageUrl;
+                            // Encode each part of the order data for the query parameter
+                            var encodedOrderNo = encodeURIComponent(orderNo);
+                            var encodedProductId = encodeURIComponent(productId);
+                            var encodedQuantity = encodeURIComponent(quantity);
+                            var encodedUserId = encodeURIComponent(userId);
+                            var encodedProductName = encodeURIComponent(productName);
+                            var encodedProductPrice = encodeURIComponent(productPrice);
+                            var encodedProductImageUrl = encodeURIComponent(productImageUrl);
+
+                            // Redirect to the payment page with order data as query parameters
+                            window.location.href = '/Orders/PaymentPage?' +
+                                'orderNo=' + encodedOrderNo +
+                                '&productId=' + encodedProductId +
+                                '&quantity=' + encodedQuantity +
+                                '&userId=' + encodedUserId +
+                                '&productName=' + encodedProductName +
+                                '&productPrice=' + encodedProductPrice +
+                                '&productImageUrl=' + encodedProductImageUrl;
+                        });
+                    } else {
+                        // User not logged in
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error when order',
+                            text: 'You are not login!',
+                        }).then((result) => {
+                            // Redirect to login page
+                            window.location.href = '/Account/Login';
+                        });
+                    }
+                });
+                
             });
 
             // Function to generate a random order number

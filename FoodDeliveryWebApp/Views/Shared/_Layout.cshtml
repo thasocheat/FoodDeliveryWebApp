@@ -95,7 +95,7 @@
                     <a id="homeLink" class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     <a id="menuLink" href="#" class="nav-item nav-link" onclick="redirectToFrontViewProduct()">Menu</a>
                     <a id="aboutUsLink" href="#" class="nav-item nav-link" onclick="redirectToAboutUs()">About Us</a>
-                    <a id="contactUsLink" href="contact.html" class="nav-item nav-link">Contact Us</a>
+                    <a id="contactUsLink" href="#" class="nav-item nav-link" onclick="redirectToContact()">Contact Us</a>
 
                     <script>
                         
@@ -119,6 +119,12 @@
                         function showCartProducts() {
                             // Assuming your create form action is named "Create"
                             var createFormUrl = '@Url.Action("GetCartProducts", "FrontPages")';
+                            window.location.href = createFormUrl;
+                        }
+
+                         function redirectToContact() {
+                            // Assuming your create form action is named "Create"
+                            var createFormUrl = '@Url.Action("Contact", "Contact")';
                             window.location.href = createFormUrl;
                         }
 
@@ -239,6 +245,10 @@
 
             }
             else if (ViewData["PageType"] == "ViewOrderPage")
+            {
+
+            }
+            else if (ViewData["PageType"] == "ContactPage")
             {
 
             }

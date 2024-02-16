@@ -1,0 +1,195 @@
+﻿@using FoodDeliveryWebApp.ViewModels
+@model List<OrderViewModel>
+
+@{
+    ViewData["Title"] = "Reprots";
+    Layout = "~/Backend/Home/_Layout.cshtml";
+
+    <style>
+    label{
+        color:black;
+    }
+
+        td {
+            color: black;
+        }
+        
+    
+    </style>
+}
+
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Tab with icon</h4>
+        </div>
+        <div class="card-body">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#home8">
+                        <span>
+                            Daily Report
+                        </span>
+                    </a>
+                </li>
+               
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content tabcontent-border">
+                <div class="tab-pane fade active show" id="home8" role="tabpanel">
+                    <div class="pt-4">
+                        <h4>Daily Report</h4>
+                        <form id="dailyReportForm" method="post">
+                            <div class="container">
+
+                                <div class="row">
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="dailyStartDate">Start Date:</label>
+                                            <input type="date" id="dailyStartDate" name="startDate" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="dailyEndDate">End Date:</label>
+                                            <input type="date" id="dailyEndDate" name="endDate" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary" onclick="loadDailyReport()">Generate Report</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            
+                            
+                            
+                        </form>
+                        <div class="table-responsive">
+                            <table id="example" class="display" style="min-width: 845px">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Order No</th>
+                                        <th>Order Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Payment Status</th>
+                                        <th>In Khmer Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="daily">
+                                   
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr>
+                                            <td>@order.OrderId</td>
+                                            <td>@order.OrderNo</td>
+                                            <td>@order.OrderAt.ToShortDateString()</td>
+                                            @{
+                                                double totalKhmer = order.TotalAmount * 4100;
+                                            }
+                                            <td>@string.Format("{0:#,##0}៛", totalKhmer)</td>
+                                            <td>@order.TotalAmount.ToString("C")</td>
+                                            <td>
+                                                @if (order.Status == "Paid")
+                                                {
+                                                    <span class="badge bg-success">@order.Status</span>
+                                                }
+                                                else if (order.Status == "Pending")
+                                                {
+                                                    <span class="badge bg-warning text-dark">@order.Status</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@order.Status</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Order No</th>
+                                        <th>Order Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Payment Status</th>
+                                        <th>In Khmer Amount</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadDailyReport();
+        });
+
+        function loadDailyReport() {
+            var startDate = $('#dailyStartDate').val();
+            var endDate = $('#dailyEndDate').val();
+            console.log('Start Date:', startDate);
+            console.log('End Date:', endDate);
+            $.ajax({
+                url: '/SaleReport/GetDailyReport',
+                method: 'POST',
+                data: { startDate: startDate, endDate: endDate },
+                success: function (response) {
+                    console.log('Response:', response);
+                    // Clear existing table rows
+                    // $('#daily').empty();
+                    // Append new rows with the response data
+                    $('#daily').append(response);
+                    // Append new rows with the response data
+                    if (response && response.length > 0) {
+                        response.forEach(function (order) {
+                            var totalKhmer = order.TotalAmount * 4100;
+                            var statusBadge = '<span class="badge bg-secondary">' + order.Status + '</span>';
+                            if (order.Status === 'Paid') {
+                                statusBadge = '<span class="badge bg-success">' + order.Status + '</span>';
+                            } else if (order.Status === 'Pending') {
+                                statusBadge = '<span class="badge bg-warning text-dark">' + order.Status + '</span>';
+                            }
+                            $('#daily').append('<tr>' +
+                                '<td>' + order.OrderId + '</td>' +
+                                '<td>' + order.OrderNo + '</td>' +
+                                '<td>' + order.OrderAt + '</td>' +
+                                '<td>' + totalKhmer.toLocaleString() + '៛</td>' +
+                                '<td>' + order.TotalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) + '</td>' +
+                                '<td>' + statusBadge + '</td>' +
+                                '</tr>');
+                        });
+                    } else {
+                        $('#daily').append('<tr><td colspan="6">No data available</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        
+    </script>
+}

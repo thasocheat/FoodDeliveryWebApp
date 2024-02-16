@@ -342,33 +342,57 @@ input[type=checkbox]{
             // Handle payment details and order completion
             $('.payButton').on('click', function () {
 
-                var paymentMode = $('.paymentTab.active').attr('id').replace('Tab', '');
+                // Check if user is logged in or not
+                $.get('/FrontPages/CheckLogin', function (isLoggedIn) {
+                    if (isLoggedIn) {
+                        // User is logged in
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Remove from cart',
+                            text: 'Your are now can make an order.',
+                        }).then((result) => {
+                            var paymentMode = $('.paymentTab.active').attr('id').replace('Tab', '');
 
-                if(paymentMode === 'card'){
-                    // Collect payment details from the user
-                    var paymentData = {
-                        Name: $('#cardholderName').val(),
-                        Address: $('#address').val(),
-                        CardNo: $('#cardNumber').val(),
-                        ExpiryDate: $('#expiryDate').val(),
-                        CvvNo: $('#cvv').val(),
-                    };
-                }else if(paymentMode === 'cash'){
-                    var paymentData = {
-                        Address: $('#cashAddress').val(),
-                    };
-                }
+                            if (paymentMode === 'card') {
+                                // Collect payment details from the user
+                                var paymentData = {
+                                    Name: $('#cardholderName').val(),
+                                    Address: $('#address').val(),
+                                    CardNo: $('#cardNumber').val(),
+                                    ExpiryDate: $('#expiryDate').val(),
+                                    CvvNo: $('#cvv').val(),
+                                };
+                            } else if (paymentMode === 'cash') {
+                                var paymentData = {
+                                    Address: $('#cashAddress').val(),
+                                };
+                            }
 
-                // Validate payment details
-                if (!validatePaymentDetails(paymentData)) {
-                    // Display error message or handle invalid details
-                    return;
-                }
+                            // Validate payment details
+                            if (!validatePaymentDetails(paymentData)) {
+                                // Display error message or handle invalid details
+                                return;
+                            }
 
-                // Disable the pay button during processing
-                $(this).prop('disabled', true);
+                            // Disable the pay button during processing
+                            $(this).prop('disabled', true);
 
-                placeOrder(tempOrder, paymentData, paymentMode);
+                            placeOrder(tempOrder, paymentData, paymentMode);
+                        });
+                    } else {
+                        // User not logged in
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Please, log in first',
+                            text: 'You are not login!',
+                        }).then((result) => {
+                            // Redirect to login page
+                            window.location.href = '/Account/Login';
+                        });
+                    }
+                });
+
+                
 
 
             });

@@ -111,7 +111,7 @@ namespace FoodDeliveryWebApp.Controllers.Frontend
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public IActionResult IsProductInCart(int productId)
         {
             // Get the current user logged-in 

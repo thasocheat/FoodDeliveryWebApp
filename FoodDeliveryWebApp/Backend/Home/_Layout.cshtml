@@ -273,10 +273,18 @@
                         </li>
 
                         <li>
-                            <a href="@Url.Action("Index", "Dashboard")" aria-expanded="false">
-                                <i class="icon icon-globe-2"></i><span class="nav-text">Selling Report</span>
+                            <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                                <i class="icon icon-app-store"></i><span class="nav-text">Reports</span>
                             </a>
+                            <ul aria-expanded="false">
+                                <li><a href="@Url.Action("Reports", "SaleReport")" aria-expanded="false">Daily Report</a></li>
+                                <li><a href="@Url.Action("WeeklyReports", "SaleReport")" aria-expanded="false">Weekly Report</a></li>
+                                <li><a href="./app-calender.html">Monthly Report</a></li>
+                                <li><a href="./app-calender.html">Yearly Report</a></li>
+                            </ul>
                         </li>
+
+                       
 
                         <li>
                             <a href="@Url.Action("Index", "Team")" aria-expanded="false">

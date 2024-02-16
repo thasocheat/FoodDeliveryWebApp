@@ -1,0 +1,210 @@
+﻿@using FoodDeliveryWebApp.ViewModels
+@model List<OrderViewModel>
+
+@{
+    ViewData["Title"] = "Weekly Reprots";
+    Layout = "~/Backend/Home/_Layout.cshtml";
+
+    <style>
+    label{
+        color:black;
+    }
+
+        td {
+            color: black;
+        }
+        
+    
+    </style>
+}
+
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Tab with icon</h4>
+        </div>
+        <div class="card-body">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+               
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#weekly">
+                        <span>
+                            Weekly Report
+                        </span>
+                    </a>
+                </li>
+                @* <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#profile8">
+                        <span>
+                           Monthly Report
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#messages8">
+                        <span>
+                            Yearly Report
+                        </span>
+                    </a>
+                </li> *@
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content tabcontent-border">
+                <div class="tab-pane fade active show" id="weekly" role="tabpanel">
+                    <div class="pt-4">
+                        <h4>Weekly Report</h4>
+                        <form id="dailyReportForm" method="post">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="weekNumber">Week Number:</label>
+                                            <input type="number" id="weekNumber" name="weekNumber" class="form-control" min="1" max="5" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="year">Year:</label>
+                                            <input type="number" id="year" name="year" class="form-control" value="@DateTime.Today.Year" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="month">Month:</label>
+                                            <input type="number" id="month" name="month" class="form-control" value="@DateTime.Today.Month" min="1" max="12" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary" onclick="loadWeeklyReport()">Generate Report</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            
+                        </form>
+                        <div class="table-responsive">
+                            <table id="example" class="display" style="min-width: 845px">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Order No</th>
+                                        <th>Order Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Payment Status</th>
+                                        <th>In Khmer Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="weekly">
+                                   
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr>
+                                            <td>@order.OrderId</td>
+                                            <td>@order.OrderNo</td>
+                                            <td>@order.OrderAt.ToShortDateString()</td>
+                                            <td>@string.Format("{0:#,##0}៛", order.TotalAmount * 4100)</td>
+                                            <td>@string.Format("{0:C}", order.TotalAmount)</td>
+                                            <td>
+                                                @if (order.Status == "Paid")
+                                                {
+                                                    <span class="badge bg-success">@order.Status</span>
+                                                }
+                                                else if (order.Status == "Pending")
+                                                {
+                                                    <span class="badge bg-warning text-dark">@order.Status</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@order.Status</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Order No</th>
+                                        <th>Order Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Payment Status</th>
+                                        <th>In Khmer Amount</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadWeeklyReport();
+        });
+
+
+
+        function loadWeeklyReport() {
+            var weekNumber = $('#weekNumber').val();
+            var year = $('#year').val();
+            var month = $('#month').val();
+
+            $.ajax({
+                url: '/SaleReport/GetWeeklyReport',
+                method: 'POST',
+                data: { weekNumber: weekNumber, year: year, month: month },
+                success: function (response) {
+                    $('#weeklyReportData').empty();
+                    if (response && response.length > 0) {
+                        response.forEach(function (order) {
+                            var statusBadge = '<span class="badge bg-secondary">' + order.Status + '</span>';
+                            if (order.Status === 'Paid') {
+                                statusBadge = '<span class="badge bg-success">' + order.Status + '</span>';
+                            } else if (order.Status === 'Pending') {
+                                statusBadge = '<span class="badge bg-warning text-dark">' + order.Status + '</span>';
+                            }
+                            $('#weeklyReportData').append('<tr>' +
+                                '<td>' + order.OrderId + '</td>' +
+                                '<td>' + order.OrderNo + '</td>' +
+                                '<td>' + order.OrderAt + '</td>' +
+                                '<td>' + (order.TotalAmount * 4100).toLocaleString() + '៛</td>' +
+                                '<td>' + order.TotalAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) + '</td>' +
+                                '<td>' + statusBadge + '</td>' +
+                                '</tr>');
+                        });
+                    } else {
+                        $('#weeklyReportData').append('<tr><td colspan="6">No data available</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        // Function to load monthly report
+        function loadMonthlyReport() {
+            // Implement similar AJAX call as above for monthly report data
+        }
+
+        // Function to load yearly report
+        function loadYearlyReport() {
+            // Implement similar AJAX call as above for yearly report data
+        }
+    </script>
+}
