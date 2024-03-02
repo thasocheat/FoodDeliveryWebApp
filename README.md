@@ -28,6 +28,7 @@ Note:
 - And the password.
 
 3. Add connection string to app `appsettings.json`. It will look something like this:
+   
 ```bash
   "ConnectionStrings": {
     "DefaultConnection": "Data Source=DESKTOP-0CLKE34;Initial Catalog=FoodDeliveryWebApp;User ID=sa;Password=123;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi   Subnet Failover=False"
