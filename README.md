@@ -41,6 +41,7 @@ Note:
 
 
 - To create the migration folder and files
+  
    ```bash
     Add-Migration InitialCreate 
    ```
