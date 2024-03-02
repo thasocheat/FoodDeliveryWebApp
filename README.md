@@ -8,7 +8,9 @@
   git fork https://github.com/thasocheat/FoodDeliveryWebApp
   
 ```
+
 - Or
+  
 ```bash
   
   git clone https://github.com/thasocheat/FoodDeliveryWebApp
@@ -17,9 +19,11 @@
 2. Create a local database.
 
 Note:
+
 ```bash
  Data Source=DESKTOP-0CLKE34;Initial Catalog=FoodDeliveryWebApps;User ID=sa;Password=123;
 ```
+
 - Data `Source=DESKTOP-0CLKE34;` is your computer name.
 - In this project the database name is `FoodDeliveryWebApps`.
 - `User ID` your database username.
@@ -43,14 +47,16 @@ Note:
    ```
 
 Note:
+
 - When clone the project it already have the Migration folder, so you no need to use the command above.
-- You only just use the command below to update the database only.  
+- You only just use the command below to update the database and it will migrate the tables.  
 
  ```bash
     Update-Database 
    ```
-  - To run and migrate the tables into the database, just go to your project directory or `Window PowerShell`
-  - This command is to seed data into table for testing this project
+  - Go to your project directory or `Window PowerShell` just type the command below
+  - This command is to seed data into table for testing this project.
+
   ```bash
     dotnet run seeddata 
    ```
