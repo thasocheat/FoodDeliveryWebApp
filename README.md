@@ -6,13 +6,11 @@
 
 ```bash
   git fork https://github.com/thasocheat/FoodDeliveryWebApp
-  
 ```
 
 - Or
   
 ```bash
-  
   git clone https://github.com/thasocheat/FoodDeliveryWebApp
 ```
 
